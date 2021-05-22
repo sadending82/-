@@ -27,7 +27,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	WndClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 	RegisterClassEx(&WndClass);
 
-	hWnd = CreateWindow(lpszClass, lpszWindowName, WS_OVERLAPPEDWINDOW, 0, 0, 1200, 800, NULL, (HMENU)NULL, hInstance, NULL); // 일단 1200 800으로 구현 시작.
+	hWnd = CreateWindow(lpszClass, lpszWindowName, WS_OVERLAPPEDWINDOW, 0, 0, WindowWidth, WindowHeight, NULL, (HMENU)NULL, hInstance, NULL);
+	// WindowWidth와 WindowHeight는 헤더파일에 적어 두었습니다.
+	// 일단 시작은 1200 800으로 시작하겠습니다.
 
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
@@ -41,24 +43,96 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
+
+	HDC hDC, hMemDC;
+	PAINTSTRUCT ps;
+
+	HBITMAP hCompatibleBit;
+
+	RECT cRect;
+
 	switch (iMessage) {
 	case WM_CREATE:
+	{
+
+	}
+		break;
+	case WM_PAINT:
+	{
+		hDC = BeginPaint(hWnd, &ps);
+		GetClientRect(hWnd, &cRect);
+		hCompatibleBit = CreateCompatibleBitmap(hDC, WindowWidth, WindowHeight);
+		hMemDC = CreateCompatibleDC(hDC);
+		// 더블 버퍼링을 위한 밑 준비 입니다.
+		// WM_PAINT에서 출력해야할 것이 있다면 이 사이에 입력하시면 됩니다.
+		//--
+
+
+		// 더블 버퍼링 이후 BitBlt 및 오브젝트 삭제 입니다. 
+		BitBlt(hDC, 0, 0, WindowWidth, WindowHeight, hMemDC, 0, 0, SRCCOPY);
+		DeleteObject(hCompatibleBit);
+		DeleteObject(hMemDC);
+		EndPaint(hWnd, &ps);
+	}
 		break;
 	case WM_TIMER:
+	{
+		switch (wParam)
+		{
+		default:
+			break;
+		}
+	}
 		break;
 	case WM_LBUTTONDOWN:
+	{
+		int mx = LOWORD(lParam);
+		int my = HIWORD(lParam);
+	}
 		break;
 	case WM_LBUTTONUP:
+	{
+		int mx = LOWORD(lParam);
+		int my = HIWORD(lParam);
+	}
 		break;
 	case WM_MOUSEMOVE:
+	{
+		int mx = LOWORD(lParam);
+		int my = HIWORD(lParam);
+	}
 		break;
 	case WM_CHAR:
+	{
+		switch (wParam)
+		{
+		default:
+			break;
+		}
+	}
 		break;
 	case WM_KEYDOWN:
+	{
+		switch (wParam)
+		{
+		default:
+			break;
+		}
+	}
 		break;
 	case WM_KEYUP:
+	{
+		switch (wParam)
+		{
+		default:
+			break;
+		}
+	}
 		break;
 	case WM_COMMAND:
+	{
+
+	}
 		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
