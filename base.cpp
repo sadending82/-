@@ -66,8 +66,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		// 더블 버퍼링을 위한 밑 준비 입니다.
 		// WM_PAINT에서 출력해야할 것이 있다면 이 사이에 입력하시면 됩니다.
 		//--
+		RECT rect;
+		rect.left = 0;
+		rect.top = 0;
+		rect.right = WindowWidth;
+		rect.bottom = WindowHeight;
 
-
+		FillRect(hMemDC, &rect, WHITE_BRUSH);
+		
 		// 더블 버퍼링 이후 BitBlt 및 오브젝트 삭제 입니다. 
 		BitBlt(hDC, 0, 0, WindowWidth, WindowHeight, hMemDC, 0, 0, SRCCOPY);
 		DeleteObject(hCompatibleBit);
