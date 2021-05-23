@@ -9,3 +9,4 @@
 
 #define WindowWidth 1200 // WindowWidth 윈도우 폭
 #define WindowHeight 800 // WindowHeight 윈도우 높이
+#define NOOOO 100 // 암것도 아님
