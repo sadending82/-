@@ -69,10 +69,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		RECT rect;
 		rect.left = 0;
 		rect.top = 0;
-		rect.right = WindowWidth;
-		rect.bottom = WindowHeight;
 
-		FillRect(hMemDC, &rect, WHITE_BRUSH);
 		
 		// 더블 버퍼링 이후 BitBlt 및 오브젝트 삭제 입니다. 
 		BitBlt(hDC, 0, 0, WindowWidth, WindowHeight, hMemDC, 0, 0, SRCCOPY);
