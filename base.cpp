@@ -75,6 +75,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		hMemDC = CreateCompatibleDC(hDC);
 		// 더블 버퍼링을 위한 밑 준비 입니다.
 		// WM_PAINT에서 출력해야할 것이 있다면 이 사이에 입력하시면 됩니다.
+
+		//	아래 출력의 경우 각각의 case에 따라서 다른 함수로 만들어 출력하는것도 좋을 것 같습니다.
 		switch(screen_number)
 		{
 		case 0:
@@ -101,15 +103,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			break;
 		case 1:
 			//	in game 화면 - 게임 시작 후 지도 – 1, 2 참고
+			//	배경 출력
+			//	맵 타일 출력
 			break;
 		case 2:
 			//	전투 화면 - 전투 – 1, 2 참고
 			//	전투시 screen_number 값도 같이 바꾸고 전투가 끝나면 다시 1로 바꾼다.
+			//	배경 출력
+			//	플레이어 적 카드 출력
+			//	각종 효과 출력
+			//	승리시 보상선택 화면 출력 - 선택시 전투 종료 - 1로 돌아감
+			//	패배시 is_over 값 수정
 			break;
 		}
 		if (is_over)
 		{
-			//게임이 끝나면 스코어를 보여주고 메인 화면으로 돌아간다.
+			//게임이 끝나면 스코어와 승패여부(마지막 보스 처시치 승리, 어디서든 체력이 0 이하로 내려가면 패배)출력
+			//메인 화면으로 돌아간다.
+			
 
 		}
 		if (is_pause)
