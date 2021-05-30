@@ -1,4 +1,4 @@
-#include "header.cpp"
+﻿#include "header.cpp"
 
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"Window Class Name";
@@ -28,8 +28,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	RegisterClassEx(&WndClass);
 
 	hWnd = CreateWindow(lpszClass, lpszWindowName, WS_OVERLAPPEDWINDOW, 0, 0, WindowWidth, WindowHeight, NULL, (HMENU)NULL, hInstance, NULL);
-	// WindowWidth�� WindowHeight�� ������Ͽ� ���� �ξ����ϴ�.
-	// �ϴ� ������ 1200 800���� �����ϰڽ��ϴ�.
+	// WindowWidth와 WindowHeight는 헤더파일에 적어 두었습니다.
+	// 일단 시작은 1200 800으로 시작하겠습니다.
 
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
@@ -40,10 +40,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	}
 	return Message.wParam;
 }
-// �ּ����� ��������
+// 주석변경 ㅁㄴㅇㄹ
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
-
 	HDC hDC, hMemDC;
 	PAINTSTRUCT ps;
 
@@ -51,10 +50,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 	RECT cRect;
 
+	static Master master;
+	static int screen_number;
+	static int main_menu;//메인 화면의 상태
+
+	static BOOL is_over;
+	static BOOL is_pause;
+
+	int answer;
 	switch (iMessage) {
 	case WM_CREATE:
 	{
-
+		screen_number = 0;
+		main_menu = 0;
+		is_over = FALSE;
+		is_pause = FALSE;
 	}
 		break;
 	case WM_PAINT:
@@ -63,15 +73,58 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		GetClientRect(hWnd, &cRect);
 		hCompatibleBit = CreateCompatibleBitmap(hDC, WindowWidth, WindowHeight);
 		hMemDC = CreateCompatibleDC(hDC);
-		// ���� ���۸��� ���� �� �غ� �Դϴ�.
-		// WM_PAINT���� ����ؾ��� ���� �ִٸ� �� ���̿� �Է��Ͻø� �˴ϴ�.
+		// 더블 버퍼링을 위한 밑 준비 입니다.
+		// WM_PAINT에서 출력해야할 것이 있다면 이 사이에 입력하시면 됩니다.
+		switch(screen_number)
+		{
+		case 0:
+			//메인 화면
+			Rectangle(hMemDC, 0, 0, cRect.right, cRect.bottom);//메인화면의 배경 출력 - 비트맵 이미지로 대체할것
+			switch (main_menu)
+			{
+			case 0:
+				//선택지 화면
+				break;
+			case 1:
+				//게임 시작 -> 캐릭터 선택
+				//현재 존재하는 캐릭터를 화면에 출력
+				//키보드 1, 2, 3 or 캐릭터 클릭을 통해 선택하고 게임 시작 누를 시 게임 시작 -- screen_number = 1;
+				break;
+			case 2:
+				// 백과사전 -> 카드, 유물 열람기능
+				break;
+			case 3:
+				// 말 그대로 클릭시 게임 종료
+				break;
+			}
+			// 키보드 1,2,3 과 차일드 윈도우등으로 구현.
+			break;
+		case 1:
+			//	in game 화면 - 게임 시작 후 지도 – 1, 2 참고
+			break;
+		case 2:
+			//	전투 화면 - 전투 – 1, 2 참고
+			//	전투시 screen_number 값도 같이 바꾸고 전투가 끝나면 다시 1로 바꾼다.
+			break;
+		}
+		if (is_over)
+		{
+			//게임이 끝나면 스코어를 보여주고 메인 화면으로 돌아간다.
+
+		}
+		if (is_pause)
+		{
+			// ESC를 누르면 나오는 화면으로 메인 화면으로 돌아갈 수 있다.
+			// 이 상태가 되면 아무런 조작이 불가능해야함 - 키 입력시 is_pause 조건 추가
+		}
+
 		//--
 		RECT rect;
 		rect.left = 0;
 		rect.top = 0;
 
 		
-		// ���� ���۸� ���� BitBlt �� ������Ʈ ���� �Դϴ�. 
+		// 더블 버퍼링 이후 BitBlt 및 오브젝트 삭제 입니다. 
 		BitBlt(hDC, 0, 0, WindowWidth, WindowHeight, hMemDC, 0, 0, SRCCOPY);
 		DeleteObject(hCompatibleBit);
 		DeleteObject(hMemDC);
@@ -118,9 +171,38 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	{
 		switch (wParam)
 		{
-		default:
+		case VK_ESCAPE:
+			switch (screen_number)
+			{
+			case 0:
+				//게임을 종료할건지 묻는 화면 출력
+				answer = MessageBox(hWnd, L"정말로?", L"게임 종료", MB_YESNO);
+				if (answer == IDYES)
+					DestroyWindow(hWnd);
+				break;
+			case 1:
+			case 2:
+				if (is_pause)
+					is_pause = FALSE;
+				else
+					is_pause = TRUE;
+				break;
+			}
+			break;
+		case '3':
+			if(screen_number == 0)
+			{
+				answer = MessageBox(hWnd, L"정말로?", L"게임 종료", MB_YESNO);
+				if (answer == IDYES)
+					DestroyWindow(hWnd);
+			}
 			break;
 		}
+		if(screen_number == 2 && !is_pause)	//  전투중 키 사용
+			if (wParam <= '0' && wParam <= '9')
+			{
+				//해당하는 카드를 선택 상태로 만든다.
+			}
 	}
 		break;
 	case WM_KEYUP:

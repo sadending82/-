@@ -28,6 +28,22 @@
 #define Number_of_buffs 20
 #define Number_of_relics 10
 
+// 각각의 객체를 늘일때마다 바꿔줘야합니다.
+#define Number_of_characters 1
+// 스테이지 1의 몬스터의 종류입니다. 
+#define Number_of_Regular_Monsters_in_Stage_1 1
+#define RMS1 Number_of_Regular_Monsters_in_Stage_1
+
+#define Number_of_Elite_Monsters_in_Stage_1 0
+#define EMS1 Number_of_Elite_Monsters_in_Stage_1
+
+#define Number_of_Boss_Monsters_in_Stage_1 0
+#define BMS1 Number_of_Boss_Monsters_in_Stage_1
+
+// 스테이지 2를 만들때 아래도 추가해주세요.
+//...
+// 객체 개수 선언 끝
+
 typedef struct room {
 	int room_type;
 	struct room* next1;
