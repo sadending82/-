@@ -11,3 +11,125 @@
 #define WindowHeight 800 // WindowHeight 윈도우 높이
 #define NOOOO 100 // 암것도 아님
 #define NOOO1 100 // 암것도 아님2
+
+
+#define Maximum_number_of_cards_on_deck 50
+#define MNCD Maximum_number_of_cards_on_deck
+
+#define Default_number_of_cards_on_deck 10
+#define DNCD Default_number_of_cards_on_deck
+
+#define Default_number_of_rooms 10
+#define DNR Default_number_of_rooms
+
+#define Maximum_number_of_potions_on_player 3
+#define MNPP Maximum_number_of_potions_on_player
+
+#define Number_of_buffs 20
+#define Number_of_relics 10
+
+typedef struct room {
+	int room_type;
+	struct room* next1;
+	struct room* next2;
+}Room;
+/*
+* 방
+0 : 기본 적
+1 : 엘리트 적
+2 : 휴식
+3 : 유물(상자)
+4 : 랜덤 이벤트
+5 : 상인
+6 : 보스 -- 무조건 마지막에 나옴
+*/
+typedef struct {
+	Room room[DNR];
+}Map;
+typedef struct {
+	int stage_num;
+	Map map;
+}Stage;
+/*
+스테이지별로 다른 종류의 몬스터 생성
+각각 고유의 스프라이트
+...
+*/
+typedef struct {
+	int stage_num;
+	int type; // 0 : 일반, 1 : 엘리트, 2 : 보스
+	int ob_num;
+	int hp;
+}Monster;
+
+
+typedef struct {
+	int occupation;
+	int type; // 0 : 없음, 1 : 공격, 2 : 방어
+	int number;
+	BOOL is_enhanced;//기본값 FLASE
+}Card;
+/*
+* 카드
+* number 값에 따라서 다른 이미지로 출력
+ALL, 1, 0 = 모든 직업의 0번째 공격 카드 = 6 + 힘의 데미지		힘과 민첩은 버프입니다. 아래 버프 목록 참고
+ALL, 2, 0 = 모든 직업의 0번째 수비 카드 = 6 + 민첩의 방어도
+0, 1, 1 = 0번 직업의 1번째 공격카드 = 8 + 공격력으로 전체 공격
+...
+*/
+typedef struct {
+	Card card[MNCD];
+	int num_of_cards; // 기본값 DNCD
+}Deck;
+typedef struct {
+
+}Potion;
+/*
+
+...
+*/
+typedef struct {
+
+}Relic;
+/*
+
+...
+*/
+typedef struct {
+	int num;
+	int duration; // 일부만 가지고 있음
+}Buff;
+/*
+* 버프
+0 : 힘 - 가하는 피해 증가
+1 : 민첩 - 얻는 방어도 증가
+...
+
+10 : 가하는 피해 감소
+11 : 얻는 방어도 감소
+12 : 받는 피해 증가
+...
+*/
+typedef struct {
+	Potion potions[MNPP];
+	Relic relics[Number_of_relics]; // 소지 가능 제한 없음
+	Buff buffs[Number_of_buffs];	// 소지 가능 제한 없음
+	int num_of_potions;
+	int num_of_relics;
+	int num_of_buffs;
+}Item;
+
+typedef struct {
+	int hp;
+	int monney;
+	int occupation;
+	Deck deck;
+	Item item;
+}Player;
+
+typedef struct {
+	Player player;
+	int random_seed;
+	Stage stage;
+}Master;
+
