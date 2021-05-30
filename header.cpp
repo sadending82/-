@@ -114,6 +114,7 @@ typedef struct {
 typedef struct {
 	int num;
 	int duration; // 일부만 가지고 있음
+	BOOL haveDuration; // 일부만 가지고 있다면 가지고 있는지 없는지를 판단하는 BOOL 함수가 필요합니다.
 }Buff;
 /*
 * 버프
