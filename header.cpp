@@ -9,8 +9,6 @@
 
 #define WindowWidth 1200 // WindowWidth 윈도우 폭
 #define WindowHeight 800 // WindowHeight 윈도우 높이
-#define NOOOO 100 // 암것도 아님
-#define NOOO1 100 // 암것도 아님2
 
 
 #define Maximum_number_of_cards_on_deck 50
@@ -154,4 +152,7 @@ typedef struct {
 	int random_seed;
 	Stage stage;
 }Master;
+
+
+void GamePlay(HDC hDC);
 

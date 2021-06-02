@@ -40,7 +40,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	}
 	return Message.wParam;
 }
-// 주석변경 ㅁㄴㅇㄹ
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	HDC hDC, hMemDC;
@@ -61,7 +61,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	switch (iMessage) {
 	case WM_CREATE:
 	{
-		screen_number = 0;
+		screen_number = 2; // 
 		main_menu = 0;
 		is_over = FALSE;
 		is_pause = FALSE;
@@ -99,7 +99,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				// 말 그대로 클릭시 게임 종료
 				break;
 			}
-			// 키보드 1,2,3 과 차일드 윈도우등으로 구현.
+			// 키보드 1,2,3 과 '차일드 윈도우'등으로 구현.
+			/* 차일드 윈도우를 이용할 필요는 없을 듯 합니다 PNG파일로 들고와서 클릭으로 충분히 대체 가능합니다.*/
 			break;
 		case 1:
 			//	in game 화면 - 게임 시작 후 지도 – 1, 2 참고
@@ -114,6 +115,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			//	각종 효과 출력
 			//	승리시 보상선택 화면 출력 - 선택시 전투 종료 - 1로 돌아감
 			//	패배시 is_over 값 수정
+
+			GamePlay(hMemDC);
 			break;
 		}
 		if (is_over)
@@ -127,6 +130,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		{
 			// ESC를 누르면 나오는 화면으로 메인 화면으로 돌아갈 수 있다.
 			// 이 상태가 되면 아무런 조작이 불가능해야함 - 키 입력시 is_pause 조건 추가
+			/**/
 		}
 
 		//--
@@ -209,11 +213,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			}
 			break;
 		}
-		if(screen_number == 2 && !is_pause)	//  전투중 키 사용
+		if (screen_number == 2 && !is_pause)	//  전투중 키 사용
+		{
 			if (wParam <= '0' && wParam <= '9')
 			{
 				//해당하는 카드를 선택 상태로 만든다.
 			}
+		}
 	}
 		break;
 	case WM_KEYUP:
