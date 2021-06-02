@@ -141,7 +141,16 @@
   <ItemGroup>
     <ClCompile Include="base.cpp" />
     <ClCompile Include="GamePlay.cpp" />
-    <ClCompile Include="header.cpp" />
+    <ClCompile Include="header.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\윈플 텀 프로젝트\bgImg_stage1.jpg" />
+    <Image Include="..\..\윈플 텀 프로젝트\card.png" />
+    <Image Include="..\..\윈플 텀 프로젝트\charAttack1.png" />
+    <Image Include="..\..\윈플 텀 프로젝트\charAttack2.png" />
+    <Image Include="..\..\윈플 텀 프로젝트\charAttack3.png" />
+    <Image Include="..\..\윈플 텀 프로젝트\charIdle1.png" />
+    <Image Include="..\..\윈플 텀 프로젝트\charIdle2.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

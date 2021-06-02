@@ -1,4 +1,5 @@
-﻿#include "header.cpp"
+﻿
+#include "header.h"
 
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"Window Class Name";
@@ -29,7 +30,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 	hWnd = CreateWindow(lpszClass, lpszWindowName, WS_OVERLAPPEDWINDOW, 0, 0, WindowWidth, WindowHeight, NULL, (HMENU)NULL, hInstance, NULL);
 	// WindowWidth와 WindowHeight는 헤더파일에 적어 두었습니다.
-	// 일단 시작은 1200 800으로 시작하겠습니다.
+	// 1280 1024로 변경했습니다.
 
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
@@ -61,10 +62,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	switch (iMessage) {
 	case WM_CREATE:
 	{
-		screen_number = 2; // 
+		screen_number = 2; // 저도 여러가지 실험을 해야하는지라 2번이 되어 있습니다!
 		main_menu = 0;
 		is_over = FALSE;
 		is_pause = FALSE;
+		SetTimer(hWnd, 1, 16, NULL);
 	}
 		break;
 	case WM_PAINT:
@@ -153,7 +155,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		default:
 			break;
 		}
+		InvalidateRect(hWnd, NULL, FALSE);
 	}
+
 		break;
 	case WM_LBUTTONDOWN:
 	{
@@ -242,4 +246,5 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	}
 	return (DefWindowProc(hWnd, iMessage, wParam, lParam));
 }
+
 

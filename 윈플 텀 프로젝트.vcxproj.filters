@@ -18,11 +18,34 @@
     <ClCompile Include="base.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="header.cpp">
-      <Filter>헤더 파일</Filter>
-    </ClCompile>
     <ClCompile Include="GamePlay.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="header.h">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\윈플 텀 프로젝트\charIdle2.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\윈플 텀 프로젝트\bgImg_stage1.jpg">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\윈플 텀 프로젝트\card.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\윈플 텀 프로젝트\charAttack1.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\윈플 텀 프로젝트\charAttack2.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\윈플 텀 프로젝트\charAttack3.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\..\윈플 텀 프로젝트\charIdle1.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
 </Project>

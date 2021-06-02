@@ -1,14 +1,15 @@
 // 헤더파일 입니다.
 // 여기에 전역변수나 base가 아닌 다른 소스코드에서 생성한 함수의 반환형 등을 입력해 두면 될것 같습니다.
 
-
+#ifndef __HEADER_H__
+#define __HEADER_H__
 #include <windows.h>		
 #include <tchar.h>
 #include <time.h>
 #include <atlimage.h>
 
-#define WindowWidth 1200 // WindowWidth 윈도우 폭
-#define WindowHeight 800 // WindowHeight 윈도우 높이
+#define WindowWidth 1280 // WindowWidth 윈도우 폭
+#define WindowHeight 1024 // WindowHeight 윈도우 높이
 
 
 #define Maximum_number_of_cards_on_deck 50
@@ -153,6 +154,6 @@ typedef struct {
 	Stage stage;
 }Master;
 
-
 void GamePlay(HDC hDC);
 
+#endif
