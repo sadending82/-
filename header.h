@@ -1,6 +1,8 @@
 // 헤더파일 입니다.
 // 여기에 전역변수나 base가 아닌 다른 소스코드에서 생성한 함수의 반환형 등을 입력해 두면 될것 같습니다.
 
+// -*- 표시가 된것은 김혁동이 작성한 것입니다.
+
 #ifndef __HEADER_H__
 #define __HEADER_H__
 #include <windows.h>		
@@ -29,6 +31,7 @@
 
 // 각각의 객체를 늘일때마다 바꿔줘야합니다.
 #define Number_of_characters 1
+
 // 스테이지 1의 몬스터의 종류입니다. 
 #define Number_of_Regular_Monsters_in_Stage_1 1
 #define RMS1 Number_of_Regular_Monsters_in_Stage_1
@@ -38,6 +41,30 @@
 
 #define Number_of_Boss_Monsters_in_Stage_1 0
 #define BMS1 Number_of_Boss_Monsters_in_Stage_1
+
+//Room 관련
+
+#define Room_Basic_Enemy 0
+#define Room_Elite_Enemy 1
+#define Room_Rest 2
+#define Room_Relics 3
+#define Room_Random 4
+#define Room_Merchant 5
+#define Room_Boss 6
+
+//Monster 관련
+
+#define Monster_Type_Basic 0
+#define Monster_Type_Elite 1
+#define Monster_Type_Boss 2
+
+//Card 관련
+
+#define Card_Occu_ALL -1
+#define Card_Occu_Fisrt 0
+#define Card_Type_None 0
+#define Card_Type_Attack 1
+#define Card_Type_Deffence 2
 
 // 스테이지 2를 만들때 아래도 추가해주세요.
 //...
@@ -57,23 +84,35 @@ typedef struct room {
 4 : 랜덤 이벤트
 5 : 상인
 6 : 보스 -- 무조건 마지막에 나옴
+
+// -*- 이런 부분도 헤더파일로 추가해 주시면 제가 볼 때 코드를 이해하기 편합니다!
+// -*- 일단은 제가 알 수 있는 부분에 대해서는 임의적으로 추가해 두었습니다.
+// -*- 그리고 그래프 구조로 구현하는 것은 아주 좋은 방법인듯 합니다.
+// -*- 대신, 맵을 그릴 때 어떤식으로 구현할지 고민을 해봐야 할 것 같습니다.
+
 */
 typedef struct {
+
 	Room room[DNR];
+
 }Map;
+
+
 typedef struct {
 	int stage_num;
 	Map map;
 }Stage;
+
 /*
 스테이지별로 다른 종류의 몬스터 생성
 각각 고유의 스프라이트
 ...
 */
+
 typedef struct {
 	int stage_num;
 	int type; // 0 : 일반, 1 : 엘리트, 2 : 보스
-	int ob_num;
+	int ob_num; // -*- 이건 무엇인가요?
 	int hp;
 }Monster;
 
@@ -91,6 +130,11 @@ ALL, 1, 0 = 모든 직업의 0번째 공격 카드 = 6 + 힘의 데미지		힘과 민첩은 버프입니�
 ALL, 2, 0 = 모든 직업의 0번째 수비 카드 = 6 + 민첩의 방어도
 0, 1, 1 = 0번 직업의 1번째 공격카드 = 8 + 공격력으로 전체 공격
 ...
+
+// -*- ALL의 경우는 -1로 설정해 두겠습니다.
+// -*- 그리고 이런 부분에 대해서는 저는 잘 모르기 때문에 전부 작성하거나, 카드나 유물 리스트 같은 것을 정리한 텍스트 파일을 리소스 파일에 추가해 주시면 감사하겠습니다.
+
+
 */
 typedef struct {
 	Card card[MNCD];
@@ -130,6 +174,9 @@ typedef struct {
 11 : 얻는 방어도 감소
 12 : 받는 피해 증가
 ...
+
+// -*- 전부다 작성해 주시면 감사하겠습니다!
+
 */
 typedef struct {
 	Potion potions[MNPP];
@@ -141,19 +188,23 @@ typedef struct {
 }Item;
 
 typedef struct {
+	int x; // 전투 화면에 나왔을 때의 위치. y는 고정인지 아닌지 모르지만 일단은 고정인 채로 구현해 봄.
 	int hp;
-	int monney;
+	int money;
 	int occupation;
 	Deck deck;
 	Item item;
+	BOOL isCharacterActive; // 화면에 캐릭터를 출력할 것인지 아닌지 확인하는 변수 (전투 화면에 출력할 때만 TRUE)
 }Player;
 
 typedef struct {
 	Player player;
-	int random_seed;
+	int random_seed; // -*- 이것도 무엇인가요?
 	Stage stage;
 }Master;
 
-void GamePlay(HDC hDC);
+
+// -*- 아래부터는 GamePlay에 관한 함수입니다.
+void DisplayGame(HDC hDC);
 
 #endif

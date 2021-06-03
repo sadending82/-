@@ -7,6 +7,12 @@ LPCTSTR lpszWindowName = L"2021-1 Windows Programming Term Project";
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 
+/* -*- winmain은 여기서 계속 돌기 때문에, Master, Player 구조체를 사용한 플레이어 데이터 변수는 이곳에 전역으로 설정해 두는 것이 좋을 것 같습니다.*/
+/* -*- 다른 소스파일에서 이 변수를 필요로 할 경우에는 함수의 인자로서 소스코드로 들고 가도록 합시다*/
+
+Master master = { 0 };
+Player player = { 0 };
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
 	HWND hWnd;
@@ -59,22 +65,36 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static BOOL is_pause;
 
 	int answer;
+
 	switch (iMessage) {
+
 	case WM_CREATE:
 	{
-		screen_number = 2; // 저도 여러가지 실험을 해야하는지라 2번이 되어 있습니다!
+		screen_number = 2; /* 저도 여러가지 실험을 해야하는지라 2번이 되어 있습니다!*/
 		main_menu = 0;
 		is_over = FALSE;
 		is_pause = FALSE;
+		player.x = 200;
+		player.hp = 100; // -*- 어떤지 몰라서 일단 이렇게 적었습니다.
+		player.money = 0;
+		player.occupation = 0;
+		player.isCharacterActive = TRUE; // -*- 게임 플레이 구현을 위해서 TRUE로 해두었습니다. 
+										 //FALSE로 바꾸어야 합니다.
+		master.player = player;
+		master.random_seed = NULL;
+
 		SetTimer(hWnd, 1, 16, NULL);
 	}
 		break;
+
 	case WM_PAINT:
 	{
 		hDC = BeginPaint(hWnd, &ps);
 		GetClientRect(hWnd, &cRect);
 		hCompatibleBit = CreateCompatibleBitmap(hDC, WindowWidth, WindowHeight);
 		hMemDC = CreateCompatibleDC(hDC);
+		SelectObject(hMemDC, hCompatibleBit); /* 셀렉트 안해서 안됐었습니다 ㅋㅋㅋㅋㅋㅋㅋㅋ */
+
 		// 더블 버퍼링을 위한 밑 준비 입니다.
 		// WM_PAINT에서 출력해야할 것이 있다면 이 사이에 입력하시면 됩니다.
 
@@ -83,7 +103,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		{
 		case 0:
 			//메인 화면
-			Rectangle(hMemDC, 0, 0, cRect.right, cRect.bottom);//메인화면의 배경 출력 - 비트맵 이미지로 대체할것
+			//메인화면의 배경 출력 - 비트맵 이미지로 대체할것
 			switch (main_menu)
 			{
 			case 0:
@@ -118,7 +138,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			//	승리시 보상선택 화면 출력 - 선택시 전투 종료 - 1로 돌아감
 			//	패배시 is_over 값 수정
 
-			GamePlay(hMemDC);
+			DisplayGame(hMemDC);
+
+
 			break;
 		}
 		if (is_over)
@@ -132,7 +154,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		{
 			// ESC를 누르면 나오는 화면으로 메인 화면으로 돌아갈 수 있다.
 			// 이 상태가 되면 아무런 조작이 불가능해야함 - 키 입력시 is_pause 조건 추가
-			/**/
 		}
 
 		//--
