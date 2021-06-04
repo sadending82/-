@@ -85,7 +85,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		player.animation_num = 0;
 		player.animation_state = 0;
 		master.player = player;
-		master.random_seed = NULL;
+		master.game_seed = NULL; // 게임을 시작하면 값이 정해집니다.
 
 		SetTimer(hWnd, 1, 16, NULL);
 	}
@@ -137,11 +137,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			//	전투 화면 - 전투 – 1, 2 참고
 			//	전투시 screen_number 값도 같이 바꾸고 전투가 끝나면 다시 1로 바꾼다.
 			//	배경 출력
-			//	플레이어 적 카드 출력
+			//	플레이어와 플레이어손의 카드, 적 출력
 			//	각종 효과 출력
 			//	승리시 보상선택 화면 출력 - 선택시 전투 종료 - 1로 돌아감
 			//	패배시 is_over 값 수정
 
+			// screen_number == 1인 상태에서 맵 타일중 전투인 경우를 선택하면 해당 스테이지에 랜덤한 몬스터를 지정해서 전투를 진행합니다.
+			// 몬스터가 정해지면 screen_number = 2;를 하고 화면에 위 순서대로 출력해야할겁니다.
+			// 전투가 끝나면 ==(플레이어의 체력or 몬스터의 체력 이 0이되면) 다시 1로 돌아갑니다. 위의 설명처럼 패배의 경우는 아래의 게임 오버 화면이 나와야합니다.
 			DisplayGame(hMemDC, &player);
 
 
