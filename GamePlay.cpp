@@ -87,35 +87,35 @@ void DrawPlayer(HDC hDC, Player* player)
 		{
 			int pw = charIdle1.GetWidth();
 			int ph = charIdle1.GetHeight();
-			charIdle1.Draw(hDC, player->x, 600, pw, ph, 0, 0, pw, ph);
+			charIdle1.Draw(hDC, player->x, 550, pw, ph, 0, 0, pw, ph);
 		}
 			break;
 		case 1:
 		{
 			int pw = charIdle1.GetWidth();
 			int ph = charIdle1.GetHeight();
-			charIdle1.Draw(hDC, player->x, 600, pw + 2, ph + 2, 0, 0, pw, ph);
+			charIdle1.Draw(hDC, player->x, 550 - 2, pw , ph + 2, 0, 0, pw, ph);
 		}
 			break;
 		case 2:
 		{
 			int pw = charIdle1.GetWidth();
 			int ph = charIdle1.GetHeight();
-			charIdle1.Draw(hDC, player->x, 600, pw + 4, ph + 4, 0, 0, pw, ph);
+			charIdle1.Draw(hDC, player->x, 550 - 4, pw , ph + 4, 0, 0, pw, ph);
 		}
 			break;
 		case 3:
 		{
 			int pw = charIdle1.GetWidth();
 			int ph = charIdle1.GetHeight();
-			charIdle1.Draw(hDC, player->x, 600, pw + 2, ph + 2, 0, 0, pw, ph);
+			charIdle1.Draw(hDC, player->x, 550 - 2, pw , ph + 2, 0, 0, pw, ph);
 		}
 			break;
 		case 4:
 		{
 			int pw = charIdle1.GetWidth();
 			int ph = charIdle1.GetHeight();
-			charIdle1.Draw(hDC, player->x, 600, pw + 0, ph + 0, 0, 0, pw, ph);
+			charIdle1.Draw(hDC, player->x, 550, pw , ph , 0, 0, pw, ph);
 		}
 			break;
 		default:
