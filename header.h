@@ -11,7 +11,7 @@
 #include <atlimage.h>
 
 #define WindowWidth 1280 // WindowWidth 윈도우 폭
-#define WindowHeight 1024 // WindowHeight 윈도우 높이
+#define WindowHeight 860 // WindowHeight 윈도우 높이
 
 
 #define Maximum_number_of_cards_on_deck 50
@@ -66,6 +66,12 @@
 #define Card_Type_Attack 1
 #define Card_Type_Deffence 2
 
+//Player 관련
+
+#define State_Idle 0
+#define State_Attack 1
+#define State_Deffence 2
+
 // 스테이지 2를 만들때 아래도 추가해주세요.
 //...
 // 객체 개수 선언 끝
@@ -89,6 +95,7 @@ typedef struct room {
 // -*- 일단은 제가 알 수 있는 부분에 대해서는 임의적으로 추가해 두었습니다.
 // -*- 그리고 그래프 구조로 구현하는 것은 아주 좋은 방법인듯 합니다.
 // -*- 대신, 맵을 그릴 때 어떤식으로 구현할지 고민을 해봐야 할 것 같습니다.
+// -*- 아마 그래프 형식이 될 것 같은데 랜덤 그래프는 너무 어려우니까 무언가 방법을 찾는게 좋을 지도 모르겠네요!
 
 */
 typedef struct {
@@ -160,6 +167,7 @@ typedef struct {
 	BOOL haveDuration; // 일부만 가지고 있다면 가지고 있는지 없는지를 판단하는 BOOL 함수가 필요합니다.
 }Buff;
 /*
+
 * 버프는 플레이어의 buffs의 주소에 따라서 역할이 정해져있습니다. num 값이 버프의 크기입니다
 * 힘, 민첩의 경우 num만큼 증가하며
 * 10, 11, 12의 경우 duration이 존재하고 그 값이 0 이상이면 효과를 발휘합니다. (num 만큼 증가 감소 합니다.)
@@ -192,10 +200,23 @@ typedef struct {
 	int hp;
 	int money;
 	int occupation;
+	int animation_num; // 어떤 애니메이션을 출력할 것인가
+	int animation_state; // 어떤 애니메이션을 재생해야하나?
 	Deck deck;
 	Item item;
 	BOOL isCharacterActive; // 화면에 캐릭터를 출력할 것인지 아닌지 확인하는 변수 (전투 화면에 출력할 때만 TRUE)
 }Player;
+
+/*
+캐릭터 애니메이션 관련입니다.
+
+animation_state가
+0 : State_Idle
+1 : State_Attack
+2 : State_Deffence
+
+정도로 설정하고 #define으로 설정해 두겠습니다.
+*/
 
 typedef struct {
 	Player player;
@@ -205,6 +226,6 @@ typedef struct {
 
 
 // -*- 아래부터는 GamePlay에 관한 함수입니다.
-void DisplayGame(HDC hDC);
+void DisplayGame(HDC hDC, Player* player);
 
 #endif

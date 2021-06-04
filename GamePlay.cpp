@@ -13,10 +13,12 @@ static CImage charAttack3;
 static CImage cardImg;
 
 static int selected = -1;
+
 static void SetImg();
 static void SetCard();
+void DrawPlayer(HDC hDC, Player* player);
 
-void DisplayGame(HDC hDC)
+void DisplayGame(HDC hDC, Player* player)
 {
 	/*이미지 설정*/
 	SetImg();
@@ -25,14 +27,14 @@ void DisplayGame(HDC hDC)
 	/*배경화면 그리기*/
 	int bgw = bgImg.GetWidth();
 	int bgh = bgImg.GetHeight();
-	bgImg.Draw(hDC, 0, 0, WindowWidth, WindowHeight, 0, 0, 1600, 900);
+	bgImg.Draw(hDC, 0, 0, WindowWidth, WindowHeight, 0, 0, bgw, bgh);
 
 	/*캐릭터 그리기*/
 
 	/*카드 설정(현재는 아무것도 없음)*/
 	SetCard();
 
-	
+	DrawPlayer(hDC, player);
 	
 }
 
@@ -75,5 +77,58 @@ void SetCard()
 
 }
 
+void DrawPlayer(HDC hDC, Player* player)
+{
+	if (player->animation_state == State_Idle)
+	{
+		switch (player->animation_num)
+		{
+		case 0:
+		{
+			int pw = charIdle1.GetWidth();
+			int ph = charIdle1.GetHeight();
+			charIdle1.Draw(hDC, player->x, 600, pw, ph, 0, 0, pw, ph);
+		}
+			break;
+		case 1:
+		{
+			int pw = charIdle1.GetWidth();
+			int ph = charIdle1.GetHeight();
+			charIdle1.Draw(hDC, player->x, 600, pw + 2, ph + 2, 0, 0, pw, ph);
+		}
+			break;
+		case 2:
+		{
+			int pw = charIdle1.GetWidth();
+			int ph = charIdle1.GetHeight();
+			charIdle1.Draw(hDC, player->x, 600, pw + 4, ph + 4, 0, 0, pw, ph);
+		}
+			break;
+		case 3:
+		{
+			int pw = charIdle1.GetWidth();
+			int ph = charIdle1.GetHeight();
+			charIdle1.Draw(hDC, player->x, 600, pw + 2, ph + 2, 0, 0, pw, ph);
+		}
+			break;
+		case 4:
+		{
+			int pw = charIdle1.GetWidth();
+			int ph = charIdle1.GetHeight();
+			charIdle1.Draw(hDC, player->x, 600, pw + 0, ph + 0, 0, 0, pw, ph);
+		}
+			break;
+		default:
+			break;
+		}
+	}
+	else if (player->animation_state == State_Attack)
+	{
 
+	}
+	else if (player->animation_state == State_Deffence)
+	{
+
+	}
+}
 

@@ -13,6 +13,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 Master master = { 0 };
 Player player = { 0 };
 
+static int count = 0;
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
 	HWND hWnd;
@@ -80,6 +82,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		player.occupation = 0;
 		player.isCharacterActive = TRUE; // -*- 게임 플레이 구현을 위해서 TRUE로 해두었습니다. 
 										 //FALSE로 바꾸어야 합니다.
+		player.animation_num = 0;
+		player.animation_state = 0;
 		master.player = player;
 		master.random_seed = NULL;
 
@@ -138,7 +142,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			//	승리시 보상선택 화면 출력 - 선택시 전투 종료 - 1로 돌아감
 			//	패배시 is_over 값 수정
 
-			DisplayGame(hMemDC);
+			DisplayGame(hMemDC, &player);
 
 
 			break;
@@ -173,6 +177,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	{
 		switch (wParam)
 		{
+		case 1:
+		{
+			if (player.animation_state == State_Idle)
+			{
+				if (count >= 30)
+				{
+					if (player.animation_num >= 4)
+					{
+						player.animation_num = 0;
+					}
+					player.animation_num++;
+					count = 0;
+				}
+				count++;
+			}
+		}
+			break;
 		default:
 			break;
 		}
