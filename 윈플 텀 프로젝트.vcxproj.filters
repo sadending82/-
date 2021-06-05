@@ -59,5 +59,11 @@
     <Image Include="Exit.png">
       <Filter>리소스 파일</Filter>
     </Image>
+    <Image Include="Character1.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Character2.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
 </Project>

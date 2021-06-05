@@ -76,18 +76,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		main_menu = 0;
 		is_over = FALSE;
 		is_pause = FALSE;
-		player.x = 200;
-		player.hp = 100; // -*- 어떤지 몰라서 일단 이렇게 적었습니다.
-		player.money = 0;
-		player.occupation = 0;
-		player.isCharacterActive = TRUE; // -*- 게임 플레이 구현을 위해서 TRUE로 해두었습니다. 
-										 //FALSE로 바꾸어야 합니다.
-		player.animation_num = 0;
-		player.animation_state = 0;
-		master.player = player;
-		master.game_seed = NULL; // 게임을 시작하면 값이 정해집니다.
-
+		
 		SetTimer(hWnd, 1, 16, NULL);
+
 
 		GetClientRect(hWnd, &cRect);
 		set_MS_Button(hWnd, cRect, g_hInst);
@@ -110,9 +101,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		case 0:
 			//메인 화면
 			print_MS(hMemDC,cRect,main_menu);
-			
-			// 키보드 1,2,3 과 '차일드 윈도우'등으로 구현.
-			/* 차일드 윈도우를 이용할 필요는 없을 듯 합니다 PNG파일로 들고와서 클릭으로 충분히 대체 가능합니다.*/
 			break;
 		case 1:
 			//	in game 화면 - 게임 시작 후 지도 – 1, 2 참고
@@ -197,7 +185,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		switch (screen_number)
 		{
 		case 0:
-			MS_LBUTTONDOWN(hWnd, mx, my, &main_menu, &screen_number);
+			MS_LBUTTONDOWN(hWnd, mx, my, &main_menu, &screen_number, &player, &master);
 			break;
 		case 1:
 			break;
@@ -259,12 +247,73 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				break;
 			}
 			break;
-		case '3':
-			if(screen_number == 0)
+		case '1':
+			switch (screen_number)
 			{
-				answer = MessageBox(hWnd, L"정말로?", L"게임 종료", MB_YESNO);
-				if (answer == IDYES)
-					DestroyWindow(hWnd);
+			case 0:
+				switch (main_menu)
+				{
+				case 0:
+					main_menu = 1;
+					break;
+				case 1:
+					// 0번째 캐릭터로 게임 시작
+					player.x = 200;
+					player.hp = 80; // -*- 어떤지 몰라서 일단 이렇게 적었습니다.
+					player.money = 0;
+					player.occupation = 0;
+					player.isCharacterActive = TRUE;
+					player.animation_num = 0;
+					player.animation_state = 0;
+					master.player = player;
+					master.game_seed = rand(); 
+
+					screen_number = 2;
+					break;
+				case 2:
+					//아래에서 처리
+					break;
+				}
+				break;
+			}
+			break;
+		case '2':
+			switch (main_menu)
+			{
+			case 0:
+				MessageBox(hWnd, L"미구현", L"백과사전", MB_OK);
+				break;
+			case 1:
+				// 1번째 캐릭터로 게임 시작 - 아직 0번 캐릭터까지밖에 없습니다.
+				player.x = 200;
+				player.hp = 70; // -*- 어떤지 몰라서 일단 이렇게 적었습니다.
+				player.money = 0;
+				player.occupation = 1;
+				player.isCharacterActive = TRUE;
+				player.animation_num = 0;
+				player.animation_state = 0;
+				master.player = player;
+				master.game_seed = rand();
+
+				screen_number = 2;
+				break;
+			}
+			break;
+		case '3':
+			switch(screen_number)
+			{
+			case 0:
+				switch (main_menu)
+				{
+				case 0:
+					answer = MessageBox(hWnd, L"정말로?", L"게임 종료", MB_YESNO);
+					if (answer == IDYES)
+						DestroyWindow(hWnd);
+					break;
+				case 1:
+					break;
+				}
+				break;
 			}
 			break;
 		}

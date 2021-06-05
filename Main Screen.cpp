@@ -1,10 +1,7 @@
 #include "header.h"
 
-//static HWND hButton_Start_game;
-//static HWND hButton_Dictionary;
-//static HWND hButton_Exit;
-//
 
+//	main_menu == 0
 static RECT rStart_game;//게임시작
 static RECT rDictionary;//백과사전
 static RECT rExit;//종료
@@ -17,22 +14,36 @@ static BOOL is_on_start_game;
 static BOOL is_on_Dictionary;
 static BOOL is_on_Exit;
 
+//	main_menu == 1
+static RECT rCharacter1;
+static RECT rCharacter2;
+
+static CImage cCharacter1;
+static CImage cCharacter2;
+
+static BOOL is_on_Character1;
+static BOOL is_on_Character2;
+
+
 void Set_MS_Img()
 {
+	//	main_menu == 0
 	if (cStart_game.IsNull())
 		cStart_game.Load(L"Start_game.png");
 	if (cDictionary.IsNull())
 		cDictionary.Load(L"Dictionary.png");
 	if (cExit.IsNull())
 		cExit.Load(L"Exit.png");
+	//	main_menu == 1
+	if (cCharacter1.IsNull())
+		cCharacter1.Load(L"Character1.png");
+	if (cCharacter2.IsNull())
+		cCharacter2.Load(L"Character2.png");
 }
 
 void set_MS_Button(HWND hWnd, RECT cRect, HINSTANCE g_hInst)
 {
-//	hButton_Start_game = CreateWindow(L"button", L"Select", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, cRect.bottom + 150, cRect.bottom - 280, 120, 50, hWnd, (HMENU)MAIN_BUTTON_Start_game, g_hInst, NULL);
-//	hButton_Dictionary = CreateWindow(L"button", L"Done", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, cRect.bottom + 150, cRect.bottom - 210, 200, 50, hWnd, (HMENU)MAIN_BUTTON_Dictionary, g_hInst, NULL);
-//	hButton_Exit = CreateWindow(L"button", L"Move", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, cRect.bottom + 150, cRect.bottom - 140, 200, 50, hWnd, (HMENU)MAIN_BUTTON_Exit, g_hInst, NULL);
-
+	//	main_menu == 0
 	rStart_game.left = 100;
 	rStart_game.right = 300;
 	rStart_game.top = cRect.bottom / 2;
@@ -47,8 +58,29 @@ void set_MS_Button(HWND hWnd, RECT cRect, HINSTANCE g_hInst)
 	rExit.right = 200;
 	rExit.top = cRect.bottom / 2 + 140;
 	rExit.bottom = cRect.bottom / 2 + 190;
+	//	main_menu == 1
+	rCharacter1.left = 100;
+	rCharacter1.right = rCharacter1.left + (cRect.right - 300) / 3;
+	rCharacter1.top = 100;
+	rCharacter1.bottom = cRect.bottom - 200;
+
+	rCharacter2.left = rCharacter1.right + 50;
+	rCharacter2.right = rCharacter2.left + (cRect.right - 300) / 3;
+	rCharacter2.top = 100;
+	rCharacter2.bottom = cRect.bottom - 200;
 }
 
+void printf_MS_button(HDC hDC,BOOL is_on, CImage* cButton,RECT rButton)
+{
+	if (!is_on)
+	{
+		int pw = cButton->GetWidth();
+		int ph = cButton->GetHeight();
+		cButton->Draw(hDC, rButton.left, rButton.top, rButton.right - rButton.left, rButton.bottom - rButton.top, 0, 0, pw, ph);
+	}
+	else
+		Rectangle(hDC, rButton.left, rButton.top, rButton.right, rButton.bottom);
+}
 
 void print_MS(HDC hDC, RECT cRect,int main_menu)
 {
@@ -60,36 +92,16 @@ void print_MS(HDC hDC, RECT cRect,int main_menu)
 	case 0:
 		//선택지 화면
 		//메인화면의 버튼 출력 - 비트맵 이미지로 대체할것
-		if (!is_on_start_game)
-		{
-			int pw = cStart_game.GetWidth();
-			int ph = cStart_game.GetHeight();
-			cStart_game.Draw(hDC, rStart_game.left, rStart_game.top, pw, ph, 0, 0, pw, ph);
-		}
-		else
-			Rectangle(hDC, rStart_game.left, rStart_game.top, rStart_game.right, rStart_game.bottom);
-		if (!is_on_Dictionary)
-		{
-			int pw = cDictionary.GetWidth();
-			int ph = cDictionary.GetHeight();
-			cDictionary.Draw(hDC, rDictionary.left, rDictionary.top, pw, ph, 0, 0, pw, ph);
-		}
-		else
-			Rectangle(hDC, rDictionary.left, rDictionary.top, rDictionary.right, rDictionary.bottom);
-		if (!is_on_Exit)
-		{
-			int pw = cExit.GetWidth();
-			int ph = cExit.GetHeight();
-			cExit.Draw(hDC, rExit.left, rExit.top, pw, ph, 0, 0, pw, ph);
-		}
-		else
-			Rectangle(hDC, rExit.left, rExit.top, rExit.right, rExit.bottom);
-
+		printf_MS_button(hDC, is_on_start_game, &cStart_game, rStart_game);
+		printf_MS_button(hDC, is_on_Dictionary, &cDictionary, rDictionary);
+		printf_MS_button(hDC, is_on_Exit, &cExit, rExit);
 		break;
 	case 1:
 		//게임 시작 -> 캐릭터 선택
 		//현재 존재하는 캐릭터를 화면에 출력
 		//키보드 1, 2, 3 or 캐릭터 클릭을 통해 선택하고 게임 시작 누를 시 게임 시작 -- screen_number = 1;
+		printf_MS_button(hDC, is_on_Character1, &cCharacter1, rCharacter1);
+		printf_MS_button(hDC, is_on_Character2, &cCharacter2, rCharacter2);
 		break;
 	case 2:
 		// 백과사전 -> 카드, 유물 열람기능
@@ -108,7 +120,7 @@ BOOL is_in_rect(int x, int y, RECT rect)
 		return FALSE;
 }
 
-void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_number)
+void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_number, Player* player, Master* master)
 {
 	int answer;
 	switch (*main_menu)
@@ -116,11 +128,8 @@ void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_numbe
 	case 0:
 		if (is_in_rect(mx, my, rStart_game))
 		{
-			answer = MessageBox(hWnd, L"미완성이므로 바로 전투 화면이로 이동", L"게임 시작", MB_YESNO);
-			if (answer == IDYES)
-				*screen_number = 2;
-		}// 메뉴가 완성되면 수정
-			//*main_menu = 1;
+			*main_menu = 1;
+		}
 		if (is_in_rect(mx, my, rDictionary))
 		{
 			MessageBox(hWnd, L"미구현", L"백과사전", MB_OK);
@@ -134,6 +143,37 @@ void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_numbe
 		break;
 	case 1:
 		// 캐릭터를 누르면 게임 시작
+		if (is_in_rect(mx, my, rCharacter1))
+		{
+			// 0번째 캐릭터로 게임 시작
+			player->x = 200;
+			player->hp = 80; // -*- 어떤지 몰라서 일단 이렇게 적었습니다.
+			player->money = 0;
+			player->occupation = 0;
+			player->isCharacterActive = TRUE;
+			player->animation_num = 0;
+			player->animation_state = 0;
+			master->player = *player;
+			master->game_seed = rand();
+
+			*screen_number = 2;
+		}
+
+		if (is_in_rect(mx, my, rCharacter2))
+		{
+			// 1번째 캐릭터로 게임 시작 - 아직 0번 캐릭터까지밖에 없습니다.
+			player->x = 200;
+			player->hp = 70; // -*- 어떤지 몰라서 일단 이렇게 적었습니다.
+			player->money = 0;
+			player->occupation = 1;
+			player->isCharacterActive = TRUE;
+			player->animation_num = 0;
+			player->animation_state = 0;
+			master->player = *player;
+			master->game_seed = rand();
+
+			*screen_number = 2;
+		}
 		break;
 	case 2:
 		// 백과사전 출력
@@ -145,6 +185,8 @@ void MS_MOUSEMOVE(int mx, int my, int main_menu)
 	is_on_start_game = FALSE;
 	is_on_Dictionary = FALSE;
 	is_on_Exit = FALSE;
+	is_on_Character1 = FALSE;
+	is_on_Character2 = FALSE;
 
 	switch (main_menu)
 	{
@@ -158,11 +200,19 @@ void MS_MOUSEMOVE(int mx, int my, int main_menu)
 		break;
 	case 1:
 		//위랑 비슷하게 볼드 효과
+		if (is_in_rect(mx, my, rCharacter1))
+			is_on_Character1 = TRUE;
+		if (is_in_rect(mx, my, rCharacter2))
+			is_on_Character2 = TRUE;
 		break;
 	case 2:
 		//위랑 비슷하게 볼드 효과
 		break;
 	}
 	
+
+}
+void MS_MENU_1(HWND hWnd,int answer, int *screen_number)
+{
 
 }
