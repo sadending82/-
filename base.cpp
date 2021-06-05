@@ -57,7 +57,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 	HBITMAP hCompatibleBit;
 
-	RECT cRect;
+	static RECT cRect;
 
 	static Master master;
 	static int screen_number;
@@ -72,7 +72,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 	case WM_CREATE:
 	{
-		screen_number = 2; /* 저도 여러가지 실험을 해야하는지라 2번이 되어 있습니다!*/
+		screen_number = 0; /* 저도 여러가지 실험을 해야하는지라 2번이 되어 있습니다!*/
 		main_menu = 0;
 		is_over = FALSE;
 		is_pause = FALSE;
@@ -88,13 +88,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		master.game_seed = NULL; // 게임을 시작하면 값이 정해집니다.
 
 		SetTimer(hWnd, 1, 16, NULL);
+
+		GetClientRect(hWnd, &cRect);
+		set_MS_Button(hWnd, cRect, g_hInst);
 	}
 		break;
 
 	case WM_PAINT:
 	{
 		hDC = BeginPaint(hWnd, &ps);
-		GetClientRect(hWnd, &cRect);
 		hCompatibleBit = CreateCompatibleBitmap(hDC, WindowWidth, WindowHeight);
 		hMemDC = CreateCompatibleDC(hDC);
 		SelectObject(hMemDC, hCompatibleBit); /* 셀렉트 안해서 안됐었습니다 ㅋㅋㅋㅋㅋㅋㅋㅋ */
@@ -107,24 +109,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		{
 		case 0:
 			//메인 화면
-			//메인화면의 배경 출력 - 비트맵 이미지로 대체할것
-			switch (main_menu)
-			{
-			case 0:
-				//선택지 화면
-				break;
-			case 1:
-				//게임 시작 -> 캐릭터 선택
-				//현재 존재하는 캐릭터를 화면에 출력
-				//키보드 1, 2, 3 or 캐릭터 클릭을 통해 선택하고 게임 시작 누를 시 게임 시작 -- screen_number = 1;
-				break;
-			case 2:
-				// 백과사전 -> 카드, 유물 열람기능
-				break;
-			case 3:
-				// 말 그대로 클릭시 게임 종료
-				break;
-			}
+			print_MS(hMemDC,cRect,main_menu);
+			
 			// 키보드 1,2,3 과 '차일드 윈도우'등으로 구현.
 			/* 차일드 윈도우를 이용할 필요는 없을 듯 합니다 PNG파일로 들고와서 클릭으로 충분히 대체 가능합니다.*/
 			break;
@@ -208,6 +194,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	{
 		int mx = LOWORD(lParam);
 		int my = HIWORD(lParam);
+		switch (screen_number)
+		{
+		case 0:
+			MS_LBUTTONDOWN(hWnd, mx, my, &main_menu, &screen_number);
+			break;
+		case 1:
+			break;
+		case 2:
+			break;
+		}
 	}
 		break;
 	case WM_LBUTTONUP:
@@ -220,6 +216,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	{
 		int mx = LOWORD(lParam);
 		int my = HIWORD(lParam);
+		switch (screen_number)
+		{
+		case 0:
+			MS_MOUSEMOVE(mx, my, main_menu);
+			break;
+		case 1:
+			break;
+		case 2:
+			break;
+		}
 	}
 		break;
 	case WM_CHAR:

@@ -72,6 +72,12 @@
 #define State_Attack 1
 #define State_Deffence 2
 
+//// 메인 화면에서 사용할 차일드 윈도우의 값 0XXX
+//#define MAIN_BUTTON_Start_game		0100
+//#define MAIN_BUTTON_Dictionary		0101
+//#define MAIN_BUTTON_Exit			0102
+
+
 // 스테이지 2를 만들때 아래도 추가해주세요.
 //...
 // 객체 개수 선언 끝
@@ -252,5 +258,16 @@ typedef struct {
 
 // -*- 아래부터는 GamePlay에 관한 함수입니다.
 void DisplayGame(HDC hDC, Player* player);
+
+
+// From Main Screen
+
+
+void set_MS_Button(HWND hWnd, RECT cRect, HINSTANCE g_hInst);
+void print_MS(HDC hDC, RECT cRect, int main_menu);
+BOOL is_in_rect(int x, int y, RECT rect);
+void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_number);
+void MS_MOUSEMOVE(int mx, int my, int main_menu);
+void Set_MS_Img();
 
 #endif

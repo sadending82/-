@@ -24,6 +24,9 @@
     <ClCompile Include="header.h">
       <Filter>헤더 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Main Screen.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\윈플 텀 프로젝트\charIdle2.png">
@@ -45,6 +48,15 @@
       <Filter>리소스 파일</Filter>
     </Image>
     <Image Include="..\..\윈플 텀 프로젝트\charIdle1.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Start_game.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Dictionary.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Exit.png">
       <Filter>리소스 파일</Filter>
     </Image>
   </ItemGroup>
