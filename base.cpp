@@ -259,7 +259,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				case 1:
 					// 0번째 캐릭터로 게임 시작
 					player.x = 200;
-					player.hp = 80; // -*- 어떤지 몰라서 일단 이렇게 적었습니다.
+					player.hp = 80;
 					player.money = 0;
 					player.occupation = 0;
 					player.isCharacterActive = TRUE;
@@ -284,9 +284,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				MessageBox(hWnd, L"미구현", L"백과사전", MB_OK);
 				break;
 			case 1:
-				// 1번째 캐릭터로 게임 시작 - 아직 0번 캐릭터까지밖에 없습니다.
+				// 1번째 캐릭터로 게임 시작 - 아직 0번 캐릭터까지밖에 없는걸로 알고있습니다.
 				player.x = 200;
-				player.hp = 70; // -*- 어떤지 몰라서 일단 이렇게 적었습니다.
+				player.hp = 70;
 				player.money = 0;
 				player.occupation = 1;
 				player.isCharacterActive = TRUE;

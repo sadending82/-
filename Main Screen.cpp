@@ -180,6 +180,7 @@ void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_numbe
 		break;
 	}
 }
+
 void MS_MOUSEMOVE(int mx, int my, int main_menu)
 {
 	is_on_start_game = FALSE;
@@ -212,6 +213,8 @@ void MS_MOUSEMOVE(int mx, int my, int main_menu)
 	
 
 }
+
+//??
 void MS_MENU_1(HWND hWnd,int answer, int *screen_number)
 {
 
