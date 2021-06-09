@@ -71,6 +71,7 @@
 #define State_Idle 0
 #define State_Attack 1
 #define State_Deffence 2
+#define State_Attacked 3
 
 
 // 스테이지 2를 만들때 아래도 추가해주세요.

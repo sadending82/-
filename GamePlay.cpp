@@ -34,7 +34,10 @@ void DisplayGame(HDC hDC, Player* player)
 	/*카드 설정(현재는 아무것도 없음)*/
 	SetCard();
 
-	DrawPlayer(hDC, player);
+	if (player->isCharacterActive == TRUE)
+	{
+		DrawPlayer(hDC, player);
+	}
 	
 }
 
