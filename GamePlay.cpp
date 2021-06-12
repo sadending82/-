@@ -460,7 +460,7 @@ void CardAnimToBigger(HWND hWnd, int left, int top, int right, int bottom, int a
 			int leftBase = (left - card->left) / 10;
 			int topBase = (top - card->top) / 10;
 			int rightBase = (right - card->right) / 10;
-			int bottom = (bottom - card->bottom) / 10;
+			int bottomBase = (bottom - card->bottom) / 10;
 			card->left = card->left + leftBase;
 			card->right = card->right + right;
 			card->top = card->top + top;
