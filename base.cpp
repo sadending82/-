@@ -135,6 +135,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		{
 			// ESC를 누르면 나오는 화면으로 메인 화면으로 돌아갈 수 있다.
 			// 이 상태가 되면 아무런 조작이 불가능해야함 - 키 입력시 is_pause 조건 추가
+
 		}
 
 		//--
@@ -234,9 +235,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			{
 			case 0:
 				//게임을 종료할건지 묻는 화면 출력
-				answer = MessageBox(hWnd, L"정말로?", L"게임 종료", MB_YESNO);
-				if (answer == IDYES)
-					DestroyWindow(hWnd);
+				switch (main_menu)
+				{
+				case 0:
+					answer = MessageBox(hWnd, L"정말로?", L"게임 종료", MB_YESNO);
+					if (answer == IDYES)
+						DestroyWindow(hWnd);
+					break;
+				case 1:
+					main_menu = 0;
+					break;
+				}
 				break;
 			case 1:
 			case 2:

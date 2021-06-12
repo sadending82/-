@@ -34,6 +34,8 @@ void Set_MS_Img()
 		cDictionary.Load(L"Dictionary.png");
 	if (cExit.IsNull())
 		cExit.Load(L"Exit.png");
+	// 3가지 추가될 예정
+
 	//	main_menu == 1
 	if (cCharacter1.IsNull())
 		cCharacter1.Load(L"Character1.png");
@@ -55,7 +57,7 @@ void set_MS_Button(HWND hWnd, RECT cRect, HINSTANCE g_hInst)
 	rDictionary.bottom = cRect.bottom / 2 + 120;
 
 	rExit.left = 100;
-	rExit.right = 200;
+	rExit.right = 300;
 	rExit.top = cRect.bottom / 2 + 140;
 	rExit.bottom = cRect.bottom / 2 + 190;
 	//	main_menu == 1
@@ -70,7 +72,7 @@ void set_MS_Button(HWND hWnd, RECT cRect, HINSTANCE g_hInst)
 	rCharacter2.bottom = cRect.bottom - 200;
 }
 
-void printf_MS_button(HDC hDC,BOOL is_on, CImage* cButton,RECT rButton)
+void print_button(HDC hDC,BOOL is_on, CImage* cButton,RECT rButton)
 {
 	if (!is_on)
 	{
@@ -80,6 +82,7 @@ void printf_MS_button(HDC hDC,BOOL is_on, CImage* cButton,RECT rButton)
 	}
 	else
 		Rectangle(hDC, rButton.left, rButton.top, rButton.right, rButton.bottom);
+	//여기도 이미지 파일로 바꿀 예정
 }
 
 void print_MS(HDC hDC, RECT cRect,int main_menu)
@@ -92,16 +95,16 @@ void print_MS(HDC hDC, RECT cRect,int main_menu)
 	case 0:
 		//선택지 화면
 		//메인화면의 버튼 출력 - 비트맵 이미지로 대체할것
-		printf_MS_button(hDC, is_on_start_game, &cStart_game, rStart_game);
-		printf_MS_button(hDC, is_on_Dictionary, &cDictionary, rDictionary);
-		printf_MS_button(hDC, is_on_Exit, &cExit, rExit);
+		print_button(hDC, is_on_start_game, &cStart_game, rStart_game);
+		print_button(hDC, is_on_Dictionary, &cDictionary, rDictionary);
+		print_button(hDC, is_on_Exit, &cExit, rExit);
 		break;
 	case 1:
 		//게임 시작 -> 캐릭터 선택
 		//현재 존재하는 캐릭터를 화면에 출력
 		//키보드 1, 2, 3 or 캐릭터 클릭을 통해 선택하고 게임 시작 누를 시 게임 시작 -- screen_number = 1;
-		printf_MS_button(hDC, is_on_Character1, &cCharacter1, rCharacter1);
-		printf_MS_button(hDC, is_on_Character2, &cCharacter2, rCharacter2);
+		print_button(hDC, is_on_Character1, &cCharacter1, rCharacter1);
+		print_button(hDC, is_on_Character2, &cCharacter2, rCharacter2);
 		break;
 	case 2:
 		// 백과사전 -> 카드, 유물 열람기능
@@ -145,7 +148,7 @@ void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_numbe
 		// 캐릭터를 누르면 게임 시작
 		if (is_in_rect(mx, my, rCharacter1))
 		{
-			// 0번째 캐릭터로 게임 시작
+			 //0번째 캐릭터로 게임 시작
 			player->x = 200;
 			player->hp = 80; // -*- 어떤지 몰라서 일단 이렇게 적었습니다.
 			player->money = 0;
@@ -155,8 +158,8 @@ void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_numbe
 			player->animation_state = 0;
 			master->player = *player;
 			master->game_seed = rand();
-
-			*screen_number = 2;
+			
+			*screen_number = 1;
 		}
 
 		if (is_in_rect(mx, my, rCharacter2))

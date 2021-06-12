@@ -142,7 +142,9 @@
     <ClCompile Include="base.cpp" />
     <ClCompile Include="GamePlay.cpp" />
     <ClCompile Include="header.h" />
+    <ClCompile Include="In Game.cpp" />
     <ClCompile Include="Main Screen.cpp" />
+    <ClCompile Include="Other Screens.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\윈플 텀 프로젝트\bgImg_stage1.jpg" />

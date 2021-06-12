@@ -20,8 +20,15 @@
 #define Default_number_of_cards_on_deck 10
 #define DNCD Default_number_of_cards_on_deck
 
-#define Default_number_of_rooms 10
-#define DNR Default_number_of_rooms
+//#define Default_number_of_rooms 10
+//#define DNR Default_number_of_rooms
+#define Default_number_of_floors 8
+#define DNF Default_number_of_floors
+
+//Maximum number of rooms per floor
+#define Maximum_number_of_rooms_of_floor 3
+#define MNRF Maximum_number_of_rooms_of_floor
+
 
 #define Maximum_number_of_potions_on_player 3
 #define MNPP Maximum_number_of_potions_on_player
@@ -44,6 +51,7 @@
 
 //Room 관련
 
+#define Room_Start -1
 #define Room_Basic_Enemy 0
 #define Room_Elite_Enemy 1
 #define Room_Rest 2
@@ -51,6 +59,14 @@
 #define Room_Random 4
 #define Room_Merchant 5
 #define Room_Boss 6
+#define Number_of_Room_Types 6// 보스룸 제외
+
+#define Weight_of_Room_Basic_Enemy 10
+#define Weight_of_Room_Elite_Enemy 1
+#define Weight_of_Room_Rest 3
+#define Weight_of_Room_Relics 1
+#define Weight_of_Room_Random 3
+#define Weight_of_Room_Merchant 2
 
 //Monster 관련
 
@@ -79,8 +95,8 @@
 
 typedef struct room {
 	int room_type;
-	struct room* next1;
-	struct room* next2;
+	RECT rect;
+	struct room* next1[MNRF];
 }Room;
 /*
 * 방
@@ -100,9 +116,11 @@ typedef struct room {
 
 */
 typedef struct {
-
-	Room room[DNR];
-
+	//Room** All_room;
+	//Room* Current_Room;
+	//Room* Boss_Room;
+	Room Start_Room;
+	int num_of_rooms;
 }Map;
 
 
@@ -260,10 +278,24 @@ void DisplayGame(HDC hDC, Player* player);
 
 void set_MS_Button(HWND hWnd, RECT cRect, HINSTANCE g_hInst);
 void print_MS(HDC hDC, RECT cRect, int main_menu);
-BOOL is_in_rect(int x, int y, RECT rect);
 void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_number, Player* player, Master* master);
 void MS_MOUSEMOVE(int mx, int my, int main_menu);
 void Set_MS_Img();
-void MS_MENU_1(HWND hWnd, int answer, int* screen_number);
+void MS_MENU_1(HWND hWnd, int answer, int* screen_number);// 현재 비어잇음
+
+// From In Game
+
+void Set_IG_Img();
+void set_IG_Button(HWND hWnd, RECT cRect, HINSTANCE g_hInst);
+void print_IG(HDC hDC, RECT cRect, int main_menu, Master master);
+void make_random_map(Master master);
+void make_map(Master master);
+
+
+
+
+// 많이 사용하는 함수
+BOOL is_in_rect(int x, int y, RECT rect);
+void print_button(HDC hDC, BOOL is_on, CImage* cButton, RECT rButton);
 
 #endif

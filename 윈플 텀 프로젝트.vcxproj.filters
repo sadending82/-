@@ -27,6 +27,12 @@
     <ClCompile Include="Main Screen.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="In Game.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Other Screens.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\윈플 텀 프로젝트\charIdle2.png">
