@@ -51,14 +51,14 @@
 
 //Room 관련
 
-#define Room_Start -1
-#define Room_Basic_Enemy 0
-#define Room_Elite_Enemy 1
-#define Room_Rest 2
-#define Room_Relics 3
-#define Room_Merchant 4
-#define Room_Random 5
-#define Room_Boss 6
+#define Room_Start			-1
+#define Room_Basic_Enemy	0
+#define Room_Elite_Enemy	1
+#define Room_Rest			2
+#define Room_Relics			3
+#define Room_Merchant		4
+#define Room_Random			5
+#define Room_Boss			6
 #define Number_of_Room_Types 6// 보스룸 제외
 
 #define Weight_of_Room_Basic_Enemy 10
@@ -309,7 +309,7 @@ void GP_MOUSEMOVE(int, int, Player*);
 
 void set_MS_Button(HWND hWnd, RECT cRect, HINSTANCE g_hInst);
 void print_MS(HDC hMemDC, RECT cRect, int main_menu);
-void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_number, Player* player, Master* master);
+void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_number, Player* player, Master* master, RECT cRect);
 void MS_MOUSEMOVE(int mx, int my, int main_menu);
 void Set_MS_Img();
 void MS_MENU_1(HWND hWnd, int answer, int* screen_number);// 현재 비어잇음
@@ -317,10 +317,13 @@ void MS_MENU_1(HWND hWnd, int answer, int* screen_number);// 현재 비어잇음
 // From In Game
 
 void Set_IG_Img();
-void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, int main_menu, Master master);
+void Set_IG_POINT(RECT cRect);
+void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos);
 void make_random_map(Master master);
 void make_map(Master* master, RECT cRect);
-void print_room(HDC hDC);
+void print_room(HDC hMapDC, Master master);
+void IG_MOUSEMOVE(int mx, int my, POINT* cursor);
+void IG_Timer(POINT cursor, int* map_yPos, RECT cRect);
 
 
 

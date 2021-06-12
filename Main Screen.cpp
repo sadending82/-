@@ -156,7 +156,7 @@ BOOL is_in_rect(int x, int y, RECT rect)
 		return FALSE;
 }
 
-void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_number, Player* player, Master* master)
+void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_number, Player* player, Master* master, RECT cRect)
 {
 	int answer;
 	switch (*main_menu)
@@ -208,7 +208,7 @@ void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_numbe
 			master->player = *player;
 			master->game_seed = rand();
 
-			make_map(&master, cRect);
+			make_map(master, cRect);
 
 
 			*screen_number = 1;

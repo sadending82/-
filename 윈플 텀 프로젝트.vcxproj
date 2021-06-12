@@ -160,6 +160,7 @@
     <Image Include="Dictionary_.png" />
     <Image Include="Exit.png" />
     <Image Include="Exit_.png" />
+    <Image Include="IG_Map.png" />
     <Image Include="Main_screen.png" />
     <Image Include="RcharAttack1.png" />
     <Image Include="RcharAttack2.png" />

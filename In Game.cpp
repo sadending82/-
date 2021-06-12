@@ -5,7 +5,9 @@
 
 static POINT pRoom;//50,50
 static POINT pBoss;//500,300
+static POINT pIG_Map;
 
+static CImage cIG_Map;
 static CImage cBasic_Enemy;
 static CImage cElite_Enemy;
 static CImage cRest;
@@ -30,10 +32,20 @@ static CImage cBoss_;
 //이미지 세팅
 void Set_IG_Img()
 {
-
+	if (cIG_Map.IsNull())
+		cIG_Map.Load(L"IG_Map.png");
 }
 
+void Set_IG_POINT(RECT cRect)
+{
+	pRoom.x = pRoom.y = 50;
 
+	pBoss.x = 500;
+	pBoss.y = 300;
+
+	pIG_Map.x = cRect.right * 3 / 5;
+	pIG_Map.y = cRect.bottom * 2;
+}
 
 // 맵생성시 나오는 맵의 가중치 함수
 int get_random_type_of_room()
@@ -288,13 +300,70 @@ void make_map(Master* master, RECT cRect)
 
 }
 // 지도에 방을 출력할 함수
-void print_room(HDC hMapDC)
+void print_room(HDC hMapDC, Master master)
 {
-
+	for (int i = 0; i < 13; i++)
+	{
+		switch (master.stage.map.All_room[i]->room_type)
+		{
+		case Room_Basic_Enemy:
+			//해당 좌표에 해당 이미지 출력
+			break;
+		case Room_Elite_Enemy:
+			break;
+		case Room_Rest:
+			break;
+		case Room_Relics:
+			break;
+		case Room_Merchant:
+			break;
+		case Room_Random:
+			break;
+		}
+	}
 }
 //인 게임 - 스크린 넘버 2 출력화면
-void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, int main_menu, Master master)
+void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos)
 {
+	Set_IG_Img();
+	Set_IG_POINT(cRect);
 	//지도를 알맞게 출력한다.
+	int pw = cIG_Map.GetWidth();
+	int ph = cIG_Map.GetHeight();
+	cIG_Map.Draw(hMapDC, 0, 0, pIG_Map.x, pIG_Map.y, 0, 0, pw, ph);
+	// 방 출력
+	print_room(hMapDC, master);
+	// 방을 잊는 선 출력
+
+	BitBlt(hMemDC, cRect.right / 5, 0, pIG_Map.x, cRect.bottom, hMapDC, 0, map_yPos, SRCCOPY);
+
+
+	// 옆에 나오는 목록 출력
+
+	//맨 위에 상태창 출력
+
 }
 // 지도가 위 아래로 움직이는걸 구현할 함수
+void IG_MOUSEMOVE(int mx, int my, POINT* cursor)
+{
+	cursor->x = mx;
+	cursor->y = my;
+}
+void IG_Timer(POINT cursor, int* map_yPos, RECT cRect)
+{
+	if (cursor.y >= 0 && cursor.y < 30)
+	{
+		if (*map_yPos > -30)
+			*map_yPos = *map_yPos - 30;
+		if (*map_yPos < -30)
+			*map_yPos = -30;
+	}
+	if (cursor.y > cRect.bottom - 30 && cursor.y <= cRect.bottom)
+	{
+		if (*map_yPos < cRect.bottom + 30)
+			*map_yPos = *map_yPos + 30;
+		if (*map_yPos > cRect.bottom + 30)
+			*map_yPos = cRect.bottom + 30;
+	}
+	//맵 노드들도 같이 움직여야한다.
+}

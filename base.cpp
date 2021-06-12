@@ -69,8 +69,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static BOOL is_over;
 	static BOOL is_pause;
 
+	static int map_yPos;
+
 	int answer;
 
+	static POINT cursor;
 	switch (iMessage) {
 
 	case WM_CREATE:
@@ -86,6 +89,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 		GetClientRect(hWnd, &cRect);
 		set_MS_Button(hWnd, cRect, g_hInst);
+		map_yPos = 0;
+		cursor.x = cursor.y = 0;
 	}
 		break;
 
@@ -97,7 +102,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		SelectObject(hMemDC, hCompatibleBit); /* 셀렉트 안해서 안됐었습니다 ㅋㅋㅋㅋㅋㅋㅋㅋ */
 		//screen_number == 1에서 사용할 DC
 		hMapDC = CreateCompatibleDC(hMemDC);
-		hMapBit = CreateCompatibleBitmap(hMapDC, WindowWidth * 3 / 5, WindowHeight + 2);// 오류가 생기면 hMapDC를 hDC로 바꿔볼것
+		hMapBit = CreateCompatibleBitmap(hDC, cRect.right * 3 / 5, cRect.bottom * 2);
 		SelectObject(hMapDC, hMapBit);
 		// 더블 버퍼링을 위한 밑 준비 입니다.
 		// WM_PAINT에서 출력해야할 것이 있다면 이 사이에 입력하시면 됩니다.
@@ -113,6 +118,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			//	in game 화면 - 게임 시작 후 지도 – 1, 2 참고
 			//	배경 출력
 			//	맵 타일 출력
+			print_IG(hMemDC, hMapDC, cRect, master, map_yPos);
 			break;
 		case 2:
 			//	전투 화면 - 전투 – 1, 2 참고
@@ -165,6 +171,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		{
 		case 1:
 		{
+			if(!is_pause)
+				IG_Timer(cursor, &map_yPos, cRect);
 			CheckState();
 			InvalidateRect(hWnd, NULL, FALSE);
 		}
@@ -191,7 +199,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		switch (screen_number)
 		{
 		case 0:
-			MS_LBUTTONDOWN(hWnd, mx, my, &main_menu, &screen_number, &player, &master);
+			MS_LBUTTONDOWN(hWnd, mx, my, &main_menu, &screen_number, &player, &master, cRect);
 			break;
 		case 1:
 			break;
@@ -218,6 +226,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			break;
 		case 1:
 			GP_MOUSEMOVE(mx, my, &player);
+			IG_MOUSEMOVE(mx, my,&cursor);
 			break;
 		case 2:
 			break;
@@ -324,7 +333,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				make_map(&master, cRect);
 
 
-				screen_number = 2;
+				screen_number = 1;
 				break;
 			}
 			break;
