@@ -283,6 +283,7 @@ POS GP_LBUTTONDOWN(HWND hWnd, int x, int y, Player* player);
 void CheckState();
 void CardAnimToXy(HWND hWnd, int x, int y, int animNum, Card* card, int cardNum);
 POS StartStage(HWND hWnd, Player* player);
+void GP_MOUSEMOVE(int, int, Player*);
 
 
 // From Main Screen

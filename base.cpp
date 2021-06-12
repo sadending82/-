@@ -209,6 +209,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			MS_MOUSEMOVE(mx, my, main_menu);
 			break;
 		case 1:
+			GP_MOUSEMOVE(mx, my, &player);
 			break;
 		case 2:
 			break;
