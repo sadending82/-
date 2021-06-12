@@ -14,6 +14,7 @@ Master master = { 0 };
 Player player = { 0 };
 
 static int count = 0;
+static POS card_position = { 0 };
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
@@ -72,6 +73,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 	case WM_CREATE:
 	{
+		srand((unsigned int)time(NULL));
 		screen_number = 0; /* 저도 여러가지 실험을 해야하는지라 2번이 되어 있습니다!*/
 		main_menu = 0;
 		is_over = FALSE;
@@ -121,7 +123,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			// 전투가 끝나면 ==(플레이어의 체력or 몬스터의 체력 이 0이되면) 다시 1로 돌아갑니다. 위의 설명처럼 패배의 경우는 아래의 게임 오버 화면이 나와야합니다.
 			DisplayGame(hMemDC, &player);
 
-
 			break;
 		}
 		if (is_over)
@@ -157,25 +158,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		{
 		case 1:
 		{
-			if (player.animation_state == State_Idle)
+			CheckState();
+			InvalidateRect(hWnd, NULL, FALSE);
+		}
+			break;
+		case 10:
+		{
+			for (int i = 0; (player.deck.card[i].is_inhand); ++i)
 			{
-				if (count >= 30)
-				{
-					if (player.animation_num >= 4)
-					{
-						player.animation_num = 0;
-					}
-					player.animation_num++;
-					count = 0;
-				}
-				count++;
+				CardAnimToXy(hWnd, card_position.x + (i * 150), card_position.y, 10, &(player.deck.card[i]), i);
 			}
 		}
 			break;
 		default:
 			break;
 		}
-		InvalidateRect(hWnd, NULL, FALSE);
+
 	}
 
 		break;
@@ -191,6 +189,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		case 1:
 			break;
 		case 2:
+			card_position = GP_LBUTTONDOWN(hWnd, mx, my, &player);
 			break;
 		}
 	}
@@ -274,10 +273,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					player.isCharacterActive = TRUE;
 					player.animation_num = 0;
 					player.animation_state = 0;
+					player.selectedCard = -1;
+					player.amount_of_card_draw = 5;
 					master.player = player;
 					master.game_seed = rand(); 
+					SetCard(&player);
 
+					
 					screen_number = 2;
+					card_position = StartStage(hWnd, &player);
 					break;
 				case 2:
 					//아래에서 처리
@@ -301,8 +305,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				player.isCharacterActive = TRUE;
 				player.animation_num = 0;
 				player.animation_state = 0;
+				player.selectedCard = -1;
+				player.amount_of_card_draw = 5;
 				master.player = player;
 				master.game_seed = rand();
+				SetCard(&player);
+
 
 				screen_number = 2;
 				break;
