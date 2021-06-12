@@ -321,9 +321,10 @@ void Set_IG_POINT(RECT cRect);
 void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos);
 void make_random_map(Master master);
 void make_map(Master* master, RECT cRect);
-void print_room(HDC hMapDC, Master master);
+void print_room(HDC hMapDC, Master master, RECT cRect);
 void IG_MOUSEMOVE(int mx, int my, POINT* cursor);
-void IG_Timer(POINT cursor, int* map_yPos, RECT cRect);
+void IG_Timer(POINT cursor, int* map_yPos, RECT cRect, Master* master);
+void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master);
 
 
 

@@ -199,11 +199,14 @@ void make_random_map(Master master)
 	//	}
 	//}
 	// 마지막 방 들은 전부 다 보스룸과 연결한다.
+
+// 휴대폰 메모 참고
 }
 //	고정지도에 랜덤 타입만 주는 함수
 void make_map(Master* master, RECT cRect)
 {
-	// 시작 방에서 고정된 맵을 생성하고 랜덤한 타입값을 준다.
+	Set_IG_POINT(cRect);
+		// 시작 방에서 고정된 맵을 생성하고 랜덤한 타입값을 준다.
 	master->stage.map.num_of_rooms = 13;
 	
 	master->stage.map.All_room = (Room**)malloc(sizeof(Room*) * master->stage.map.num_of_rooms);
@@ -243,6 +246,8 @@ void make_map(Master* master, RECT cRect)
 	master->stage.map.All_room[11]->next[0] = boss_room;
 	master->stage.map.All_room[12]->next[0] = boss_room;
 	// 지도DC의 크기는 cRect에서 세로 2배,가로 3/5배
+	//X축
+	int error = cRect.right / 5;// 오차
 	for (int i = 0; i < 13; i++)
 	{
 		switch (i)
@@ -250,44 +255,44 @@ void make_map(Master* master, RECT cRect)
 		case 0:
 		case 3:
 		case 8:
-			master->stage.map.All_room[i]->rect.left = cRect.right / 4;
+			master->stage.map.All_room[i]->rect.left = pIG_Map.x / 4 + error;
 			break;
 		case 1:
 		case 4:
 		case 9:
-			master->stage.map.All_room[i]->rect.left = cRect.right / 4 * 2;
+			master->stage.map.All_room[i]->rect.left = pIG_Map.x / 4 * 2 + error;
 			break;
 		case 2:
 		case 5:
 		case 10:
-			master->stage.map.All_room[i]->rect.left = cRect.right / 4 * 3;
+			master->stage.map.All_room[i]->rect.left = pIG_Map.x / 4 * 3 + error;
 			break;
 		case 6:
 		case 11:
-			master->stage.map.All_room[i]->rect.left = cRect.right / 3;
+			master->stage.map.All_room[i]->rect.left = pIG_Map.x / 3 + error;
 			break;
 		case 7:
 		case 12:
-			master->stage.map.All_room[i]->rect.left = cRect.right / 3 * 2;
+			master->stage.map.All_room[i]->rect.left = pIG_Map.x / 3 * 2 + error;
 			break;
 		}
 	}
 
-
+	//Y 축
 	for (int i = 0; i < 3; i++)
-		master->stage.map.All_room[i]->rect.top = (cRect.bottom * 2) / 8 * 7;
+		master->stage.map.All_room[i]->rect.top = pIG_Map.y / 8 * 7;
 	for (int i = 3; i < 6; i++)
-		master->stage.map.All_room[i]->rect.top = (cRect.bottom * 2) / 8 * 6;
+		master->stage.map.All_room[i]->rect.top = pIG_Map.y / 8 * 6;
 	for (int i = 6; i < 8; i++)
-		master->stage.map.All_room[i]->rect.top = (cRect.bottom * 2) / 8 * 5;
+		master->stage.map.All_room[i]->rect.top = pIG_Map.y / 8 * 5;
 	for (int i = 8; i < 11; i++)
-		master->stage.map.All_room[i]->rect.top = (cRect.bottom * 2) / 8 * 4;
+		master->stage.map.All_room[i]->rect.top = pIG_Map.y / 8 * 4;
 	for (int i = 11; i < 13; i++)
-		master->stage.map.All_room[i]->rect.top = (cRect.bottom * 2) / 8 * 3;
+		master->stage.map.All_room[i]->rect.top = pIG_Map.y / 8 * 3;
 
-	boss_room->rect.left = (cRect.right * 3 / 5) / 2 - 250;
+	boss_room->rect.left = pIG_Map.x / 2 - 250 + error;
 	boss_room->rect.right = boss_room->rect.left + 500;
-	boss_room->rect.top = (cRect.bottom * 2) / 8 * 1;
+	boss_room->rect.top = pIG_Map.y / 8 * 1;
 	boss_room->rect.bottom = boss_room->rect.top + 300;
 
 	for (int i = 0; i < 13; i++)
@@ -298,12 +303,17 @@ void make_map(Master* master, RECT cRect)
 	master->stage.map.Boss_Room = boss_room;
 	master->stage.map.Start_Room = start_room;
 
+	master->stage.map.Current_Room = &master->stage.map.Start_Room;
 }
 // 지도에 방을 출력할 함수
-void print_room(HDC hMapDC, Master master)
+void print_room(HDC hMapDC, Master master, RECT cRect)
 {
+	POINT error;// 오차
+	error.x = cRect.right / 5;
+	error.y = -30;
 	for (int i = 0; i < 13; i++)
 	{
+		Rectangle(hMapDC, master.stage.map.All_room[i]->rect.left , master.stage.map.All_room[i]->rect.top, master.stage.map.All_room[i]->rect.right , master.stage.map.All_room[i]->rect.bottom);
 		switch (master.stage.map.All_room[i]->room_type)
 		{
 		case Room_Basic_Enemy:
@@ -321,6 +331,11 @@ void print_room(HDC hMapDC, Master master)
 			break;
 		}
 	}
+	//보스룸 출력
+	Rectangle(hMapDC, master.stage.map.Boss_Room->rect.left , master.stage.map.Boss_Room->rect.top, master.stage.map.Boss_Room->rect.right , master.stage.map.Boss_Room->rect.bottom);
+
+	Ellipse(hMapDC, master.stage.map.Current_Room->rect.left, master.stage.map.Current_Room->rect.top, master.stage.map.Current_Room->rect.right, master.stage.map.Current_Room->rect.bottom);
+
 }
 //인 게임 - 스크린 넘버 2 출력화면
 void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos)
@@ -331,11 +346,11 @@ void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos)
 	int pw = cIG_Map.GetWidth();
 	int ph = cIG_Map.GetHeight();
 	cIG_Map.Draw(hMapDC, 0, 0, pIG_Map.x, pIG_Map.y, 0, 0, pw, ph);
+	BitBlt(hMemDC, cRect.right / 5, 0, pIG_Map.x, cRect.bottom, hMapDC, 0, map_yPos, SRCCOPY);
 	// 방 출력
-	print_room(hMapDC, master);
+	print_room(hMemDC, master,cRect);
 	// 방을 잊는 선 출력
 
-	BitBlt(hMemDC, cRect.right / 5, 0, pIG_Map.x, cRect.bottom, hMapDC, 0, map_yPos, SRCCOPY);
 
 
 	// 옆에 나오는 목록 출력
@@ -349,21 +364,64 @@ void IG_MOUSEMOVE(int mx, int my, POINT* cursor)
 	cursor->x = mx;
 	cursor->y = my;
 }
-void IG_Timer(POINT cursor, int* map_yPos, RECT cRect)
+void IG_Timer(POINT cursor, int* map_yPos, RECT cRect, Master* master)
 {
 	if (cursor.y >= 0 && cursor.y < 30)
 	{
 		if (*map_yPos > -30)
+		{
 			*map_yPos = *map_yPos - 30;
+			if (master->stage.map.Boss_Room != NULL)
+			{
+				for (int i = 0; i < 13; i++)
+				{
+					OffsetRect(&master->stage.map.All_room[i]->rect, 0, 30);
+				}
+				OffsetRect(&master->stage.map.Boss_Room->rect, 0, 30);
+			}
+		}
 		if (*map_yPos < -30)
 			*map_yPos = -30;
 	}
 	if (cursor.y > cRect.bottom - 30 && cursor.y <= cRect.bottom)
 	{
 		if (*map_yPos < cRect.bottom + 30)
+		{
 			*map_yPos = *map_yPos + 30;
+			if (master->stage.map.Boss_Room != NULL)
+			{
+				for (int i = 0; i < 13; i++)
+				{
+					OffsetRect(&master->stage.map.All_room[i]->rect, 0, -30);
+				}
+				OffsetRect(&master->stage.map.Boss_Room->rect, 0, -30);
+			}
+		}
 		if (*map_yPos > cRect.bottom + 30)
 			*map_yPos = cRect.bottom + 30;
 	}
-	//맵 노드들도 같이 움직여야한다.
+	//맵 노드들의 좌표값도 같이 움직여야한다.
+	// rect 영역 움직여주는 함수 갔다가 쓰자.
+	
+}
+void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master)
+{
+	TCHAR str[20];
+	for (int i = 0; i < 13; i++)
+	{
+		wsprintf(str, L"%d", i);
+		//커런트룸의 next이면
+		for (int j = 0; j < MNRF; j++)
+			if (master->stage.map.Current_Room->next[j] != NULL && is_in_rect(mx, my, master->stage.map.Current_Room->next[j]->rect))
+				if(is_in_rect(mx, my, master->stage.map.All_room[i]->rect))
+				{
+					MessageBox(hWnd, str, L"노드 선택", MB_OK);
+					master->stage.map.Current_Room = master->stage.map.All_room[i];
+				}
+	}
+	if (is_in_rect(mx, my, master->stage.map.Boss_Room->rect))
+	{
+		MessageBox(hWnd, L"보스방", L"노드 선택", MB_OK);
+		master->stage.map.Current_Room = master->stage.map.Boss_Room;
+	}
 }

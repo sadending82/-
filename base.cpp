@@ -172,7 +172,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		case 1:
 		{
 			if(!is_pause)
-				IG_Timer(cursor, &map_yPos, cRect);
+				IG_Timer(cursor, &map_yPos, cRect, &master);
 			CheckState();
 			InvalidateRect(hWnd, NULL, FALSE);
 		}
@@ -202,6 +202,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			MS_LBUTTONDOWN(hWnd, mx, my, &main_menu, &screen_number, &player, &master, cRect);
 			break;
 		case 1:
+			if (!is_pause)
+				IG_LBUTTONDOWN(hWnd, mx, my, &master);
 			break;
 		case 2:
 			card_position = GP_LBUTTONDOWN(hWnd, mx, my, &player);
