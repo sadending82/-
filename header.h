@@ -77,11 +77,20 @@
 
 #define Base_Timer 1
 #define Player_Timer 2
-#define Card_Timer 3
+#define Card_Timer 10
 
 // 스테이지 2를 만들때 아래도 추가해주세요.
 //...
 // 객체 개수 선언 끝
+
+typedef struct position{
+	int x;
+	int y;
+}POS;
+
+/*
+포지션 용 구조체가 필요해서 추가함.
+*/
 
 typedef struct room {
 	int room_type;
@@ -157,6 +166,7 @@ typedef struct {
 	int bottom;
 	BOOL is_enhanced;//기본값 FALSE
 	BOOL is_Active;
+	BOOL is_inhand;
 }Card;
 /*
 * 카드
@@ -233,12 +243,13 @@ typedef struct {
 	int occupation;
 	int animation_num; // 어떤 애니메이션을 출력할 것인가
 	int animation_state; // 어떤 애니메이션을 재생해야하나?
-	int selectedCard;
-	int amount_of_card_draw;
+	int selectedCard; // 선택된 카드
+	int amount_of_card_draw; // 카드 드로우 양
 	Deck deck;
 	Item item;
 	BOOL isCharacterActive; // 화면에 캐릭터를 출력할 것인지 아닌지 확인하는 변수 (전투 화면에 출력할 때만 TRUE)
-	BOOL isDragCard;
+	BOOL isDragCard; // 카드 드래그 중인지 아닌지 확인하는 변수
+	BOOL isMyTurn; // 자신의 턴인지 확인하는 변수
 }Player;
 
 /*
@@ -268,8 +279,10 @@ typedef struct {
 // -*- 아래부터는 GamePlay에 관한 함수입니다.
 void DisplayGame(HDC hDC, Player* player);
 void SetCard(Player* player);
-void GP_LBUTTONDOWN(HWND hWnd, int, int, Player* player);
+POS GP_LBUTTONDOWN(HWND hWnd, int x, int y, Player* player);
 void CheckState();
+void CardAnimToXy(HWND hWnd, int x, int y, int animNum, Card* card, int cardNum);
+POS StartStage(HWND hWnd, Player* player);
 
 
 // From Main Screen

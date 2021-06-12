@@ -22,9 +22,11 @@ static BOOL isCardMove = FALSE;
 static int MoveCard = 0;
 
 static int timer = 0;
+static int CardTimer[50] = { 0 };
 
 static void SetImg();
 void DrawPlayer(HDC hDC, Player* player);
+void DrawCard(HDC hDC, Player* player);
 
 void DisplayGame(HDC hDC, Player* player)
 {
@@ -45,6 +47,7 @@ void DisplayGame(HDC hDC, Player* player)
 	if (player->isCharacterActive == TRUE)
 	{
 		DrawPlayer(hDC, player);
+		DrawCard(hDC, player);
 	}
 	
 }
@@ -55,9 +58,14 @@ void SetCard(Player* player)
 
 	tmpCard.is_Active = TRUE;
 	tmpCard.is_enhanced = FALSE;
+	tmpCard.is_inhand = FALSE;
 	tmpCard.occupation = Card_Occu_ALL;
 	tmpCard.type = Card_Type_Attack;
 	tmpCard.number = 0;
+	tmpCard.left = 900;
+	tmpCard.right = 1100;
+	tmpCard.top = 470;
+	tmpCard.bottom = 730;
 
 	player->deck.card[0] = tmpCard;
 	player->deck.card[1] = tmpCard;
@@ -67,9 +75,14 @@ void SetCard(Player* player)
 
 	tmpCard.is_Active = TRUE;
 	tmpCard.is_enhanced = FALSE;
+	tmpCard.is_inhand = FALSE;
 	tmpCard.occupation = Card_Occu_ALL;
 	tmpCard.type = Card_Type_Deffence;
 	tmpCard.number = 0;
+	tmpCard.left = 900;
+	tmpCard.right = 1100;
+	tmpCard.top = 470;
+	tmpCard.bottom = 730;
 
 	player->deck.card[5] = tmpCard;
 	player->deck.card[6] = tmpCard;
@@ -142,7 +155,7 @@ void DrawPlayer(HDC hDC, Player* player)
 		{
 			int pw = charIdle1.GetWidth();
 			int ph = charIdle1.GetHeight();
-			charIdle1.Draw(hDC, player->x, 400, pw*2, ph*2, 0, 0, pw, ph);
+			charIdle1.Draw(hDC, player->x, 350, pw*2, ph*2, 0, 0, pw, ph);
 			timer++;
 			if (timer >= 10)
 			{
@@ -154,7 +167,7 @@ void DrawPlayer(HDC hDC, Player* player)
 		{
 			int pw = charIdle1.GetWidth();
 			int ph = charIdle1.GetHeight();
-			charIdle1.Draw(hDC, player->x, 400 - 2, pw * 2, ph * 2 + 2, 0, 0, pw, ph);
+			charIdle1.Draw(hDC, player->x, 350 - 2, pw * 2, ph * 2 + 2, 0, 0, pw, ph);
 			timer++;
 			if (timer >= 20)
 			{
@@ -166,7 +179,7 @@ void DrawPlayer(HDC hDC, Player* player)
 		{
 			int pw = charIdle1.GetWidth();
 			int ph = charIdle1.GetHeight();
-			charIdle1.Draw(hDC, player->x, 400 - 4, pw * 2, ph * 2 + 4, 0, 0, pw, ph);
+			charIdle1.Draw(hDC, player->x, 350 - 4, pw * 2, ph * 2 + 4, 0, 0, pw, ph);
 			timer++;
 			if (timer >= 30)
 			{
@@ -178,7 +191,7 @@ void DrawPlayer(HDC hDC, Player* player)
 		{
 			int pw = charIdle1.GetWidth();
 			int ph = charIdle1.GetHeight();
-			charIdle1.Draw(hDC, player->x, 400 - 2, pw * 2, ph * 2 + 2, 0, 0, pw, ph);
+			charIdle1.Draw(hDC, player->x, 350 - 2, pw * 2, ph * 2 + 2, 0, 0, pw, ph);
 			timer++;
 			if (timer >= 40)
 			{
@@ -190,7 +203,7 @@ void DrawPlayer(HDC hDC, Player* player)
 		{
 			int pw = charIdle1.GetWidth();
 			int ph = charIdle1.GetHeight();
-			charIdle1.Draw(hDC, player->x, 400, pw * 2, ph * 2, 0, 0, pw, ph);
+			charIdle1.Draw(hDC, player->x, 350, pw * 2, ph * 2, 0, 0, pw, ph);
 			timer++; 
 			if (timer >= 50)
 			{
@@ -211,7 +224,7 @@ void DrawPlayer(HDC hDC, Player* player)
 		{
 			int pw = charIdle1.GetWidth();
 			int ph = charIdle1.GetHeight();
-			charIdle1.Draw(hDC, player->x, 550, pw, ph, 0, 0, pw, ph);
+			charIdle1.Draw(hDC, player->x, 350, pw, ph, 0, 0, pw, ph);
 			timer++;
 			if (timer >= 10)
 			{
@@ -223,7 +236,7 @@ void DrawPlayer(HDC hDC, Player* player)
 		{
 			int pw = charAttack1.GetWidth();
 			int ph = charAttack1.GetHeight();
-			charAttack1.Draw(hDC, player->x, 550, pw, ph, 0, 0, pw, ph);
+			charAttack1.Draw(hDC, player->x, 350, pw, ph, 0, 0, pw, ph);
 			timer++;
 			if (timer >= 20)
 			{
@@ -236,7 +249,7 @@ void DrawPlayer(HDC hDC, Player* player)
 		{
 			int pw = charAttack2.GetWidth();
 			int ph = charAttack2.GetHeight();
-			charAttack2.Draw(hDC, player->x, 550, pw, ph, 0, 0, pw, ph);
+			charAttack2.Draw(hDC, player->x, 350, pw, ph, 0, 0, pw, ph);
 			timer++;
 			if (timer >= 30)
 			{
@@ -248,7 +261,7 @@ void DrawPlayer(HDC hDC, Player* player)
 		{
 			int pw = charAttack3.GetWidth();
 			int ph = charAttack3.GetHeight();
-			charAttack3.Draw(hDC, player->x, 550, pw, ph, 0, 0, pw, ph);
+			charAttack3.Draw(hDC, player->x, 350, pw, ph, 0, 0, pw, ph);
 			timer++;
 			if (timer >= 40)
 			{
@@ -259,7 +272,7 @@ void DrawPlayer(HDC hDC, Player* player)
 		{
 			int pw = charAttack4.GetWidth();
 			int ph = charAttack4.GetHeight();
-			charAttack4.Draw(hDC, player->x, 550, pw, ph, 0, 0, pw, ph);
+			charAttack4.Draw(hDC, player->x, 350, pw, ph, 0, 0, pw, ph);
 			timer++;
 			if (timer >= 50)
 			{
@@ -270,7 +283,7 @@ void DrawPlayer(HDC hDC, Player* player)
 		{
 			int pw = charAttack5.GetWidth();
 			int ph = charAttack5.GetHeight();
-			charAttack5.Draw(hDC, player->x, 550, pw, ph, 0, 0, pw, ph);
+			charAttack5.Draw(hDC, player->x, 350, pw, ph, 0, 0, pw, ph);
 			timer++;
 			if (timer >= 60)
 			{
@@ -281,7 +294,7 @@ void DrawPlayer(HDC hDC, Player* player)
 		{
 			int pw = charAttack6.GetWidth();
 			int ph = charAttack6.GetHeight();
-			charAttack6.Draw(hDC, player->x, 550, pw, ph, 0, 0, pw, ph);
+			charAttack6.Draw(hDC, player->x, 350, pw, ph, 0, 0, pw, ph);
 			timer++;
 			if (timer >= 70)
 			{
@@ -292,7 +305,7 @@ void DrawPlayer(HDC hDC, Player* player)
 		{
 			int pw = charAttack7.GetWidth();
 			int ph = charAttack7.GetHeight();
-			charAttack7.Draw(hDC, player->x, 550, pw, ph, 0, 0, pw, ph);
+			charAttack7.Draw(hDC, player->x, 350, pw, ph, 0, 0, pw, ph);
 			timer++;
 			if (timer >= 80)
 			{
@@ -313,6 +326,33 @@ void DrawPlayer(HDC hDC, Player* player)
 	}
 }
 
+static void DrawCard(HDC hDC, Player* player)
+{
+	for (int i = 0; i < 50; ++i)
+	{
+		if (player->deck.card[i].is_Active)
+		{
+			if (player->deck.card[i].is_inhand)
+			{
+				if (player->deck.card[i].type == Card_Type_Attack)
+				{
+					int pw = AttackCardImg.GetWidth();
+					int ph = AttackCardImg.GetHeight();
+					AttackCardImg.Draw(hDC, (player->deck.card[i].right + player->deck.card[i].left) / 2, (player->deck.card[i].bottom + player->deck.card[i].top) / 2,
+						player->deck.card[i].right - player->deck.card[i].left, player->deck.card[i].bottom - player->deck.card[i].top, 0, 0, pw, ph);
+				}
+				else if (player->deck.card[i].type == Card_Type_Deffence)
+				{
+					int pw = DeffenceCardImg.GetWidth();
+					int ph = DeffenceCardImg.GetHeight();
+					DeffenceCardImg.Draw(hDC, (player->deck.card[i].right + player->deck.card[i].left) / 2, (player->deck.card[i].bottom + player->deck.card[i].top) / 2,
+						player->deck.card[i].right - player->deck.card[i].left, player->deck.card[i].bottom - player->deck.card[i].top, 0, 0, pw, ph);
+				}
+			}
+		}
+	}
+}
+
 static BOOL is_in_rect(int x, int y, RECT rect)
 {
 	if (x > rect.left && x<rect.right && y>rect.top && y < rect.bottom)
@@ -321,14 +361,55 @@ static BOOL is_in_rect(int x, int y, RECT rect)
 		return FALSE;
 }
 
-void GP_LBUTTONDOWN(HWND hWnd, int x, int y, Player* player)
+POS GP_LBUTTONDOWN(HWND hWnd, int x, int y, Player* player)
 {
+	if (!isCardMove)
+	{
+		SetCard(player);
+		player->deck.card[0].is_inhand = TRUE;
+		player->deck.card[1].is_inhand = TRUE;
+		player->deck.card[2].is_inhand = TRUE;
+		player->deck.card[3].is_inhand = TRUE;
+		player->deck.card[4].is_inhand = TRUE;
+		CardAnimToXy(hWnd, 300, 650, Card_Timer, &(player->deck.card[0]), 0);
+		CardAnimToXy(hWnd, 450, 650, Card_Timer, &(player->deck.card[1]), 1);
+		CardAnimToXy(hWnd, 600, 650, Card_Timer, &(player->deck.card[2]), 2);
+		CardAnimToXy(hWnd, 750, 650, Card_Timer, &(player->deck.card[3]), 3);
+		CardAnimToXy(hWnd, 900, 650, Card_Timer, &(player->deck.card[4]), 4);
+		POS pos = { 300, 650 };
+		return pos;
+	}
+
 
 }
 
-void AnimToXy(int x, int y)
+void CardAnimToXy(HWND hWnd, int x, int y, int animNum, Card* card, int cardNum)
 {
+	if (card->is_inhand == TRUE)
+	{
+		if (CardTimer[cardNum] >= 50)
+		{
+			card->left = x - 100;
+			card->right = x + 100;
+			card->top = y - 130;
+			card->bottom = y + 130;
+			CardTimer[cardNum] = 0;
+			KillTimer(hWnd, animNum);
+		}
+		else
+		{
+			CardTimer[cardNum]++;
+			int HoriBase = (card->left - (x - 100)) / 10;
+			int VertBase = (card->top - (y - 130)) / 10;
+			card->left = card->left - HoriBase;
+			card->right = card->right - HoriBase;
+			card->top = card->top - VertBase;
+			card->bottom = card->bottom - VertBase;
 
+
+			SetTimer(hWnd, animNum, 16, NULL);
+		}
+	}
 }
 
 void CheckState()
@@ -336,4 +417,39 @@ void CheckState()
 
 }
 
+void Shupple(Player* player, int cardNum)
+{
+	if (cardNum >= 1)
+	{
+		for (int i = cardNum - 1; i > 2; --i)
+		{
+			int first = rand() % i;
+			int last = rand() % ((i / 2) + (cardNum / 2)) ;
+
+			Card tmp = player->deck.card[first];
+			player->deck.card[first] = player->deck.card[last];
+			player->deck.card[last] = tmp;
+		}
+	}
+}
+
+POS StartStage(HWND hWnd, Player* player)
+{
+	SetCard(player);
+
+
+	Shupple(player, 10);
+	player->deck.card[0].is_inhand = TRUE;
+	player->deck.card[1].is_inhand = TRUE;
+	player->deck.card[2].is_inhand = TRUE;
+	player->deck.card[3].is_inhand = TRUE;
+	player->deck.card[4].is_inhand = TRUE;
+	CardAnimToXy(hWnd, 250, 650, Card_Timer, &(player->deck.card[0]), 0);
+	CardAnimToXy(hWnd, 400, 650, Card_Timer, &(player->deck.card[1]), 1);
+	CardAnimToXy(hWnd, 550, 650, Card_Timer, &(player->deck.card[2]), 2);
+	CardAnimToXy(hWnd, 700, 650, Card_Timer, &(player->deck.card[3]), 3);
+	CardAnimToXy(hWnd, 850, 650, Card_Timer, &(player->deck.card[4]), 4);
+	POS pos = { 250, 650 };
+	return pos;
+}
 

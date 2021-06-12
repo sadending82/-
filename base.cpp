@@ -14,6 +14,7 @@ Master master = { 0 };
 Player player = { 0 };
 
 static int count = 0;
+static POS card_position = { 0 };
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
@@ -72,6 +73,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 	case WM_CREATE:
 	{
+		srand((unsigned int)time(NULL));
 		screen_number = 0; /* 저도 여러가지 실험을 해야하는지라 2번이 되어 있습니다!*/
 		main_menu = 0;
 		is_over = FALSE;
@@ -155,7 +157,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		{
 		case 1:
 		{
+			CheckState();
 			InvalidateRect(hWnd, NULL, FALSE);
+		}
+			break;
+		case 10:
+		{
+			for (int i = 0; (player.deck.card[i].is_inhand); ++i)
+			{
+				CardAnimToXy(hWnd, card_position.x + (i * 150), card_position.y, 10, &(player.deck.card[i]), i);
+			}
 		}
 			break;
 		default:
@@ -177,7 +188,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		case 1:
 			break;
 		case 2:
-			GP_LBUTTONDOWN(hWnd, mx, my, &player);
+			card_position = GP_LBUTTONDOWN(hWnd, mx, my, &player);
 			break;
 		}
 	}
@@ -261,6 +272,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 					
 					screen_number = 2;
+					card_position = StartStage(hWnd, &player);
 					break;
 				case 2:
 					//아래에서 처리

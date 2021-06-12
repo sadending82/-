@@ -112,7 +112,7 @@ void print_MS(HDC hDC, RECT cRect,int main_menu)
 	}
 }
 
-static BOOL is_in_rect(int x, int y, RECT rect)
+BOOL is_in_rect(int x, int y, RECT rect)
 {
 	if (x > rect.left && x<rect.right && y>rect.top && y < rect.bottom)
 		return TRUE;
