@@ -121,7 +121,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			// 전투가 끝나면 ==(플레이어의 체력or 몬스터의 체력 이 0이되면) 다시 1로 돌아갑니다. 위의 설명처럼 패배의 경우는 아래의 게임 오버 화면이 나와야합니다.
 			DisplayGame(hMemDC, &player);
 
-
 			break;
 		}
 		if (is_over)
@@ -156,25 +155,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		{
 		case 1:
 		{
-			if (player.animation_state == State_Idle)
-			{
-				if (count >= 30)
-				{
-					if (player.animation_num >= 4)
-					{
-						player.animation_num = 0;
-					}
-					player.animation_num++;
-					count = 0;
-				}
-				count++;
-			}
+			InvalidateRect(hWnd, NULL, FALSE);
 		}
 			break;
 		default:
 			break;
 		}
-		InvalidateRect(hWnd, NULL, FALSE);
+
 	}
 
 		break;
@@ -190,6 +177,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		case 1:
 			break;
 		case 2:
+			GP_LBUTTONDOWN(hWnd, mx, my, &player);
 			break;
 		}
 	}
@@ -265,9 +253,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					player.isCharacterActive = TRUE;
 					player.animation_num = 0;
 					player.animation_state = 0;
+					player.selectedCard = -1;
+					player.amount_of_card_draw = 5;
 					master.player = player;
 					master.game_seed = rand(); 
+					SetCard(&player);
 
+					
 					screen_number = 2;
 					break;
 				case 2:
@@ -292,8 +284,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				player.isCharacterActive = TRUE;
 				player.animation_num = 0;
 				player.animation_state = 0;
+				player.selectedCard = -1;
+				player.amount_of_card_draw = 5;
 				master.player = player;
 				master.game_seed = rand();
+				SetCard(&player);
+
 
 				screen_number = 2;
 				break;

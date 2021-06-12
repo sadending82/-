@@ -73,6 +73,11 @@
 #define State_Deffence 2
 #define State_Attacked 3
 
+//Timer 관련
+
+#define Base_Timer 1
+#define Player_Timer 2
+#define Card_Timer 3
 
 // 스테이지 2를 만들때 아래도 추가해주세요.
 //...
@@ -146,7 +151,12 @@ typedef struct {
 	int occupation;
 	int type; // 0 : 없음, 1 : 공격, 2 : 방어
 	int number;
-	BOOL is_enhanced;//기본값 FLASE
+	int left;
+	int right;
+	int top;
+	int bottom;
+	BOOL is_enhanced;//기본값 FALSE
+	BOOL is_Active;
 }Card;
 /*
 * 카드
@@ -223,9 +233,12 @@ typedef struct {
 	int occupation;
 	int animation_num; // 어떤 애니메이션을 출력할 것인가
 	int animation_state; // 어떤 애니메이션을 재생해야하나?
+	int selectedCard;
+	int amount_of_card_draw;
 	Deck deck;
 	Item item;
 	BOOL isCharacterActive; // 화면에 캐릭터를 출력할 것인지 아닌지 확인하는 변수 (전투 화면에 출력할 때만 TRUE)
+	BOOL isDragCard;
 }Player;
 
 /*
@@ -254,6 +267,9 @@ typedef struct {
 
 // -*- 아래부터는 GamePlay에 관한 함수입니다.
 void DisplayGame(HDC hDC, Player* player);
+void SetCard(Player* player);
+void GP_LBUTTONDOWN(HWND hWnd, int, int, Player* player);
+void CheckState();
 
 
 // From Main Screen

@@ -65,5 +65,38 @@
     <Image Include="Character2.png">
       <Filter>리소스 파일</Filter>
     </Image>
+    <Image Include="RcharAttack4.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="RcharAttack5.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="RcharAttack6.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="RcharAttack7.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="RcharIdle1.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="RcharIdle2.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="RcharAttack1.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="RcharAttack2.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="RcharAttack3.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="공격카드.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="방어카드.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
 </Project>
