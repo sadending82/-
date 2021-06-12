@@ -2,13 +2,19 @@
 
 
 //	main_menu == 0
+static RECT rMain_screen;//메인화면
 static RECT rStart_game;//게임시작
 static RECT rDictionary;//백과사전
 static RECT rExit;//종료
 
+static CImage cMain_screen;
 static CImage cStart_game;
 static CImage cDictionary;
 static CImage cExit;
+static CImage cStart_game_;	// 커서가 올라갈 시 이미지
+static CImage cDictionary_;
+static CImage cExit_;
+
 
 static BOOL is_on_start_game;
 static BOOL is_on_Dictionary;
@@ -20,6 +26,8 @@ static RECT rCharacter2;
 
 static CImage cCharacter1;
 static CImage cCharacter2;
+static CImage cCharacter1_;
+static CImage cCharacter2_;
 
 static BOOL is_on_Character1;
 static BOOL is_on_Character2;
@@ -28,12 +36,21 @@ static BOOL is_on_Character2;
 void Set_MS_Img()
 {
 	//	main_menu == 0
+	if (cMain_screen.IsNull())
+		cMain_screen.Load(L"Main_screen.png");
+
 	if (cStart_game.IsNull())
 		cStart_game.Load(L"Start_game.png");
 	if (cDictionary.IsNull())
 		cDictionary.Load(L"Dictionary.png");
 	if (cExit.IsNull())
 		cExit.Load(L"Exit.png");
+	if (cStart_game_.IsNull())
+		cStart_game_.Load(L"Start_game_.png");
+	if (cDictionary_.IsNull())
+		cDictionary_.Load(L"Dictionary_.png");
+	if (cExit_.IsNull())
+		cExit_.Load(L"Exit_.png");
 	// 3가지 추가될 예정
 
 	//	main_menu == 1
@@ -41,11 +58,20 @@ void Set_MS_Img()
 		cCharacter1.Load(L"Character1.png");
 	if (cCharacter2.IsNull())
 		cCharacter2.Load(L"Character2.png");
+	if (cCharacter1_.IsNull())
+		cCharacter1_.Load(L"Character1_.png");
+	if (cCharacter2_.IsNull())
+		cCharacter2_.Load(L"Character2_.png");
 }
 
 void set_MS_Button(HWND hWnd, RECT cRect, HINSTANCE g_hInst)
 {
 	//	main_menu == 0
+	rMain_screen.left = 0;
+	rMain_screen.right = cRect.right;
+	rMain_screen.top = 0;
+	rMain_screen.bottom = cRect.bottom;
+
 	rStart_game.left = 100;
 	rStart_game.right = 300;
 	rStart_game.top = cRect.bottom / 2;
@@ -72,39 +98,46 @@ void set_MS_Button(HWND hWnd, RECT cRect, HINSTANCE g_hInst)
 	rCharacter2.bottom = cRect.bottom - 200;
 }
 
-void print_button(HDC hDC,BOOL is_on, CImage* cButton,RECT rButton)
+void print_button(HDC hMemDC, BOOL is_on, CImage* cButton, CImage* cButton_, RECT rButton)
 {
 	if (!is_on)
 	{
 		int pw = cButton->GetWidth();
 		int ph = cButton->GetHeight();
-		cButton->Draw(hDC, rButton.left, rButton.top, rButton.right - rButton.left, rButton.bottom - rButton.top, 0, 0, pw, ph);
+		cButton->Draw(hMemDC, rButton.left, rButton.top, rButton.right - rButton.left, rButton.bottom - rButton.top, 0, 0, pw, ph);
 	}
 	else
-		Rectangle(hDC, rButton.left, rButton.top, rButton.right, rButton.bottom);
+	{
+		int pw = cButton_->GetWidth();
+		int ph = cButton_->GetHeight();
+		cButton_->Draw(hMemDC, rButton.left, rButton.top, rButton.right - rButton.left, rButton.bottom - rButton.top, 0, 0, pw, ph);
+	}
 	//여기도 이미지 파일로 바꿀 예정
 }
 
-void print_MS(HDC hDC, RECT cRect,int main_menu)
+void print_MS(HDC hMemDC, RECT cRect,int main_menu)
 {
 	Set_MS_Img();
-	Rectangle(hDC, 0, 0, cRect.right, cRect.bottom);//메인화면의 배경 출력 - 비트맵 이미지로 대체할것
+	Rectangle(hMemDC, 0, 0, cRect.right, cRect.bottom);//메인화면의 배경 출력 - 비트맵 이미지로 대체할것
 			// 차일드 윈도우 버튼 3개 생성
+	int pw = cMain_screen.GetWidth();
+	int ph = cMain_screen.GetHeight();
+	cMain_screen.Draw(hMemDC, rMain_screen.left, rMain_screen.top, rMain_screen.right - rMain_screen.left, rMain_screen.bottom - rMain_screen.top, 0, 0, pw, ph);
 	switch (main_menu)
 	{
 	case 0:
 		//선택지 화면
 		//메인화면의 버튼 출력 - 비트맵 이미지로 대체할것
-		print_button(hDC, is_on_start_game, &cStart_game, rStart_game);
-		print_button(hDC, is_on_Dictionary, &cDictionary, rDictionary);
-		print_button(hDC, is_on_Exit, &cExit, rExit);
+		print_button(hMemDC, is_on_start_game, &cStart_game, &cStart_game_, rStart_game);
+		print_button(hMemDC, is_on_Dictionary, &cDictionary, &cDictionary_, rDictionary);
+		print_button(hMemDC, is_on_Exit, &cExit, &cExit_, rExit);
 		break;
 	case 1:
 		//게임 시작 -> 캐릭터 선택
 		//현재 존재하는 캐릭터를 화면에 출력
 		//키보드 1, 2, 3 or 캐릭터 클릭을 통해 선택하고 게임 시작 누를 시 게임 시작 -- screen_number = 1;
-		print_button(hDC, is_on_Character1, &cCharacter1, rCharacter1);
-		print_button(hDC, is_on_Character2, &cCharacter2, rCharacter2);
+		print_button(hMemDC, is_on_Character1, &cCharacter1, &cCharacter1_, rCharacter1);
+		print_button(hMemDC, is_on_Character2, &cCharacter2, &cCharacter2_, rCharacter2);
 		break;
 	case 2:
 		// 백과사전 -> 카드, 유물 열람기능
@@ -159,7 +192,7 @@ void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_numbe
 			master->player = *player;
 			master->game_seed = rand();
 			
-			*screen_number = 1;
+			*screen_number = 2;
 		}
 
 		if (is_in_rect(mx, my, rCharacter2))
@@ -175,7 +208,10 @@ void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_numbe
 			master->player = *player;
 			master->game_seed = rand();
 
-			*screen_number = 2;
+			make_map(&master, cRect);
+
+
+			*screen_number = 1;
 		}
 		break;
 	case 2:

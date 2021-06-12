@@ -56,8 +56,8 @@
 #define Room_Elite_Enemy 1
 #define Room_Rest 2
 #define Room_Relics 3
-#define Room_Random 4
-#define Room_Merchant 5
+#define Room_Merchant 4
+#define Room_Random 5
 #define Room_Boss 6
 #define Number_of_Room_Types 6// 보스룸 제외
 
@@ -111,7 +111,7 @@ typedef struct position{
 typedef struct room {
 	int room_type;
 	RECT rect;
-	struct room* next1[MNRF];
+	struct room* next[MNRF];
 }Room;
 /*
 * 방
@@ -131,9 +131,9 @@ typedef struct room {
 
 */
 typedef struct {
-	//Room** All_room;
-	//Room* Current_Room;
-	//Room* Boss_Room;
+	Room** All_room;
+	Room* Current_Room;
+	Room* Boss_Room;
 	Room Start_Room;
 	int num_of_rooms;
 }Map;
@@ -308,7 +308,7 @@ void GP_MOUSEMOVE(int, int, Player*);
 
 
 void set_MS_Button(HWND hWnd, RECT cRect, HINSTANCE g_hInst);
-void print_MS(HDC hDC, RECT cRect, int main_menu);
+void print_MS(HDC hMemDC, RECT cRect, int main_menu);
 void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_number, Player* player, Master* master);
 void MS_MOUSEMOVE(int mx, int my, int main_menu);
 void Set_MS_Img();
@@ -317,16 +317,17 @@ void MS_MENU_1(HWND hWnd, int answer, int* screen_number);// 현재 비어잇음
 // From In Game
 
 void Set_IG_Img();
-void set_IG_Button(HWND hWnd, RECT cRect, HINSTANCE g_hInst);
-void print_IG(HDC hDC, RECT cRect, int main_menu, Master master);
+void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, int main_menu, Master master);
 void make_random_map(Master master);
-void make_map(Master master);
+void make_map(Master* master, RECT cRect);
+void print_room(HDC hDC);
 
 
 
 
 // 많이 사용하는 함수
+void print_button(HDC hDC, BOOL is_on, CImage* cButton, CImage* cButton_, RECT rButton);
 BOOL is_in_rect(int x, int y, RECT rect);
-void print_button(HDC hDC, BOOL is_on, CImage* cButton, RECT rButton);
+
 
 #endif

@@ -54,9 +54,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	HDC hDC, hMemDC;
+	HDC hMapDC;
 	PAINTSTRUCT ps;
 
 	HBITMAP hCompatibleBit;
+	HBITMAP hMapBit;
 
 	static RECT cRect;
 
@@ -93,7 +95,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		hCompatibleBit = CreateCompatibleBitmap(hDC, WindowWidth, WindowHeight);
 		hMemDC = CreateCompatibleDC(hDC);
 		SelectObject(hMemDC, hCompatibleBit); /* 셀렉트 안해서 안됐었습니다 ㅋㅋㅋㅋㅋㅋㅋㅋ */
-
+		//screen_number == 1에서 사용할 DC
+		hMapDC = CreateCompatibleDC(hMemDC);
+		hMapBit = CreateCompatibleBitmap(hMapDC, WindowWidth * 3 / 5, WindowHeight + 2);// 오류가 생기면 hMapDC를 hDC로 바꿔볼것
+		SelectObject(hMapDC, hMapBit);
 		// 더블 버퍼링을 위한 밑 준비 입니다.
 		// WM_PAINT에서 출력해야할 것이 있다면 이 사이에 입력하시면 됩니다.
 
@@ -125,6 +130,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 			break;
 		}
+
 		if (is_over)
 		{
 			//게임이 끝나면 스코어와 승패여부(마지막 보스 처시치 승리, 어디서든 체력이 0 이하로 내려가면 패배)출력
@@ -132,6 +138,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			
 
 		}
+
 		if (is_pause)
 		{
 			// ESC를 누르면 나오는 화면으로 메인 화면으로 돌아갈 수 있다.
@@ -280,6 +287,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					master.game_seed = rand(); 
 					SetCard(&player);
 
+
 					
 					screen_number = 2;
 					card_position = StartStage(hWnd, &player);
@@ -311,6 +319,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				master.player = player;
 				master.game_seed = rand();
 				SetCard(&player);
+
+
+				make_map(&master, cRect);
 
 
 				screen_number = 2;

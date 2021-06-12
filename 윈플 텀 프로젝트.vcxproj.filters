@@ -104,5 +104,17 @@
     <Image Include="방어카드.png">
       <Filter>리소스 파일</Filter>
     </Image>
+    <Image Include="Main_screen.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Dictionary_.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Exit_.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Start_game_.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -2,24 +2,36 @@
 
 //screen_number == 1 에 사용될 것들
 
+
+static POINT pRoom;//50,50
+static POINT pBoss;//500,300
+
+static CImage cBasic_Enemy;
+static CImage cElite_Enemy;
+static CImage cRest;
+static CImage cRelics;
+static CImage cRandom;
+static CImage cMerchant;
+static CImage cBoss;
+
+static CImage cBasic_Enemy_;
+static CImage cElite_Enemy_;
+static CImage cRest_;
+static CImage cRelics_;
+static CImage cRandom_;
+static CImage cMerchant_;
+static CImage cBoss_;
+
+
+
+
+
+
 //이미지 세팅
 void Set_IG_Img()
 {
 
 }
-// 버튼 세팅
-void set_IG_Button(HWND hWnd, RECT cRect, HINSTANCE g_hInst)
-{
-
-}
-//프린트 버튼은 가져와서 사용하자
-
-//인 게임 - 스크린 넘버 2 출력화면
-void print_IG(HDC hDC, RECT cRect, int main_menu, Master master)
-{
-	//지도를 알맞게 출력한다.
-}
-// 지도가 위 아래로 움직이는걸 구현할 함수
 
 
 
@@ -177,8 +189,112 @@ void make_random_map(Master master)
 	// 마지막 방 들은 전부 다 보스룸과 연결한다.
 }
 //	고정지도에 랜덤 타입만 주는 함수
-void make_map(Master master)
+void make_map(Master* master, RECT cRect)
 {
 	// 시작 방에서 고정된 맵을 생성하고 랜덤한 타입값을 준다.
-}
+	master->stage.map.num_of_rooms = 13;
+	
+	master->stage.map.All_room = (Room**)malloc(sizeof(Room*) * master->stage.map.num_of_rooms);
+	//실행이 안 되면 위 방들을 초기화해줘라
+	for (int i = 0; i < master->stage.map.num_of_rooms; i++)
+	{
+		master->stage.map.All_room[i] = (Room*)malloc(sizeof(Room));
+		for (int j = 0; j < MNRF; j++)
+			master->stage.map.All_room[i]->next[j] = NULL;
+		master->stage.map.All_room[i]->room_type = rand() % 6;
+	}
+	
+	
+	Room start_room;// 시작 방 
+	start_room.room_type = Room_Start;
 
+	Room* boss_room = (Room*)malloc(sizeof(Room));
+	boss_room->room_type = Room_Boss;
+
+	start_room.next[0] = master->stage.map.All_room[0];
+	start_room.next[1] = master->stage.map.All_room[1];
+	start_room.next[2] = master->stage.map.All_room[2];
+	//						여기나    여기가 증가하고				여기도 증가 - 랜덤 생성 함수 만들때 고려해볼걸
+	master->stage.map.All_room[0]->next[0] = master->stage.map.All_room[3];
+	master->stage.map.All_room[0]->next[1] = master->stage.map.All_room[4];
+	master->stage.map.All_room[1]->next[0] = master->stage.map.All_room[4];
+	master->stage.map.All_room[2]->next[0] = master->stage.map.All_room[5];
+	master->stage.map.All_room[3]->next[0] = master->stage.map.All_room[6];
+	master->stage.map.All_room[4]->next[0] = master->stage.map.All_room[7];
+	master->stage.map.All_room[5]->next[0] = master->stage.map.All_room[7];
+	master->stage.map.All_room[6]->next[0] = master->stage.map.All_room[8];
+	master->stage.map.All_room[6]->next[1] = master->stage.map.All_room[9];
+	master->stage.map.All_room[7]->next[0] = master->stage.map.All_room[10];
+	master->stage.map.All_room[8]->next[0] = master->stage.map.All_room[11];
+	master->stage.map.All_room[9]->next[0] = master->stage.map.All_room[12];
+	master->stage.map.All_room[10]->next[0] = master->stage.map.All_room[12];
+	master->stage.map.All_room[11]->next[0] = boss_room;
+	master->stage.map.All_room[12]->next[0] = boss_room;
+	// 지도DC의 크기는 cRect에서 세로 2배,가로 3/5배
+	for (int i = 0; i < 13; i++)
+	{
+		switch (i)
+		{
+		case 0:
+		case 3:
+		case 8:
+			master->stage.map.All_room[i]->rect.left = cRect.right / 4;
+			break;
+		case 1:
+		case 4:
+		case 9:
+			master->stage.map.All_room[i]->rect.left = cRect.right / 4 * 2;
+			break;
+		case 2:
+		case 5:
+		case 10:
+			master->stage.map.All_room[i]->rect.left = cRect.right / 4 * 3;
+			break;
+		case 6:
+		case 11:
+			master->stage.map.All_room[i]->rect.left = cRect.right / 3;
+			break;
+		case 7:
+		case 12:
+			master->stage.map.All_room[i]->rect.left = cRect.right / 3 * 2;
+			break;
+		}
+	}
+
+
+	for (int i = 0; i < 3; i++)
+		master->stage.map.All_room[i]->rect.top = (cRect.bottom * 2) / 8 * 7;
+	for (int i = 3; i < 6; i++)
+		master->stage.map.All_room[i]->rect.top = (cRect.bottom * 2) / 8 * 6;
+	for (int i = 6; i < 8; i++)
+		master->stage.map.All_room[i]->rect.top = (cRect.bottom * 2) / 8 * 5;
+	for (int i = 8; i < 11; i++)
+		master->stage.map.All_room[i]->rect.top = (cRect.bottom * 2) / 8 * 4;
+	for (int i = 11; i < 13; i++)
+		master->stage.map.All_room[i]->rect.top = (cRect.bottom * 2) / 8 * 3;
+
+	boss_room->rect.left = (cRect.right * 3 / 5) / 2 - 250;
+	boss_room->rect.right = boss_room->rect.left + 500;
+	boss_room->rect.top = (cRect.bottom * 2) / 8 * 1;
+	boss_room->rect.bottom = boss_room->rect.top + 300;
+
+	for (int i = 0; i < 13; i++)
+	{
+		master->stage.map.All_room[i]->rect.right = master->stage.map.All_room[i]->rect.left + 50;
+		master->stage.map.All_room[i]->rect.bottom = master->stage.map.All_room[i]->rect.top + 50;
+	}
+	master->stage.map.Boss_Room = boss_room;
+	master->stage.map.Start_Room = start_room;
+
+}
+// 지도에 방을 출력할 함수
+void print_room(HDC hMapDC)
+{
+
+}
+//인 게임 - 스크린 넘버 2 출력화면
+void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, int main_menu, Master master)
+{
+	//지도를 알맞게 출력한다.
+}
+// 지도가 위 아래로 움직이는걸 구현할 함수

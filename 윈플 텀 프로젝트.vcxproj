@@ -157,7 +157,10 @@
     <Image Include="Character1.png" />
     <Image Include="Character2.png" />
     <Image Include="Dictionary.png" />
+    <Image Include="Dictionary_.png" />
     <Image Include="Exit.png" />
+    <Image Include="Exit_.png" />
+    <Image Include="Main_screen.png" />
     <Image Include="RcharAttack1.png" />
     <Image Include="RcharAttack2.png" />
     <Image Include="RcharAttack3.png" />
@@ -168,6 +171,7 @@
     <Image Include="RcharIdle1.png" />
     <Image Include="RcharIdle2.png" />
     <Image Include="Start_game.png" />
+    <Image Include="Start_game_.png" />
     <Image Include="공격카드.png" />
     <Image Include="방어카드.png" />
   </ItemGroup>
