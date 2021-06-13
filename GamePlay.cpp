@@ -56,14 +56,14 @@ void DisplayGame(HDC hDC, Player* player)
 			{
 				int pw = AttackCardImg.GetWidth();
 				int ph = AttackCardImg.GetHeight();
-				AttackCardImg.Draw(hDC, (player->deck.card[frontCard].right + player->deck.card[frontCard].left) / 2, (player->deck.card[frontCard].bottom + player->deck.card[frontCard].top) / 2,
+				AttackCardImg.Draw(hDC,player->deck.card[frontCard].left, player->deck.card[frontCard].top,
 					player->deck.card[frontCard].right - player->deck.card[frontCard].left, player->deck.card[frontCard].bottom - player->deck.card[frontCard].top, 0, 0, pw, ph);
 			}
 			else if (player->deck.card[frontCard].type == Card_Type_Deffence)
 			{
 				int pw = DeffenceCardImg.GetWidth();
 				int ph = DeffenceCardImg.GetHeight();
-				DeffenceCardImg.Draw(hDC, (player->deck.card[frontCard].right + player->deck.card[frontCard].left) / 2, (player->deck.card[frontCard].bottom + player->deck.card[frontCard].top) / 2,
+				DeffenceCardImg.Draw(hDC, player->deck.card[frontCard].left,player->deck.card[frontCard].top,
 					player->deck.card[frontCard].right - player->deck.card[frontCard].left, player->deck.card[frontCard].bottom - player->deck.card[frontCard].top, 0, 0, pw, ph);
 			}
 		}
@@ -357,14 +357,14 @@ static void DrawCard(HDC hDC, Player* player)
 				{
 					int pw = AttackCardImg.GetWidth();
 					int ph = AttackCardImg.GetHeight();
-					AttackCardImg.Draw(hDC, (player->deck.card[i].right + player->deck.card[i].left) / 2, (player->deck.card[i].bottom + player->deck.card[i].top) / 2,
+					AttackCardImg.Draw(hDC, player->deck.card[i].left, player->deck.card[i].top,
 						player->deck.card[i].right - player->deck.card[i].left, player->deck.card[i].bottom - player->deck.card[i].top, 0, 0, pw, ph);
 				}
 				else if (player->deck.card[i].type == Card_Type_Deffence)
 				{
 					int pw = DeffenceCardImg.GetWidth();
 					int ph = DeffenceCardImg.GetHeight();
-					DeffenceCardImg.Draw(hDC, (player->deck.card[i].right + player->deck.card[i].left) / 2, (player->deck.card[i].bottom + player->deck.card[i].top) / 2,
+					DeffenceCardImg.Draw(hDC, player->deck.card[i].left, player->deck.card[i].top,
 						player->deck.card[i].right - player->deck.card[i].left, player->deck.card[i].bottom - player->deck.card[i].top, 0, 0, pw, ph);
 				}
 			}
@@ -384,11 +384,19 @@ POS GP_LBUTTONDOWN(HWND hWnd, int x, int y, Player* player)
 {
 	if (!isCardMove)
 	{
-		
-
+		if (!(player->isDragCard))
+		{
+			player->isDragCard = TRUE;
+			isSelected = TRUE;
+			player->deck.card[frontCard].left = x - 100;
+			player->deck.card[frontCard].right = x + 100;
+			player->deck.card[frontCard].top = y - 130;
+			player->deck.card[frontCard].bottom = y + 130;
+		}
 	}
 
-	POS pos = { 300, 650 };
+
+	POS pos = { x, y };
 	return pos;
 }
 
@@ -396,40 +404,47 @@ void GP_MOUSEMOVE(int x, int y, Player* player)
 {
 	if (!isCardMove)
 	{
-		if (!isFront)
+		if (!(player->isDragCard))
 		{
-			for (int i = 0; player->deck.card[i].is_Active; ++i)
+			if (!isFront)
 			{
-				if (player->deck.card[i].is_inhand)
+				for (int i = 0; player->deck.card[i].is_Active; ++i)
 				{
-					RECT rect;
-					rect.left = player->deck.card[i].left;
-					rect.right = player->deck.card[i].right;
-					rect.top = player->deck.card[i].top;
-					rect.bottom = player->deck.card[i].bottom;
-
-					if (is_in_rect(x, y, rect))
+					if (player->deck.card[i].is_inhand)
 					{
-						frontCard = i;
-						isFront = TRUE;
+						RECT rect;
+						rect.left = player->deck.card[i].left;
+						rect.right = player->deck.card[i].right;
+						rect.top = player->deck.card[i].top;
+						rect.bottom = player->deck.card[i].bottom;
+
+						if (is_in_rect(x, y, rect))
+						{
+							frontCard = i;
+							isFront = TRUE;
+						}
+					}
+				}
+			}
+			else
+			{
+				RECT rect;
+				rect.left = player->deck.card[frontCard].left;
+				rect.right = player->deck.card[frontCard].right;
+				rect.top = player->deck.card[frontCard].top;
+				rect.bottom = player->deck.card[frontCard].bottom;
+				if (!is_in_rect(x, y, rect))
+				{
+					if (!isCardMove)
+					{
+						isFront = FALSE;
 					}
 				}
 			}
 		}
 		else
 		{
-			RECT rect;
-			rect.left = player->deck.card[frontCard].left;
-			rect.right = player->deck.card[frontCard].right;
-			rect.top = player->deck.card[frontCard].top;
-			rect.bottom = player->deck.card[frontCard].bottom;
-			if (!is_in_rect(x, y, rect))
-			{
-				if (!isCardMove)
-				{
-					isFront = FALSE;
-				}
-			}
+
 		}
 	}
 
@@ -530,13 +545,13 @@ POS StartStage(HWND hWnd, Player* player)
 	player->deck.card[2].is_inhand = TRUE;
 	player->deck.card[3].is_inhand = TRUE;
 	player->deck.card[4].is_inhand = TRUE;
-	CardAnimToXy(hWnd, 250, 650, Card_Timer, &(player->deck.card[0]), 0);
-	CardAnimToXy(hWnd, 400, 650, Card_Timer, &(player->deck.card[1]), 1);
-	CardAnimToXy(hWnd, 550, 650, Card_Timer, &(player->deck.card[2]), 2);
-	CardAnimToXy(hWnd, 700, 650, Card_Timer, &(player->deck.card[3]), 3);
-	CardAnimToXy(hWnd, 850, 650, Card_Timer, &(player->deck.card[4]), 4);
+	CardAnimToXy(hWnd, 300, 800, Card_Timer, &(player->deck.card[0]), 0);
+	CardAnimToXy(hWnd, 450, 800, Card_Timer, &(player->deck.card[1]), 1);
+	CardAnimToXy(hWnd, 600, 800, Card_Timer, &(player->deck.card[2]), 2);
+	CardAnimToXy(hWnd, 750, 800, Card_Timer, &(player->deck.card[3]), 3);
+	CardAnimToXy(hWnd, 900, 800, Card_Timer, &(player->deck.card[4]), 4);
 	isCardMove = TRUE;
-	POS pos = { 250, 650 };
+	POS pos = { 300, 800 };
 	return pos;
 }
 
