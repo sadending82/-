@@ -175,6 +175,7 @@
     <Image Include="RcharIdle2.png" />
     <Image Include="Start_game.png" />
     <Image Include="Start_game_.png" />
+    <Image Include="Status_Bar.PNG" />
     <Image Include="공격카드.png" />
     <Image Include="방어카드.png" />
   </ItemGroup>

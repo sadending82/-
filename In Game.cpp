@@ -9,6 +9,7 @@ static POINT pIG_Map;
 
 static CImage cIG_Map;
 static CImage cLegend;
+static CImage cStatus_Bar;
 
 static CImage cBasic_Enemy;
 static CImage cElite_Enemy;
@@ -38,6 +39,8 @@ void Set_IG_Img()
 		cIG_Map.Load(L"IG_Map.png");
 	if (cLegend.IsNull())
 		cLegend.Load(L"Legend.png");
+	if (cStatus_Bar.IsNull())
+		cStatus_Bar.Load(L"Status_Bar.png");
 
 	if (cBasic_Enemy.IsNull())
 		cBasic_Enemy.Load(L"Basic_Enemy.png");
@@ -53,6 +56,9 @@ void Set_IG_Img()
 		cMerchant.Load(L"Merchant.png");
 	if (cBoss.IsNull())
 		cBoss.Load(L"Boss.png");
+
+
+	
 }
 
 void Set_IG_POINT(RECT cRect)
@@ -397,10 +403,21 @@ void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos)
 
 
 	// 옆에 나오는 목록 출력
+	pw = cStatus_Bar.GetWidth();
+	ph = cStatus_Bar.GetHeight();
+	cStatus_Bar.Draw(hMemDC, 0, 0, cRect.right, ph, 0, 0, pw, ph);
+	//맨 위에 상태창 출력
+	// 상태창 출력 함수 만들것
 	pw = cLegend.GetWidth();
 	ph = cLegend.GetHeight();
 	cLegend.Draw(hMemDC, cRect.right - pw - 50, cRect.bottom / 2 - ph / 2, pw, ph, 0, 0, pw, ph);
-	//맨 위에 상태창 출력
+	TCHAR Hp_bar[20];
+	TCHAR Money_bar[20];
+	wsprintf(Hp_bar, L"%d / %d", master.player.hp.Current_hp, master.player.hp.Max_hp);
+	wsprintf(Money_bar, L"%3d", master.player.money);
+	// 이 부분은 옛날 과제에서 팩맨 색 바꾸던 코드 참고
+	TextOut(hMemDC, 230, 10, Hp_bar, _tcslen(Hp_bar));
+	TextOut(hMemDC, 320, 10, Money_bar, _tcslen(Money_bar));
 
 }
 // 지도가 위 아래로 움직이는걸 구현할 함수

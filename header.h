@@ -149,13 +149,18 @@ typedef struct {
 각각 고유의 스프라이트
 ...
 */
+typedef struct {
+	int Max_hp;			// 최대 체력
+	int Current_hp;		// 현재 체력
+	int Shield_figure;	// 방어도
+}HP;
 
 
 typedef struct {
 	int stage_num;
 	int type; // 0 : 일반, 1 : 엘리트, 2 : 보스
 	int ob_num; // -*- 이건 무엇인가요?
-	int hp;
+	HP hp;
 }Monster;
 /*
 ob_num 는 몬스터 고유 번호로 사용할 변수입니다
@@ -254,9 +259,10 @@ typedef struct {
 	int num_of_buffs;
 }Item;
 
+
 typedef struct {
 	int x; // 전투 화면에 나왔을 때의 위치. y는 고정인지 아닌지 모르지만 일단은 고정인 채로 구현해 봄.
-	int hp;
+	HP hp;
 	int money;
 	int occupation;
 	int animation_num; // 어떤 애니메이션을 출력할 것인가
