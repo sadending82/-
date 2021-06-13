@@ -313,7 +313,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				case 1:
 					// 0번째 캐릭터로 게임 시작
 					player.x = 200;
-					player.hp = 80;
+					player.hp.Max_hp = player.hp.Current_hp = 80;
 					player.money = 0;
 					player.occupation = 0;
 					player.isCharacterActive = TRUE;
@@ -346,7 +346,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			case 1:
 				// 1번째 캐릭터로 게임 시작 - 아직 0번 캐릭터까지밖에 없는걸로 알고있습니다.
 				player.x = 200;
-				player.hp = 70;
+				player.hp.Max_hp = player.hp.Current_hp = 70;
 				player.money = 0;
 				player.occupation = 1;
 				player.isCharacterActive = TRUE;

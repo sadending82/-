@@ -149,19 +149,18 @@ typedef struct {
 각각 고유의 스프라이트
 ...
 */
+typedef struct {
+	int Max_hp;			// 최대 체력
+	int Current_hp;		// 현재 체력
+	int Shield_figure;	// 방어도
+}HP;
 
 
 typedef struct {
-	int x;
 	int stage_num;
 	int type; // 0 : 일반, 1 : 엘리트, 2 : 보스
 	int ob_num; // -*- 이건 무엇인가요?
-	int hp;
-	int maxDmg;
-	int minDmg;
-	int animation_num;
-	int animation_state;
-	BOOL is_Active;
+	HP hp;
 }Monster;
 /*
 ob_num 는 몬스터 고유 번호로 사용할 변수입니다
@@ -191,7 +190,6 @@ typedef struct {
 	BOOL is_enhanced;//기본값 FALSE
 	BOOL is_Active;
 	BOOL is_inhand;
-	BOOL is_Moving;
 }Card;
 /*
 * 카드
@@ -261,9 +259,10 @@ typedef struct {
 	int num_of_buffs;
 }Item;
 
+
 typedef struct {
 	int x; // 전투 화면에 나왔을 때의 위치. y는 고정인지 아닌지 모르지만 일단은 고정인 채로 구현해 봄.
-	int hp;
+	HP hp;
 	int money;
 	int occupation;
 	int animation_num; // 어떤 애니메이션을 출력할 것인가
@@ -304,10 +303,10 @@ typedef struct {
 // -*- 아래부터는 GamePlay에 관한 함수입니다.
 void DisplayGame(HDC hDC, Player* player);
 void SetCard(Player* player);
-POS GP_LBUTTONDOWN(HWND hWnd, int x, int y, Player* player, int Lx, int Ly);
+POS GP_LBUTTONDOWN(HWND hWnd, int x, int y, Player* player);
 void CheckState();
 void CardAnimToXy(HWND hWnd, int x, int y, int animNum, Card* card, int cardNum);
-POS StartStage(HWND hWnd, Player* player, int monsterNum);
+POS StartStage(HWND hWnd, Player* player);
 void GP_MOUSEMOVE(int, int, Player*);
 
 
