@@ -803,7 +803,6 @@ void SetMonster(int monsterNum)
 		monster[0].stage_num = 1;
 		monster[0].type = Monster_Type_Basic;
 		monster[0].ob_num = 0;
-		monster[0].hp = rand() % 3 + 10;
 		monster[0].maxDmg = 6;
 		monster[0].minDmg = 4;
 		monster[0].animation_num = 0;
@@ -820,7 +819,7 @@ void SetMonster(int monsterNum)
 		monster[0].stage_num = 1;
 		monster[0].type = Monster_Type_Basic;
 		monster[0].ob_num = 0;
-		monster[0].hp = rand() % 3 + 10;
+
 		monster[0].maxDmg = 6;
 		monster[0].minDmg = 4;
 		monster[0].is_Active = TRUE;
@@ -829,7 +828,7 @@ void SetMonster(int monsterNum)
 		monster[1].stage_num = 1;
 		monster[1].type = Monster_Type_Basic;
 		monster[1].ob_num = 0;
-		monster[1].hp = rand() % 3 + 10;
+
 		monster[1].maxDmg = 6;
 		monster[1].minDmg = 4;
 		monster[1].is_Active = TRUE;
@@ -844,7 +843,7 @@ void SetMonster(int monsterNum)
 		monster[0].stage_num = 1;
 		monster[0].type = Monster_Type_Basic;
 		monster[0].ob_num = 0;
-		monster[0].hp = rand() % 3 + 10;
+
 		monster[0].maxDmg = 6;
 		monster[0].minDmg = 4;
 		monster[0].is_Active = TRUE;
@@ -853,7 +852,7 @@ void SetMonster(int monsterNum)
 		monster[1].stage_num = 1;
 		monster[1].type = Monster_Type_Basic;
 		monster[1].ob_num = 0;
-		monster[1].hp = rand() % 3 + 10;
+
 		monster[1].maxDmg = 6;
 		monster[1].minDmg = 4;
 		monster[1].is_Active = TRUE;
@@ -862,7 +861,6 @@ void SetMonster(int monsterNum)
 		monster[2].stage_num = 1;
 		monster[2].type = Monster_Type_Basic;
 		monster[2].ob_num = 0;
-		monster[2].hp = rand() % 3 + 10;
 		monster[2].maxDmg = 6;
 		monster[2].minDmg = 4;
 		monster[2].is_Active = TRUE;
