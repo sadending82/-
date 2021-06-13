@@ -394,33 +394,42 @@ POS GP_LBUTTONDOWN(HWND hWnd, int x, int y, Player* player)
 
 void GP_MOUSEMOVE(int x, int y, Player* player)
 {
-	if (!isFront)
+	if (!isCardMove)
 	{
-		for (int i = 0; player->deck.card[i].is_Active; ++i)
+		if (!isFront)
 		{
-			RECT rect;
-			rect.left = player->deck.card[i].left;
-			rect.right = player->deck.card[i].right;
-			rect.top = player->deck.card[i].top;
-			rect.bottom = player->deck.card[i].bottom;
-
-			if (is_in_rect(x, y, rect))
+			for (int i = 0; player->deck.card[i].is_Active; ++i)
 			{
-				frontCard = i;
-				isFront = TRUE;
+				if (player->deck.card[i].is_inhand)
+				{
+					RECT rect;
+					rect.left = player->deck.card[i].left;
+					rect.right = player->deck.card[i].right;
+					rect.top = player->deck.card[i].top;
+					rect.bottom = player->deck.card[i].bottom;
+
+					if (is_in_rect(x, y, rect))
+					{
+						frontCard = i;
+						isFront = TRUE;
+					}
+				}
 			}
 		}
-	}
-	else
-	{
-		RECT rect;
-		rect.left = player->deck.card[frontCard].left;
-		rect.right = player->deck.card[frontCard].right;
-		rect.top = player->deck.card[frontCard].top;
-		rect.bottom = player->deck.card[frontCard].bottom;
-		if (is_in_rect(x, y, rect))
+		else
 		{
-			isFront = FALSE;
+			RECT rect;
+			rect.left = player->deck.card[frontCard].left;
+			rect.right = player->deck.card[frontCard].right;
+			rect.top = player->deck.card[frontCard].top;
+			rect.bottom = player->deck.card[frontCard].bottom;
+			if (!is_in_rect(x, y, rect))
+			{
+				if (!isCardMove)
+				{
+					isFront = FALSE;
+				}
+			}
 		}
 	}
 
@@ -439,6 +448,7 @@ void CardAnimToXy(HWND hWnd, int x, int y, int animNum, Card* card, int cardNum)
 			card->bottom = y + 130;
 			CardTimer[cardNum] = 0;
 			KillTimer(hWnd, animNum);
+			isCardMove = FALSE;
 		}
 		else
 		{
@@ -449,7 +459,7 @@ void CardAnimToXy(HWND hWnd, int x, int y, int animNum, Card* card, int cardNum)
 			card->right = card->right - HoriBase;
 			card->top = card->top - VertBase;
 			card->bottom = card->bottom - VertBase;
-
+			isCardMove = TRUE;
 
 			SetTimer(hWnd, animNum, 16, NULL);
 		}
@@ -460,7 +470,7 @@ void CardAnimToBigger(HWND hWnd, int left, int top, int right, int bottom, int a
 {
 	if (card->is_inhand == TRUE)
 	{
-		if (CardTimer[cardNum] >= 50)
+		if (CardTimer[cardNum] >= 20)
 		{
 			card->left = left;
 			card->right = right;
@@ -468,18 +478,20 @@ void CardAnimToBigger(HWND hWnd, int left, int top, int right, int bottom, int a
 			card->bottom = bottom;
 			CardTimer[cardNum] = 0;
 			KillTimer(hWnd, animNum);
+			isCardMove = FALSE;
 		}
 		else
 		{
 			CardTimer[cardNum]++;
-			int leftBase = (left - card->left) / 10;
-			int topBase = (top - card->top) / 10;
-			int rightBase = (right - card->right) / 10;
-			int bottomBase = (bottom - card->bottom) / 10;
+			int leftBase = (left - card->left) / 2;
+			int topBase = (top - card->top) / 2;
+			int rightBase = (right - card->right) / 2;
+			int bottomBase = (bottom - card->bottom) / 2;
 			card->left = card->left + leftBase;
 			card->right = card->right + right;
 			card->top = card->top + top;
 			card->bottom = card->bottom + bottom;
+			isCardMove = TRUE;
 
 			SetTimer(hWnd, animNum, 16, NULL);
 		}
