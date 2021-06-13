@@ -149,18 +149,14 @@ typedef struct {
 각각 고유의 스프라이트
 ...
 */
-typedef struct {
-	int Max_hp;			// 최대 체력
-	int Current_hp;		// 현재 체력
-	int Shield_figure;	// 방어도
-}HP;
+
 
 typedef struct {
 	int x;
 	int stage_num;
 	int type; // 0 : 일반, 1 : 엘리트, 2 : 보스
 	int ob_num; // -*- 이건 무엇인가요?
-	HP hp;
+	int hp;
 	int maxDmg;
 	int minDmg;
 	int animation_num;
@@ -267,7 +263,7 @@ typedef struct {
 
 typedef struct {
 	int x; // 전투 화면에 나왔을 때의 위치. y는 고정인지 아닌지 모르지만 일단은 고정인 채로 구현해 봄.
-	HP hp;
+	int hp;
 	int money;
 	int occupation;
 	int animation_num; // 어떤 애니메이션을 출력할 것인가
