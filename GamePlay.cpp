@@ -27,6 +27,7 @@ static BOOL isCharMove = FALSE;
 static int selected = -1;
 static BOOL isSelected = FALSE;
 static BOOL isCardMove = FALSE;
+static BOOL isAtkSelected = FALSE;
 static int MoveCard = 0;
 
 static Monster monster[3] = { 0 };
@@ -36,10 +37,19 @@ static int timer = 0;
 static int monsterTimer[3] = { 0 };
 static int CardTimer[50] = { 0 };
 
+static POS arrow_pos = { 0 };
+static POS arrow_endPos = { 0 };
+
+static const COLORREF red = RGB(255, 0, 0);
+static const COLORREF white = RGB(255, 255, 255);
+
 static void SetImg();
 void DrawPlayer(HDC hDC, Player* player);
 void DrawCard(HDC hDC, Player* player);
 void DrawMonster(HDC hDC);
+
+void PlayerAttack();
+void PlayerDeffence();
 
 
 void DisplayGame(HDC hDC, Player* player)
@@ -71,6 +81,7 @@ void DisplayGame(HDC hDC, Player* player)
 			DrawPlayer(hDC, player);
 		}
 		DrawCard(hDC, player);
+
 		if (isFront)
 		{
 			if (player->deck.card[frontCard].type == Card_Type_Attack)
@@ -88,6 +99,44 @@ void DisplayGame(HDC hDC, Player* player)
 				DeffenceCardImg.Draw(hDC, player->deck.card[frontCard].left,player->deck.card[frontCard].top,
 					player->deck.card[frontCard].right - player->deck.card[frontCard].left, player->deck.card[frontCard].bottom - player->deck.card[frontCard].top, 0, 0, pw, ph);
 			}
+		}
+
+		if (isAtkSelected)
+		{
+			HPEN hPen, oldPen;
+			RECT rect;
+			BOOL isInRect = FALSE;
+			int num = 0;
+
+			for (int i = 0; i < 3; ++i)
+			{
+				rect.left = monster[i].x;
+				rect.top = 550;
+				rect.right = monster[i].x + 60;
+				rect.bottom = 600;
+				if (is_in_rect(arrow_endPos.x, arrow_endPos.y, rect))
+				{
+					isInRect = TRUE;
+					num = i;
+				}
+			}
+
+			if (isInRect)
+			{
+				hPen = CreatePen(PS_SOLID, 10, red);
+			}
+			else
+			{
+				hPen = CreatePen(PS_SOLID, 10, white);
+			}
+
+			oldPen = (HPEN)SelectObject(hDC, hPen);
+
+			MoveToEx(hDC, arrow_pos.x, arrow_pos.y, NULL);
+			LineTo(hDC, arrow_endPos.x, arrow_endPos.y);
+
+			SelectObject(hDC, oldPen);
+			DeleteObject(hPen);
 		}
 	}
 	
@@ -581,23 +630,72 @@ POS GP_LBUTTONDOWN(HWND hWnd, int x, int y, Player* player, int Lx, int Ly)
 	{
 		if (!(player->isDragCard))
 		{
-			POS pos = { x, y };
-			pos.x = player->deck.card[frontCard].left + 100;
-			pos.y = player->deck.card[frontCard].top + 130;
-			player->isDragCard = TRUE;
-			isSelected = TRUE;
-			player->deck.card[frontCard].left = x - 100;
-			player->deck.card[frontCard].right = x + 100;
-			player->deck.card[frontCard].top = y - 130;
-			player->deck.card[frontCard].bottom = y + 130;
-			return pos;
+			if (player->deck.card[frontCard].type == Card_Type_Deffence)
+			{
+				POS pos = { x, y };
+				pos.x = player->deck.card[frontCard].left + 100;
+				pos.y = player->deck.card[frontCard].top + 130;
+				player->isDragCard = TRUE;
+				isSelected = TRUE;
+				player->deck.card[frontCard].left = x - 100;
+				player->deck.card[frontCard].right = x + 100;
+				player->deck.card[frontCard].top = y - 130;
+				player->deck.card[frontCard].bottom = y + 130;
+				return pos;
+			}
+			else if (player->deck.card[frontCard].type == Card_Type_Attack)
+			{
+				isAtkSelected = TRUE;
+				player->isDragCard = TRUE;
+				isSelected = TRUE;
+				arrow_pos = { x, y };
+				arrow_endPos = { x, y };
+			}
 		}
 		else
 		{
-			player->isDragCard = FALSE;
-			isSelected = FALSE;
-			CardTimer[frontCard] = 0;
-			CardAnimToXy(hWnd, Lx, Ly, Card_Timer, &(player->deck.card[frontCard]), frontCard);
+			if (player->deck.card[frontCard].type == Card_Type_Deffence)
+			{
+				player->isDragCard = FALSE;
+				isSelected = FALSE;
+				CardTimer[frontCard] = 0;
+				if (arrow_endPos.y <= 600)
+				{
+					PlayerDeffence();
+				}
+				else
+				{
+					CardAnimToXy(hWnd, Lx, Ly, Card_Timer, &(player->deck.card[frontCard]), frontCard);
+				}
+			}
+			else if (player->deck.card[frontCard].type == Card_Type_Attack)
+			{
+				isAtkSelected = FALSE;
+				player->isDragCard = FALSE;
+				isSelected = FALSE;
+				
+				RECT rect;
+				BOOL isInRect = FALSE;
+				int num = 0;
+
+				for (int i = 0; i < 3; ++i)
+				{
+					rect.left = monster[i].x;
+					rect.top = 550;
+					rect.right = monster[i].x + 60;
+					rect.bottom = 600;
+					if (is_in_rect(arrow_endPos.x, arrow_endPos.y, rect))
+					{
+						isInRect = TRUE;
+						num = i;
+					}
+				}
+
+				if (isInRect)
+				{
+					PlayerAttack();
+				}
+			}
 		}
 	}
 
@@ -625,7 +723,10 @@ void GP_MOUSEMOVE(int x, int y, Player* player)
 						if (is_in_rect(x, y, rect))
 						{
 							frontCard = i;
+							player->deck.card[i].top -= 100;
+							player->deck.card[i].bottom -= 100;
 							isFront = TRUE;
+							break;
 						}
 					}
 				}
@@ -642,16 +743,25 @@ void GP_MOUSEMOVE(int x, int y, Player* player)
 					if (!isCardMove)
 					{
 						isFront = FALSE;
+						player->deck.card[frontCard].top += 100;
+						player->deck.card[frontCard].bottom += 100;
 					}
 				}
 			}
 		}
 		else
 		{
-			player->deck.card[frontCard].left = x - 100;
-			player->deck.card[frontCard].right = x + 100;
-			player->deck.card[frontCard].top = y - 130;
-			player->deck.card[frontCard].bottom = y + 130;
+			if (player->deck.card[frontCard].type == Card_Type_Deffence)
+			{
+				player->deck.card[frontCard].left = x - 100;
+				player->deck.card[frontCard].right = x + 100;
+				player->deck.card[frontCard].top = y - 130;
+				player->deck.card[frontCard].bottom = y + 130;
+			}
+			else if (player->deck.card[frontCard].type == Card_Type_Attack)
+			{
+				arrow_endPos = { x, y };
+			}
 		}
 	}
 
@@ -806,7 +916,7 @@ void SetMonster(int monsterNum)
 		monster[0].maxDmg = 6;
 		monster[0].minDmg = 4;
 		monster[0].animation_num = 0;
-		monster[0].animation_state = 1;
+		monster[0].animation_state = State_Idle;
 		monster[0].is_Active = TRUE;
 
 		monsterCount = 1;
@@ -823,6 +933,8 @@ void SetMonster(int monsterNum)
 		monster[0].maxDmg = 6;
 		monster[0].minDmg = 4;
 		monster[0].is_Active = TRUE;
+		monster[0].animation_num = 0;
+		monster[0].animation_state = State_Idle;
 
 		monster[1].x = 950;
 		monster[1].stage_num = 1;
@@ -832,6 +944,8 @@ void SetMonster(int monsterNum)
 		monster[1].maxDmg = 6;
 		monster[1].minDmg = 4;
 		monster[1].is_Active = TRUE;
+		monster[1].animation_num = 0;
+		monster[1].animation_state = State_Idle;
 
 		monsterCount = 2;
 
@@ -847,6 +961,8 @@ void SetMonster(int monsterNum)
 		monster[0].maxDmg = 6;
 		monster[0].minDmg = 4;
 		monster[0].is_Active = TRUE;
+		monster[0].animation_num = 0;
+		monster[0].animation_state = State_Idle;
 
 		monster[1].x = 900;
 		monster[1].stage_num = 1;
@@ -856,6 +972,8 @@ void SetMonster(int monsterNum)
 		monster[1].maxDmg = 6;
 		monster[1].minDmg = 4;
 		monster[1].is_Active = TRUE;
+		monster[1].animation_num = 0;
+		monster[1].animation_state = State_Idle;
 
 		monster[2].x = 1000;
 		monster[2].stage_num = 1;
@@ -864,6 +982,8 @@ void SetMonster(int monsterNum)
 		monster[2].maxDmg = 6;
 		monster[2].minDmg = 4;
 		monster[2].is_Active = TRUE;
+		monster[2].animation_num = 0;
+		monster[2].animation_state = State_Idle;
 
 		monsterCount = 3;
 
@@ -894,3 +1014,12 @@ POS StartStage(HWND hWnd, Player* player, int monsterNum)
 	return pos;
 }
 
+void PlayerAttack()
+{
+
+}
+
+void PlayerDeffence()
+{
+
+}
