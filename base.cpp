@@ -184,6 +184,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				CardAnimToXy(hWnd, card_position.x + (i * 150), card_position.y, 10, &(player.deck.card[i]), i);
 			}
 		}
+		case 16:
+		{
+
+		}
 			break;
 		default:
 			break;
