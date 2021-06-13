@@ -394,22 +394,37 @@ POS GP_LBUTTONDOWN(HWND hWnd, int x, int y, Player* player)
 
 void GP_MOUSEMOVE(int x, int y, Player* player)
 {
-	for (int i = 0; player->deck.card[i].is_Active; ++i)
+	if (!isFront)
+	{
+		for (int i = 0; player->deck.card[i].is_Active; ++i)
+		{
+			RECT rect;
+			rect.left = player->deck.card[i].left;
+			rect.right = player->deck.card[i].right;
+			rect.top = player->deck.card[i].top;
+			rect.bottom = player->deck.card[i].bottom;
+
+			if (is_in_rect(x, y, rect))
+			{
+				frontCard = i;
+				isFront = TRUE;
+			}
+		}
+	}
+	else
 	{
 		RECT rect;
-		rect.left = player->deck.card[i].left;
-		rect.right = player->deck.card[i].right;
-		rect.top = player->deck.card[i].top;
-		rect.bottom = player->deck.card[i].bottom;
-
+		rect.left = player->deck.card[frontCard].left;
+		rect.right = player->deck.card[frontCard].right;
+		rect.top = player->deck.card[frontCard].top;
+		rect.bottom = player->deck.card[frontCard].bottom;
 		if (is_in_rect(x, y, rect))
 		{
-			frontCard = i;
-			isFront = TRUE;
+			isFront = FALSE;
 		}
 	}
 
-	isFront = FALSE;
+
 }
 
 void CardAnimToXy(HWND hWnd, int x, int y, int animNum, Card* card, int cardNum)
