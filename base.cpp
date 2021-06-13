@@ -60,6 +60,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	HBITMAP hCompatibleBit;
 	HBITMAP hMapBit;
 
+	HFONT hFont, oldFont;
+
+
+
 	static RECT cRect;
 
 	static Master master;
@@ -86,7 +90,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		
 		SetTimer(hWnd, 1, 16, NULL);
 
-
+		AddFontResource(L"휴면편지체.TTF");
+		
+		
 		GetClientRect(hWnd, &cRect);
 		set_MS_Button(hWnd, cRect, g_hInst);
 		map_yPos = 0;
@@ -104,6 +110,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		hMapDC = CreateCompatibleDC(hMemDC);
 		hMapBit = CreateCompatibleBitmap(hDC, cRect.right * 3 / 5, cRect.bottom * 2);
 		SelectObject(hMapDC, hMapBit);
+		SetBkMode(hMemDC, 1);
+		SetTextColor(hMemDC, RGB(255, 255, 255));
+		hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"궁서");
+		oldFont = (HFONT)SelectObject(hMemDC, hFont);
+
 		// 더블 버퍼링을 위한 밑 준비 입니다.
 		// WM_PAINT에서 출력해야할 것이 있다면 이 사이에 입력하시면 됩니다.
 
@@ -134,6 +145,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			// 전투가 끝나면 ==(플레이어의 체력or 몬스터의 체력 이 0이되면) 다시 1로 돌아갑니다. 위의 설명처럼 패배의 경우는 아래의 게임 오버 화면이 나와야합니다.
 			DisplayGame(hMemDC, &player);
 
+
 			break;
 		}
 
@@ -160,8 +172,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		
 		// 더블 버퍼링 이후 BitBlt 및 오브젝트 삭제 입니다. 
 		BitBlt(hDC, 0, 0, WindowWidth, WindowHeight, hMemDC, 0, 0, SRCCOPY);
+		SelectObject(hMemDC, oldFont);
+		DeleteObject(hFont);
 		DeleteObject(hCompatibleBit);
-		DeleteObject(hMemDC);
+		DeleteDC(hMemDC);
 		EndPaint(hWnd, &ps);
 	}
 		break;
@@ -179,9 +193,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			break;
 		case 10:
 		{
-			for (int i = 0; (player.deck.card[i].is_inhand); ++i)
+			int num = 0;
+			for (int i = 0; i < 50; ++i)
 			{
-				CardAnimToXy(hWnd, card_position.x + (i * 150), card_position.y, 10, &(player.deck.card[i]), i);
+				if (player.deck.card[i].is_Active)
+				{
+					if (player.deck.card[i].is_Moving)
+					{
+						CardAnimToXy(hWnd, card_position.x + (num * 150), card_position.y, 10, &(player.deck.card[i]), i);
+						num++;
+					}
+				}
 			}
 		}
 		case 16:
@@ -210,7 +232,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				IG_LBUTTONDOWN(hWnd, mx, my, &master);
 			break;
 		case 2:
-			card_position = GP_LBUTTONDOWN(hWnd, mx, my, &player);
+			card_position = GP_LBUTTONDOWN(hWnd, mx, my, &player, card_position.x, card_position.y);
 			break;
 		}
 	}
@@ -306,7 +328,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 					
 					screen_number = 2;
-					card_position = StartStage(hWnd, &player);
+					card_position = StartStage(hWnd, &player, rand() % 3);
 					break;
 				case 2:
 					//아래에서 처리

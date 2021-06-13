@@ -152,10 +152,16 @@ typedef struct {
 
 
 typedef struct {
+	int x;
 	int stage_num;
 	int type; // 0 : 일반, 1 : 엘리트, 2 : 보스
 	int ob_num; // -*- 이건 무엇인가요?
 	int hp;
+	int maxDmg;
+	int minDmg;
+	int animation_num;
+	int animation_state;
+	BOOL is_Active;
 }Monster;
 /*
 ob_num 는 몬스터 고유 번호로 사용할 변수입니다
@@ -185,6 +191,7 @@ typedef struct {
 	BOOL is_enhanced;//기본값 FALSE
 	BOOL is_Active;
 	BOOL is_inhand;
+	BOOL is_Moving;
 }Card;
 /*
 * 카드
@@ -297,10 +304,10 @@ typedef struct {
 // -*- 아래부터는 GamePlay에 관한 함수입니다.
 void DisplayGame(HDC hDC, Player* player);
 void SetCard(Player* player);
-POS GP_LBUTTONDOWN(HWND hWnd, int x, int y, Player* player);
+POS GP_LBUTTONDOWN(HWND hWnd, int x, int y, Player* player, int Lx, int Ly);
 void CheckState();
 void CardAnimToXy(HWND hWnd, int x, int y, int animNum, Card* card, int cardNum);
-POS StartStage(HWND hWnd, Player* player);
+POS StartStage(HWND hWnd, Player* player, int monsterNum);
 void GP_MOUSEMOVE(int, int, Player*);
 
 

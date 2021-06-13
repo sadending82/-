@@ -173,10 +173,25 @@
     <Image Include="RcharAttack7.png" />
     <Image Include="RcharIdle1.png" />
     <Image Include="RcharIdle2.png" />
+    <Image Include="slime_attack1.png" />
+    <Image Include="slime_attack2.png" />
+    <Image Include="slime_attack3.png" />
+    <Image Include="slime_attack4.png" />
+    <Image Include="slime_attack5.png" />
+    <Image Include="slime_attack6.png" />
+    <Image Include="slime_idle1.png" />
+    <Image Include="slime_idle2.png" />
+    <Image Include="slime_idle3.png" />
+    <Image Include="slime_idle4.png" />
+    <Image Include="slime_idle5.png" />
+    <Image Include="slime_idle6.png" />
     <Image Include="Start_game.png" />
     <Image Include="Start_game_.png" />
     <Image Include="공격카드.png" />
     <Image Include="방어카드.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="휴면편지체.TTF" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
