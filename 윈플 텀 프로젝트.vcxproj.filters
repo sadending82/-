@@ -119,5 +119,11 @@
     <Image Include="IG_Map.png">
       <Filter>리소스 파일</Filter>
     </Image>
+    <Image Include="Legend.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Boss.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -8,6 +8,8 @@ static POINT pBoss;//500,300
 static POINT pIG_Map;
 
 static CImage cIG_Map;
+static CImage cLegend;
+
 static CImage cBasic_Enemy;
 static CImage cElite_Enemy;
 static CImage cRest;
@@ -34,6 +36,23 @@ void Set_IG_Img()
 {
 	if (cIG_Map.IsNull())
 		cIG_Map.Load(L"IG_Map.png");
+	if (cLegend.IsNull())
+		cLegend.Load(L"Legend.png");
+
+	if (cBasic_Enemy.IsNull())
+		cBasic_Enemy.Load(L"Basic_Enemy.png");
+	if (cElite_Enemy.IsNull())
+		cElite_Enemy.Load(L"Elite_Enemy.png");
+	if (cRest.IsNull())
+		cRest.Load(L"Rest.png");
+	if (cRelics.IsNull())
+		cRelics.Load(L"Relics.png");
+	if (cRandom.IsNull())
+		cRandom.Load(L"Random.png");
+	if (cMerchant.IsNull())
+		cMerchant.Load(L"Merchant.png");
+	if (cBoss.IsNull())
+		cBoss.Load(L"Boss.png");
 }
 
 void Set_IG_POINT(RECT cRect)
@@ -311,30 +330,45 @@ void print_room(HDC hMapDC, Master master, RECT cRect)
 	POINT error;// 오차
 	error.x = cRect.right / 5;
 	error.y = -30;
+	RECT tmp_rect;
+	//tmp_rect = master.stage.map.Current_Room->rect;
+	//InflateRect(&tmp_rect, 10, 10);
+	//Ellipse(hMapDC, tmp_rect.left, tmp_rect.top, tmp_rect.right, tmp_rect.bottom);
+	for (int j = 0; j < MNRF; j++)
+		if (master.stage.map.Current_Room->next[j] != NULL && master.stage.map.Current_Room != master.stage.map.Boss_Room)
+		{
+			tmp_rect = master.stage.map.Current_Room->next[j]->rect;
+			InflateRect(&tmp_rect, 10, 10);
+			Ellipse(hMapDC, tmp_rect.left, tmp_rect.top, tmp_rect.right, tmp_rect.bottom);
+		}
 	for (int i = 0; i < 13; i++)
 	{
-		Rectangle(hMapDC, master.stage.map.All_room[i]->rect.left , master.stage.map.All_room[i]->rect.top, master.stage.map.All_room[i]->rect.right , master.stage.map.All_room[i]->rect.bottom);
 		switch (master.stage.map.All_room[i]->room_type)
 		{
 		case Room_Basic_Enemy:
 			//해당 좌표에 해당 이미지 출력
+			cBasic_Enemy.Draw(hMapDC, master.stage.map.All_room[i]->rect.left, master.stage.map.All_room[i]->rect.top, 50, 50, 0, 0, 50, 50);
 			break;
 		case Room_Elite_Enemy:
+			cElite_Enemy.Draw(hMapDC, master.stage.map.All_room[i]->rect.left, master.stage.map.All_room[i]->rect.top, 50, 50, 0, 0, 50, 50);
 			break;
 		case Room_Rest:
+			cRest.Draw(hMapDC, master.stage.map.All_room[i]->rect.left, master.stage.map.All_room[i]->rect.top, 50, 50, 0, 0, 50, 50);
 			break;
 		case Room_Relics:
+			cRelics.Draw(hMapDC, master.stage.map.All_room[i]->rect.left, master.stage.map.All_room[i]->rect.top, 50, 50, 0, 0, 50, 50);
 			break;
 		case Room_Merchant:
+			cMerchant.Draw(hMapDC, master.stage.map.All_room[i]->rect.left, master.stage.map.All_room[i]->rect.top, 50, 50, 0, 0, 50, 50);
 			break;
 		case Room_Random:
+			cRandom.Draw(hMapDC, master.stage.map.All_room[i]->rect.left, master.stage.map.All_room[i]->rect.top, 50, 50, 0, 0, 50, 50);
 			break;
 		}
 	}
 	//보스룸 출력
-	Rectangle(hMapDC, master.stage.map.Boss_Room->rect.left , master.stage.map.Boss_Room->rect.top, master.stage.map.Boss_Room->rect.right , master.stage.map.Boss_Room->rect.bottom);
+	cBoss.Draw(hMapDC, master.stage.map.Boss_Room->rect.left, master.stage.map.Boss_Room->rect.top, 500, 300, 0, 0, 500, 300);
 
-	Ellipse(hMapDC, master.stage.map.Current_Room->rect.left, master.stage.map.Current_Room->rect.top, master.stage.map.Current_Room->rect.right, master.stage.map.Current_Room->rect.bottom);
 
 }
 //인 게임 - 스크린 넘버 2 출력화면
@@ -350,11 +384,22 @@ void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos)
 	// 방 출력
 	print_room(hMemDC, master,cRect);
 	// 방을 잊는 선 출력
+	for (int i = 0; i < 13; i++)
+	{
+		for (int j = 0; j < MNRF; j++)
+			if (master.stage.map.All_room[i]->next[j] != NULL)
+			{
+				MoveToEx(hMemDC, master.stage.map.All_room[i]->rect.left + (master.stage.map.All_room[i]->rect.right- master.stage.map.All_room[i]->rect.left)/2, master.stage.map.All_room[i]->rect.top, NULL);
+				LineTo(hMemDC, master.stage.map.All_room[i]->next[j]->rect.left + (master.stage.map.All_room[i]->next[j]->rect.right - master.stage.map.All_room[i]->next[j]->rect.left) / 2, master.stage.map.All_room[i]->next[j]->rect.bottom);
+			}
+	}
 
 
 
 	// 옆에 나오는 목록 출력
-
+	pw = cLegend.GetWidth();
+	ph = cLegend.GetHeight();
+	cLegend.Draw(hMemDC, cRect.right - pw - 50, cRect.bottom / 2 - ph / 2, pw, ph, 0, 0, pw, ph);
 	//맨 위에 상태창 출력
 
 }
@@ -407,21 +452,23 @@ void IG_Timer(POINT cursor, int* map_yPos, RECT cRect, Master* master)
 void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master)
 {
 	TCHAR str[20];
-	for (int i = 0; i < 13; i++)
-	{
-		wsprintf(str, L"%d", i);
-		//커런트룸의 next이면
-		for (int j = 0; j < MNRF; j++)
-			if (master->stage.map.Current_Room->next[j] != NULL && is_in_rect(mx, my, master->stage.map.Current_Room->next[j]->rect))
-				if(is_in_rect(mx, my, master->stage.map.All_room[i]->rect))
-				{
-					MessageBox(hWnd, str, L"노드 선택", MB_OK);
-					master->stage.map.Current_Room = master->stage.map.All_room[i];
-				}
-	}
 	if (is_in_rect(mx, my, master->stage.map.Boss_Room->rect))
 	{
 		MessageBox(hWnd, L"보스방", L"노드 선택", MB_OK);
 		master->stage.map.Current_Room = master->stage.map.Boss_Room;
 	}
+	else
+		for (int i = 0; i < 13; i++)
+		{
+			wsprintf(str, L"%d", i);
+			//커런트룸의 next이면
+			for (int j = 0; j < MNRF; j++)
+				if (master->stage.map.Current_Room->next[j] != NULL && is_in_rect(mx, my, master->stage.map.Current_Room->next[j]->rect))
+					if(is_in_rect(mx, my, master->stage.map.All_room[i]->rect))
+					{
+						MessageBox(hWnd, str, L"노드 선택", MB_OK);
+						master->stage.map.Current_Room = master->stage.map.All_room[i];
+					}
+		}
+	
 }
