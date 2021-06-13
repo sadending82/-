@@ -387,7 +387,7 @@ void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos)
 	for (int i = 0; i < 13; i++)
 	{
 		for (int j = 0; j < MNRF; j++)
-			if (master.stage.map.All_room[j]->next[j] != NULL)
+			if (master.stage.map.All_room[i]->next[j] != NULL)
 			{
 				MoveToEx(hMemDC, master.stage.map.All_room[i]->rect.left + (master.stage.map.All_room[i]->rect.right- master.stage.map.All_room[i]->rect.left)/2, master.stage.map.All_room[i]->rect.top, NULL);
 				LineTo(hMemDC, master.stage.map.All_room[i]->next[j]->rect.left + (master.stage.map.All_room[i]->next[j]->rect.right - master.stage.map.All_room[i]->next[j]->rect.left) / 2, master.stage.map.All_room[i]->next[j]->rect.bottom);
