@@ -323,6 +323,7 @@ POS GP_LBUTTONDOWN(HWND hWnd, int x, int y, Player* player, int Lx, int Ly);
 void CardAnimToXy(HWND hWnd, int x, int y, int animNum, Card* card, int cardNum);
 POS StartStage(HWND hWnd, Player* player, int monsterNum);
 void GP_MOUSEMOVE(int, int, Player*);
+void GetTurnChangeTimer(HWND hWnd, Player* player);
 
 
 // From Main Screen

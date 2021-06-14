@@ -224,6 +224,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 		}
 			break;
+		case 25:
+		{
+			KillTimer(hWnd, 25);
+			GetTurnChangeTimer(hWnd, &player);
+
+		}
+			break;
 		default:
 			break;
 		}
