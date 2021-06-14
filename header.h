@@ -88,6 +88,7 @@
 #define State_Attack 1
 #define State_Deffence 2
 #define State_Attacked 3
+#define State_Dead 4
 
 //Timer ฐüทร
 
