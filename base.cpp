@@ -148,7 +148,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			// screen_number == 1인 상태에서 맵 타일중 전투인 경우를 선택하면 해당 스테이지에 랜덤한 몬스터를 지정해서 전투를 진행합니다.
 			// 몬스터가 정해지면 screen_number = 2;를 하고 화면에 위 순서대로 출력해야할겁니다.
 			// 전투가 끝나면 ==(플레이어의 체력or 몬스터의 체력 이 0이되면) 다시 1로 돌아갑니다. 위의 설명처럼 패배의 경우는 아래의 게임 오버 화면이 나와야합니다.
-			DisplayGame(hMemDC, &player);
+			DisplayGame(hWnd, hMemDC, &player);
 
 
 			break;
@@ -201,7 +201,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			if (room_print_count == 4)
 				room_print_count = 0;
 
-			CheckState();
 			InvalidateRect(hWnd, NULL, FALSE);
 		}
 			break;
@@ -335,6 +334,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					player.animation_state = 0;
 					player.selectedCard = -1;
 					player.amount_of_card_draw = 5;
+					player.cost = 3;
 					master.player = player;
 					master.game_seed = rand(); 
 					SetCard(&player);

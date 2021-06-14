@@ -195,6 +195,7 @@ typedef struct {
 	int right;
 	int top;
 	int bottom;
+	int cost;
 	BOOL is_enhanced;//기본값 FALSE
 	BOOL is_Active;
 	BOOL is_inhand;
@@ -278,6 +279,7 @@ typedef struct {
 	int animation_state; // 어떤 애니메이션을 재생해야하나?
 	int selectedCard; // 선택된 카드
 	int amount_of_card_draw; // 카드 드로우 양
+	int cost;
 	Deck deck;
 	Item item;
 	BOOL isCharacterActive; // 화면에 캐릭터를 출력할 것인지 아닌지 확인하는 변수 (전투 화면에 출력할 때만 TRUE)
@@ -314,10 +316,10 @@ typedef struct {
 POS* GetPosPointer();
 
 // -*- 아래부터는 GamePlay에 관한 함수입니다.
-void DisplayGame(HDC hDC, Player* player);
+void DisplayGame(HWND hWnd, HDC hDC, Player* player);
 void SetCard(Player* player);
 POS GP_LBUTTONDOWN(HWND hWnd, int x, int y, Player* player, int Lx, int Ly);
-void CheckState();
+
 void CardAnimToXy(HWND hWnd, int x, int y, int animNum, Card* card, int cardNum);
 POS StartStage(HWND hWnd, Player* player, int monsterNum);
 void GP_MOUSEMOVE(int, int, Player*);
