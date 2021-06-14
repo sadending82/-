@@ -173,6 +173,57 @@
     <Image Include="Elite_Enemy.png">
       <Filter>리소스 파일</Filter>
     </Image>
+    <Image Include="Basic_Enemy_.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Basic_Enemy_2.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Boss_.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Boss_2.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Elite_Enemy_.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Elite_Enemy_2.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Merchant.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Merchant_.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Merchant_2.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Random.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Random_.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Random_2.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Relics.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Relics_.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Relics_2.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Rest_.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Rest_2.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Font Include="휴면편지체.TTF" />

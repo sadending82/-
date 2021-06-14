@@ -603,7 +603,9 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 	if (is_in_rect(mx, my, master->stage.map.Boss_Room->rect))
 	{
 		MessageBox(hWnd, L"보스방", L"노드 선택", MB_OK);
-		master->stage.map.Current_Room = master->stage.map.Boss_Room;
+		master->stage.map.Current_Room = master->stage.map.Boss_Room;// 이건 필요 없음
+		// 보스와 전투 시작 코드 추가
+		// 전투가 끝나면 다음 스테이지로 가거나 마지막 스테이지면 점수가 나오고 메인 화면으로
 	}
 	else
 		for (int i = 0; i < 13; i++)
@@ -615,14 +617,31 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 					if (master->stage.map.Current_Room->next[j] != NULL && is_in_rect(mx, my, master->stage.map.Current_Room->next[j]->rect))
 					{
 						MessageBox(hWnd, str, L"노드 선택", MB_OK);
+						//각각을 함수로 만들어야 랜덤 구현하기가 편함.
+						switch (master->stage.map.Current_Room->room_type)
+						{
+						case Room_Basic_Enemy:
+							break;
+						case Room_Elite_Enemy:
+							break;
+						case Room_Rest:
+							break;
+						case Room_Relics:
+							break;
+						case Room_Merchant:
+							break;
+						case Room_Random:
+							break;
+						}
+						// 위 작업이 끝나면 아래 코드가 실행되어야함
 						master->stage.map.Current_Room = master->stage.map.All_room[i];
 					}
 		}
 	RECT tmp;
-	tmp.left = cRect.right - 50;
+	tmp.left = cRect.right - cStatus_Bar.GetHeight();
 	tmp.right = cRect.right;
 	tmp.top = 0;
-	tmp.bottom = 50;
+	tmp.bottom = cStatus_Bar.GetHeight();
 	if (is_in_rect(mx, my, tmp))
 			*is_pause = TRUE;
 }
