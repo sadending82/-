@@ -870,14 +870,18 @@ POS GP_LBUTTONDOWN(HWND hWnd, int x, int y, Player* player, int Lx, int Ly)
 					rect.bottom = 600;
 					if (is_in_rect(arrow_endPos.x, arrow_endPos.y, rect))
 					{
-						isInRect = TRUE;
-						AtkMonster = i;
-						break;
+						if (monster[i].hp.Current_hp != 0)
+						{
+							isInRect = TRUE;
+							AtkMonster = i;
+							break;
+						}
 					}
 				}
 
 				if (isInRect)
 				{
+					
 					PlayerAttack(hWnd, player);
 				}
 			}
@@ -1416,8 +1420,8 @@ void TurnChange(HWND hWnd, Player* player)
 {
 	if (player->isMyTurn)
 	{
-		if (!isChangedTurn)
-		{
+
+			isTurnChange = FALSE;
 			isChangedTurn = TRUE;
 			player->isMyTurn = FALSE;
 			TurnMonsterNum = 0;
@@ -1435,11 +1439,7 @@ void TurnChange(HWND hWnd, Player* player)
 					TurnMonsterNum++;
 				}
 			}
-		}
-		else
-		{
-			isChangedTurn = FALSE;		
-		}
+
 
 	}
 	else
@@ -1502,18 +1502,21 @@ void CheckState(HWND hWnd, Player* player)
 	if (isWin)
 	{
 		PlayerWin(hWnd);
+		return;
 	}
 
 }
 
 void PlayerDefeat(HWND hWnd)
 {
-	MessageBox(hWnd, L"플레이어 패배", L"패배", MB_OK);
 	KillTimer(hWnd, 1);
+	MessageBox(hWnd, L"플레이어 패배", L"패배", MB_OK);
+
 }
 
 void PlayerWin(HWND hWnd)
 {
-	MessageBox(hWnd, L"플레이어 승리", L"승리", MB_OK);
 	KillTimer(hWnd, 1);
+	MessageBox(hWnd, L"플레이어 승리", L"승리", MB_OK);
+
 }
