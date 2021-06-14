@@ -128,5 +128,53 @@
     <Image Include="Status_Bar.PNG">
       <Filter>리소스 파일</Filter>
     </Image>
+    <Image Include="slime_attack1.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="slime_attack2.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="slime_attack3.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="slime_attack4.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="slime_attack5.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="slime_attack6.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="slime_idle1.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="slime_idle2.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="slime_idle3.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="slime_idle4.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="slime_idle5.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="slime_idle6.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Rest.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Basic_Enemy.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Elite_Enemy.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="휴면편지체.TTF" />
   </ItemGroup>
 </Project>

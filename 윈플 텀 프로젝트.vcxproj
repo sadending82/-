@@ -154,11 +154,13 @@
     <Image Include="..\..\윈플 텀 프로젝트\charAttack3.png" />
     <Image Include="..\..\윈플 텀 프로젝트\charIdle1.png" />
     <Image Include="..\..\윈플 텀 프로젝트\charIdle2.png" />
+    <Image Include="Basic_Enemy.png" />
     <Image Include="Boss.png" />
     <Image Include="Character1.png" />
     <Image Include="Character2.png" />
     <Image Include="Dictionary.png" />
     <Image Include="Dictionary_.png" />
+    <Image Include="Elite_Enemy.png" />
     <Image Include="Exit.png" />
     <Image Include="Exit_.png" />
     <Image Include="IG_Map.png" />
@@ -173,6 +175,7 @@
     <Image Include="RcharAttack7.png" />
     <Image Include="RcharIdle1.png" />
     <Image Include="RcharIdle2.png" />
+    <Image Include="Rest.png" />
     <Image Include="slime_attack1.png" />
     <Image Include="slime_attack2.png" />
     <Image Include="slime_attack3.png" />

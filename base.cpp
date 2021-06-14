@@ -77,6 +77,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 	int answer;
 
+	static int room_print_count; // 방 노드 애니메이션용
+	static int room_print_count_2; // 방 노드 애니메이션용2
+
 	static POINT cursor;
 	switch (iMessage) {
 
@@ -97,6 +100,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		set_MS_Button(hWnd, cRect, g_hInst);
 		map_yPos = 0;
 		cursor.x = cursor.y = 0;
+
+		room_print_count = 0;
 	}
 		break;
 
@@ -129,7 +134,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			//	in game 화면 - 게임 시작 후 지도 – 1, 2 참고
 			//	배경 출력
 			//	맵 타일 출력
-			print_IG(hMemDC, hMapDC, cRect, master, map_yPos);
+			print_IG(hMemDC, hMapDC, cRect, master, map_yPos, room_print_count);
 			break;
 		case 2:
 			//	전투 화면 - 전투 – 1, 2 참고
@@ -161,7 +166,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		{
 			// ESC를 누르면 나오는 화면으로 메인 화면으로 돌아갈 수 있다.
 			// 이 상태가 되면 아무런 조작이 불가능해야함 - 키 입력시 is_pause 조건 추가
-
+			print_OS_Pause(hMemDC, cRect, master);
 		}
 
 		//--
@@ -176,6 +181,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		DeleteObject(hFont);
 		DeleteObject(hCompatibleBit);
 		DeleteDC(hMemDC);
+		DeleteObject(hMapBit);
+		DeleteDC(hMapDC);
 		EndPaint(hWnd, &ps);
 	}
 		break;
@@ -187,6 +194,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		{
 			if(!is_pause)
 				IG_Timer(cursor, &map_yPos, cRect, &master);
+
+			room_print_count_2++;
+			if (room_print_count_2 % 10 == 0)// 속도 배율
+				room_print_count++;
+			if (room_print_count == 4)
+				room_print_count = 0;
+
 			CheckState();
 			InvalidateRect(hWnd, NULL, FALSE);
 		}
@@ -229,7 +243,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			break;
 		case 1:
 			if (!is_pause)
-				IG_LBUTTONDOWN(hWnd, mx, my, &master);
+				IG_LBUTTONDOWN(hWnd, mx, my, &master, cRect,&is_pause);
 			break;
 		case 2:
 			card_position = GP_LBUTTONDOWN(hWnd, mx, my, &player, card_position.x, card_position.y);
@@ -335,34 +349,45 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					break;
 				}
 				break;
+			case 1:
+				// 커런트 룸의 0번 노드 선택
+				break;
 			}
 			break;
 		case '2':
-			switch (main_menu)
+			switch (screen_number)
 			{
 			case 0:
-				MessageBox(hWnd, L"미구현", L"백과사전", MB_OK);
+				switch (main_menu)
+				{
+				case 0:
+					MessageBox(hWnd, L"미구현", L"백과사전", MB_OK);
+					break;
+				case 1:
+					// 1번째 캐릭터로 게임 시작 - 아직 0번 캐릭터까지밖에 없는걸로 알고있습니다.
+					player.x = 200;
+					player.hp.Max_hp = player.hp.Current_hp = 70;
+					player.money = 0;
+					player.occupation = 1;
+					player.isCharacterActive = TRUE;
+					player.animation_num = 0;
+					player.animation_state = 0;
+					player.selectedCard = -1;
+					player.amount_of_card_draw = 5;
+					master.player = player;
+					master.game_seed = rand();
+					SetCard(&player);
+
+
+					make_map(&master, cRect);
+
+
+					screen_number = 1;
+					break;
+				}
 				break;
 			case 1:
-				// 1번째 캐릭터로 게임 시작 - 아직 0번 캐릭터까지밖에 없는걸로 알고있습니다.
-				player.x = 200;
-				player.hp.Max_hp = player.hp.Current_hp = 70;
-				player.money = 0;
-				player.occupation = 1;
-				player.isCharacterActive = TRUE;
-				player.animation_num = 0;
-				player.animation_state = 0;
-				player.selectedCard = -1;
-				player.amount_of_card_draw = 5;
-				master.player = player;
-				master.game_seed = rand();
-				SetCard(&player);
-
-
-				make_map(&master, cRect);
-
-
-				screen_number = 1;
+				// 커런트 룸의 1번 노드 선택
 				break;
 			}
 			break;
@@ -380,6 +405,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				case 1:
 					break;
 				}
+				break;
+			case 1:
+				// 커런트 룸의 2번 노드 선택
 				break;
 			}
 			break;
