@@ -30,6 +30,8 @@ static BOOL isCardMove = FALSE;
 static BOOL isAtkSelected = FALSE;
 static int MoveCard = 0;
 
+static int AtkMonster = 0;
+
 static Monster monster[3] = { 0 };
 static int monsterCount = 0;
 
@@ -48,9 +50,12 @@ void DrawPlayer(HDC hDC, Player* player);
 void DrawCard(HDC hDC, Player* player);
 void DrawMonster(HDC hDC);
 
-void PlayerAttack();
-void PlayerDeffence();
-
+void PlayerAttack(HWND hWnd, Player* player);
+void PlayerDeffence(HWND hWnd, Player* player);
+void TurnChange();
+void SetCardPos(HWND hWnd, Player* player, int num);
+int CalcDmg(Player* player);
+int CalcDmg(Monster monster);
 
 void DisplayGame(HDC hDC, Player* player)
 {
@@ -305,6 +310,7 @@ void DrawPlayer(HDC hDC, Player* player)
 			{
 				player->animation_num = 0;
 				timer = 0;
+				CheckState();
 			}
 		}
 			break;
@@ -320,9 +326,9 @@ void DrawPlayer(HDC hDC, Player* player)
 		{
 			int pw = charIdle1.GetWidth();
 			int ph = charIdle1.GetHeight();
-			charIdle1.Draw(hDC, player->x, 350, pw, ph, 0, 0, pw, ph);
+			charIdle1.Draw(hDC, player->x, 350, pw * 2, ph * 2, 0, 0, pw, ph);
 			timer++;
-			if (timer >= 10)
+			if (timer >= 7)
 			{
 				player->animation_num++;
 			}
@@ -332,9 +338,9 @@ void DrawPlayer(HDC hDC, Player* player)
 		{
 			int pw = charAttack1.GetWidth();
 			int ph = charAttack1.GetHeight();
-			charAttack1.Draw(hDC, player->x, 350, pw, ph, 0, 0, pw, ph);
+			charAttack1.Draw(hDC, monster[AtkMonster].x - 250 , 350, pw * 2, ph * 2, 0, 0, pw, ph);
 			timer++;
-			if (timer >= 20)
+			if (timer >= 14)
 			{
 				player->animation_num++;
 			}
@@ -345,9 +351,9 @@ void DrawPlayer(HDC hDC, Player* player)
 		{
 			int pw = charAttack2.GetWidth();
 			int ph = charAttack2.GetHeight();
-			charAttack2.Draw(hDC, player->x, 350, pw, ph, 0, 0, pw, ph);
+			charAttack2.Draw(hDC, monster[AtkMonster].x - 250, 350, pw * 2, ph * 2, 0, 0, pw, ph);
 			timer++;
-			if (timer >= 30)
+			if (timer >= 21)
 			{
 				player->animation_num++;
 			}
@@ -357,56 +363,62 @@ void DrawPlayer(HDC hDC, Player* player)
 		{
 			int pw = charAttack3.GetWidth();
 			int ph = charAttack3.GetHeight();
-			charAttack3.Draw(hDC, player->x, 350, pw, ph, 0, 0, pw, ph);
+			charAttack3.Draw(hDC, monster[AtkMonster].x - 250 + (charAttack3.GetWidth() / 2), 350, pw * 2, ph * 2, 0, 0, pw, ph);
 			timer++;
-			if (timer >= 40)
+			if (timer >= 28)
 			{
 				player->animation_num++;
 			}
+
 		}
+		break;
 		case 4:
 		{
 			int pw = charAttack4.GetWidth();
 			int ph = charAttack4.GetHeight();
-			charAttack4.Draw(hDC, player->x, 350, pw, ph, 0, 0, pw, ph);
+			charAttack4.Draw(hDC, monster[AtkMonster].x - 250 + (charAttack4.GetWidth() / 2), 350, pw * 2, ph * 2, 0, 0, pw, ph);
 			timer++;
-			if (timer >= 50)
+			if (timer >= 35)
 			{
 				player->animation_num++;
 			}
 		}
+		break;
 		case 5:
 		{
 			int pw = charAttack5.GetWidth();
 			int ph = charAttack5.GetHeight();
-			charAttack5.Draw(hDC, player->x, 350, pw, ph, 0, 0, pw, ph);
+			charAttack5.Draw(hDC, monster[AtkMonster].x - 250 + (charAttack5.GetWidth() / 2), 350, pw * 2, ph * 2, 0, 0, pw, ph);
 			timer++;
-			if (timer >= 60)
+			if (timer >= 42)
 			{
 				player->animation_num++;
 			}
 		}
+		break;
 		case 6:
 		{
 			int pw = charAttack6.GetWidth();
 			int ph = charAttack6.GetHeight();
-			charAttack6.Draw(hDC, player->x, 350, pw, ph, 0, 0, pw, ph);
+			charAttack6.Draw(hDC, monster[AtkMonster].x - 250 + (charAttack6.GetWidth() / 2), 350, pw * 2, ph * 2, 0, 0, pw, ph);
 			timer++;
-			if (timer >= 70)
+			if (timer >= 49)
 			{
 				player->animation_num++;
 			}
 		}
+		break;
 		case 7:
 		{
 			int pw = charAttack7.GetWidth();
 			int ph = charAttack7.GetHeight();
-			charAttack7.Draw(hDC, player->x, 350, pw, ph, 0, 0, pw, ph);
+			charAttack7.Draw(hDC, monster[AtkMonster].x - 250, 350, pw * 2, ph * 2, 0, 0, pw, ph);
 			timer++;
-			if (timer >= 80)
+			if (timer >= 56)
 			{
 				player->animation_state = State_Idle;
 				player->animation_num = 0;
+				CheckState();
 			}
 		}
 		break;
@@ -659,9 +671,9 @@ POS GP_LBUTTONDOWN(HWND hWnd, int x, int y, Player* player, int Lx, int Ly)
 				player->isDragCard = FALSE;
 				isSelected = FALSE;
 				CardTimer[frontCard] = 0;
-				if (arrow_endPos.y <= 600)
+				if (arrow_endPos.y <= 500)
 				{
-					PlayerDeffence();
+					PlayerDeffence(hWnd, player);
 				}
 				else
 				{
@@ -687,19 +699,20 @@ POS GP_LBUTTONDOWN(HWND hWnd, int x, int y, Player* player, int Lx, int Ly)
 					if (is_in_rect(arrow_endPos.x, arrow_endPos.y, rect))
 					{
 						isInRect = TRUE;
-						num = i;
+						AtkMonster = i;
+						break;
 					}
 				}
 
 				if (isInRect)
 				{
-					PlayerAttack();
+					PlayerAttack(hWnd, player);
 				}
 			}
 		}
 	}
-
-	return { Lx, Ly };
+	POS* posp = GetPosPointer();
+	return { posp->x, posp->y };
 }
 
 void GP_MOUSEMOVE(int x, int y, Player* player)
@@ -765,7 +778,7 @@ void GP_MOUSEMOVE(int x, int y, Player* player)
 		}
 	}
 
-
+	arrow_endPos = { x, y };
 }
 
 void CardAnimToXy(HWND hWnd, int x, int y, int animNum, Card* card, int cardNum)
@@ -799,6 +812,7 @@ void CardAnimToXy(HWND hWnd, int x, int y, int animNum, Card* card, int cardNum)
 		}
 	}
 }
+
 
 void CardAnimToBigger(HWND hWnd, int left, int top, int right, int bottom, int animNum, Card* card, int cardNum)
 {
@@ -912,6 +926,10 @@ void SetMonster(int monsterNum)
 		monster[0].x = 900;
 		monster[0].stage_num = 1;
 		monster[0].type = Monster_Type_Basic;
+		int randNum = rand() % 3 + 10;
+		monster[0].hp.Current_hp = randNum;
+		monster[0].hp.Max_hp = randNum;
+		monster[0].hp.Shield_figure = 0;
 		monster[0].ob_num = 0;
 		monster[0].maxDmg = 6;
 		monster[0].minDmg = 4;
@@ -929,7 +947,10 @@ void SetMonster(int monsterNum)
 		monster[0].stage_num = 1;
 		monster[0].type = Monster_Type_Basic;
 		monster[0].ob_num = 0;
-
+		int randNum = rand() % 3 + 10;
+		monster[0].hp.Current_hp = randNum;
+		monster[0].hp.Max_hp = randNum;
+		monster[0].hp.Shield_figure = 0;
 		monster[0].maxDmg = 6;
 		monster[0].minDmg = 4;
 		monster[0].is_Active = TRUE;
@@ -940,7 +961,10 @@ void SetMonster(int monsterNum)
 		monster[1].stage_num = 1;
 		monster[1].type = Monster_Type_Basic;
 		monster[1].ob_num = 0;
-
+		randNum = rand() % 3 + 10;
+		monster[1].hp.Current_hp = randNum;
+		monster[1].hp.Max_hp = randNum;
+		monster[1].hp.Shield_figure = 0;
 		monster[1].maxDmg = 6;
 		monster[1].minDmg = 4;
 		monster[1].is_Active = TRUE;
@@ -957,7 +981,10 @@ void SetMonster(int monsterNum)
 		monster[0].stage_num = 1;
 		monster[0].type = Monster_Type_Basic;
 		monster[0].ob_num = 0;
-
+		int randNum = rand() % 3 + 10;
+		monster[0].hp.Current_hp = randNum;
+		monster[0].hp.Max_hp = randNum;
+		monster[0].hp.Shield_figure = 0;
 		monster[0].maxDmg = 6;
 		monster[0].minDmg = 4;
 		monster[0].is_Active = TRUE;
@@ -968,7 +995,10 @@ void SetMonster(int monsterNum)
 		monster[1].stage_num = 1;
 		monster[1].type = Monster_Type_Basic;
 		monster[1].ob_num = 0;
-
+		randNum = rand() % 3 + 10;
+		monster[1].hp.Current_hp = randNum;
+		monster[1].hp.Max_hp = randNum;
+		monster[1].hp.Shield_figure = 0;
 		monster[1].maxDmg = 6;
 		monster[1].minDmg = 4;
 		monster[1].is_Active = TRUE;
@@ -979,6 +1009,10 @@ void SetMonster(int monsterNum)
 		monster[2].stage_num = 1;
 		monster[2].type = Monster_Type_Basic;
 		monster[2].ob_num = 0;
+		randNum = rand() % 3 + 10;
+		monster[2].hp.Current_hp = randNum;
+		monster[2].hp.Max_hp = randNum;
+		monster[2].hp.Shield_figure = 0;
 		monster[2].maxDmg = 6;
 		monster[2].minDmg = 4;
 		monster[2].is_Active = TRUE;
@@ -1014,12 +1048,169 @@ POS StartStage(HWND hWnd, Player* player, int monsterNum)
 	return pos;
 }
 
-void PlayerAttack()
+void PlayerAttack(HWND hWnd, Player* player)
 {
+	player->deck.card[frontCard] = { 0 };
+	int targetNum = frontCard;
+	for (int i = 0; player->deck.card[targetNum + 1].is_Active && frontCard + 1 < MNCD; ++i)
+	{
+		Card tmp = player->deck.card[targetNum];
+		player->deck.card[targetNum] = player->deck.card[targetNum + 1];
+		player->deck.card[targetNum + 1] = tmp;
+		targetNum++;
+	}
+	
+	targetNum = 0;
+
+	for (int i = 0; player->deck.card[i].is_inhand; ++i)
+	{
+		targetNum++;
+	}
+
+	SetCardPos(hWnd, player, targetNum);
+
+	player->animation_state = State_Attack;
+	player->animation_num = 0;
+	timer = 0;
+
+	monster[AtkMonster].hp.Current_hp -= CalcDmg(player);
+
+
+	isFront = FALSE;
+	isSelected = FALSE;
 
 }
 
-void PlayerDeffence()
+void PlayerDeffence(HWND hWnd, Player* player)
+{
+	player->deck.card[frontCard] = { 0 };
+	int targetNum = frontCard;
+	for (int i = 0; player->deck.card[targetNum + 1].is_Active && frontCard + 1 < MNCD; ++i)
+	{
+		Card tmp = player->deck.card[targetNum];
+		player->deck.card[targetNum] = player->deck.card[targetNum + 1];
+		player->deck.card[targetNum + 1] = tmp;
+		targetNum++;
+	}
+
+	targetNum = 0;
+
+	for (int i = 0; player->deck.card[i].is_inhand; ++i)
+	{
+		targetNum++;
+	}
+
+	SetCardPos(hWnd, player, targetNum);
+
+
+
+	isFront = FALSE;
+	isSelected = FALSE;
+
+}
+
+void SetCardPos(HWND hWnd, Player* player, int num)
+{
+	switch (num)
+	{
+	case 0:
+	{
+		TurnChange();
+	}
+	break;
+	case 1:
+	{
+		CardAnimToXy(hWnd, 600, 800, Card_Timer, &(player->deck.card[0]), 0);
+		isCardMove = TRUE;
+		POS* posp = GetPosPointer();
+		posp->x = 600;
+		posp->y = 800;
+	}
+	break;
+	case 2:
+	{
+		CardAnimToXy(hWnd, 525, 800, Card_Timer, &(player->deck.card[0]), 0);
+		CardAnimToXy(hWnd, 675, 800, Card_Timer, &(player->deck.card[1]), 1);
+		isCardMove = TRUE;
+		POS* posp = GetPosPointer();
+		posp->x = 525;
+		posp->y = 800;
+	}
+	break;
+	case 3:
+	{
+		CardAnimToXy(hWnd, 450, 800, Card_Timer, &(player->deck.card[0]), 0);
+		CardAnimToXy(hWnd, 600, 800, Card_Timer, &(player->deck.card[1]), 1);
+		CardAnimToXy(hWnd, 750, 800, Card_Timer, &(player->deck.card[2]), 2);
+		isCardMove = TRUE;
+		POS* posp = GetPosPointer();
+		posp->x = 450;
+		posp->y = 800;
+	}
+	break;
+	case 4:
+	{
+		CardAnimToXy(hWnd, 375, 800, Card_Timer, &(player->deck.card[0]), 0);
+		CardAnimToXy(hWnd, 525, 800, Card_Timer, &(player->deck.card[1]), 1);
+		CardAnimToXy(hWnd, 675, 800, Card_Timer, &(player->deck.card[2]), 2);
+		CardAnimToXy(hWnd, 825, 800, Card_Timer, &(player->deck.card[3]), 3);
+		isCardMove = TRUE;
+		POS* posp = GetPosPointer();
+		posp->x = 375;
+		posp->y = 800;
+	}
+	break;
+	case 5:
+	{
+		CardAnimToXy(hWnd, 300, 800, Card_Timer, &(player->deck.card[0]), 0);
+		CardAnimToXy(hWnd, 450, 800, Card_Timer, &(player->deck.card[1]), 1);
+		CardAnimToXy(hWnd, 600, 800, Card_Timer, &(player->deck.card[2]), 2);
+		CardAnimToXy(hWnd, 750, 800, Card_Timer, &(player->deck.card[3]), 3);
+		CardAnimToXy(hWnd, 900, 800, Card_Timer, &(player->deck.card[4]), 4);
+		isCardMove = TRUE;
+		POS* posp = GetPosPointer();
+		posp->x = 300;
+		posp->y = 800;
+	}
+	break;
+	case 6:
+	{
+
+	}
+	break;
+	case 7:
+	{
+
+	}
+	break;
+	case 8:
+	{
+
+	}
+	break;
+	case 9:
+	{
+
+	}
+	break;
+	case 10:
+	{
+
+	}
+	break;
+	}
+}
+
+int CalcDmg(Player* player)
+{
+	return 5;
+}
+int CalcDmg(Monster monster)
+{
+	return rand() % 3 + 4;
+}
+
+void TurnChange()
 {
 
 }

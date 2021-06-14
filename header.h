@@ -308,6 +308,10 @@ typedef struct {
 }Master;
 
 
+// base에서 가지고 와야할 정보가 있어 Get 함수를 만들겠습니다.
+
+POS* GetPosPointer();
+
 // -*- 아래부터는 GamePlay에 관한 함수입니다.
 void DisplayGame(HDC hDC, Player* player);
 void SetCard(Player* player);
