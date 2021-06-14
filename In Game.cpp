@@ -544,11 +544,14 @@ void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos, i
 	cLegend.Draw(hMemDC, cRect.right - pw - 150, cRect.bottom / 2 - ph / 2, pw, ph, 0, 0, pw, ph);
 	TCHAR Hp_bar[20];
 	TCHAR Money_bar[20];
+	TCHAR Deck_bar[20];
 	wsprintf(Hp_bar, L"%d / %d", master.player.hp.Current_hp, master.player.hp.Max_hp);
 	wsprintf(Money_bar, L"%3d", master.player.money);
+	wsprintf(Deck_bar, L"%2d", master.player.deck.num_of_cards);
 	// 이 부분은 옛날 과제에서 팩맨 색 바꾸던 코드 참고
 	TextOut(hMemDC, 225, 7, Hp_bar, _tcslen(Hp_bar));
 	TextOut(hMemDC, 320, 7, Money_bar, _tcslen(Money_bar));
+	TextOut(hMemDC, cRect.right - cStatus_Bar.GetHeight() * 2+12, 17, Deck_bar, _tcslen(Deck_bar));
 
 }
 // 지도가 위 아래로 움직이는걸 구현할 함수

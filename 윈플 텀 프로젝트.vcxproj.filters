@@ -224,6 +224,9 @@
     <Image Include="Rest_2.png">
       <Filter>리소스 파일</Filter>
     </Image>
+    <Image Include="Pause.PNG">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Font Include="휴면편지체.TTF" />

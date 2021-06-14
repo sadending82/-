@@ -175,6 +175,7 @@
     <Image Include="Merchant.png" />
     <Image Include="Merchant_.png" />
     <Image Include="Merchant_2.png" />
+    <Image Include="Pause.PNG" />
     <Image Include="Random.png" />
     <Image Include="Random_.png" />
     <Image Include="Random_2.png" />

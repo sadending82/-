@@ -101,7 +101,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		map_yPos = 0;
 		cursor.x = cursor.y = 0;
 
-		room_print_count = 0;
+		room_print_count = room_print_count_2 = 0;
 	}
 		break;
 
