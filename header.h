@@ -343,6 +343,7 @@ typedef struct {
 // -*- base에서 가지고 와야할 정보가 있어 Get 함수를 만들겠습니다.
 
 POS* GetPosPointer();
+void ChangeScreenNumber(int num);
 
 // -*- 아래부터는 GamePlay에 관한 함수입니다.
 void DisplayGame(HWND hWnd, HDC hDC, Player* player);
@@ -382,7 +383,7 @@ void make_map(Master* master, RECT cRect);
 void print_room(HDC hMapDC, Master master, RECT cRect, int room_print_count);
 void IG_MOUSEMOVE(int mx, int my, POINT* cursor);
 void IG_Timer(POINT cursor, int* map_yPos, RECT cRect, Master* master);
-void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL* is_pause, int* map_yPos);
+void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL* is_pause, int* map_yPos, int* screen_number);
 void print_Status_Bar(HDC hMemDC, RECT cRect, Master master);
 
 void Event_Rest(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL* is_pause);

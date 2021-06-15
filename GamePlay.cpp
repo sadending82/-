@@ -2878,15 +2878,14 @@ int GetPrint()
 
 void PlayerDefeat(HWND hWnd)
 {
+	
 	KillTimer(hWnd, 1);
 	MessageBox(hWnd, L"플레이어 패배", L"패배", MB_OK);
-
 }
 
 void PlayerWin(HWND hWnd)
 {
-	KillTimer(hWnd, 1);
-	MessageBox(hWnd, L"플레이어 승리", L"승리", MB_OK);
 
+	ChangeScreenNumber(1);
 }
 

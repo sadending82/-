@@ -15,6 +15,7 @@ Master master = { 0 };
 
 static int count = 0;
 static POS card_position = { 0 };
+static int screen_number;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
@@ -67,7 +68,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static RECT cRect;
 
 	//static Master master;
-	static int screen_number;
+
 	static int main_menu;//메인 화면의 상태
 
 	static BOOL is_over;
@@ -288,7 +289,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			break;
 		case 1:
 			if (!is_pause)
-				IG_LBUTTONDOWN(hWnd, mx, my, &master, cRect, &is_pause, &map_yPos);
+				IG_LBUTTONDOWN(hWnd, mx, my, &master, cRect, &is_pause, &map_yPos, &screen_number);
 			else
 				OS_Pause_LBUTTONDOWN(hWnd, mx, my, &master, cRect, &is_pause, &screen_number, &main_menu);
 			break;
@@ -484,5 +485,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 POS* GetPosPointer()
 {
 	return &(card_position);
+}
+
+void ChangeScreenNumber(int num)
+{
+	screen_number = num;
 }
 
