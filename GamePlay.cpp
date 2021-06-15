@@ -2386,7 +2386,7 @@ void SetMonster(int monsterNum)
 	}
 }
 
-POS StartStage(HWND hWnd, Player* player, int monsterNum)
+void StartStage(HWND hWnd, Player* player, int monsterNum)
 {
 	SetCard(player);
 	SetMonster(monsterNum);
@@ -2406,9 +2406,12 @@ POS StartStage(HWND hWnd, Player* player, int monsterNum)
 	CardAnimToXy(hWnd, 900, 800, Card_Timer, &(player->deck.card[4]), 4);
 	isCardMove = TRUE;
 	POS pos = { 300, 800 };
+	POS* tposp = GetPosPointer();
+	tposp->x = pos.x;
+	tposp->y = pos.y;
 	isMyTurnPrint = FALSE;
 	SetMyTurnPrint(hWnd);
-	return pos;
+
 }
 
 void ChangePlayerTurn(HWND hWnd, Player* player)
