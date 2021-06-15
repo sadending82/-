@@ -124,6 +124,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		// WM_PAINT에서 출력해야할 것이 있다면 이 사이에 입력하시면 됩니다.
 
 		//	아래 출력의 경우 각각의 case에 따라서 다른 함수로 만들어 출력하는것도 좋을 것 같습니다.
+		// 이미지 불러오기 함수들
+		Set_IG_Img();
+
+
 		switch(screen_number)
 		{
 		case 0:
@@ -135,6 +139,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			//	배경 출력
 			//	맵 타일 출력
 			print_IG(hMemDC, hMapDC, cRect, master, map_yPos, room_print_count);
+			print_Status_Bar(hMemDC, cRect, master);
 			break;
 		case 2:
 			//	전투 화면 - 전투 – 1, 2 참고
@@ -149,6 +154,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			// 몬스터가 정해지면 screen_number = 2;를 하고 화면에 위 순서대로 출력해야할겁니다.
 			// 전투가 끝나면 ==(플레이어의 체력or 몬스터의 체력 이 0이되면) 다시 1로 돌아갑니다. 위의 설명처럼 패배의 경우는 아래의 게임 오버 화면이 나와야합니다.
 			DisplayGame(hWnd, hMemDC, &player);
+			print_Status_Bar(hMemDC, cRect, master);
 
 
 			break;
@@ -359,7 +365,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					player.amount_of_card_draw = 5;
 					player.cost = 3;
 					master.player = player;
-					master.game_seed = rand(); 
+					master.game_seed = rand();
 					SetCard(&player);
 
 
@@ -387,23 +393,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					MessageBox(hWnd, L"미구현", L"백과사전", MB_OK);
 					break;
 				case 1:
-					// 1번째 캐릭터로 게임 시작 - 아직 0번 캐릭터까지밖에 없는걸로 알고있습니다.
-					player.x = 200;
-					player.hp.Max_hp = player.hp.Current_hp = 70;
-					player.money = 0;
-					player.occupation = 1;
-					player.isCharacterActive = TRUE;
-					player.animation_num = 0;
-					player.animation_state = 0;
-					player.selectedCard = -1;
-					player.amount_of_card_draw = 5;
-					master.player = player;
-					master.game_seed = rand();
-					SetCard(&player);
-
+					Set_player(1, &master);
 
 					make_map(&master, cRect);
-
 
 					screen_number = 1;
 					break;
@@ -431,6 +423,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				break;
 			case 1:
 				// 커런트 룸의 2번 노드 선택
+				break;
+			}
+			break;
+		case 'E':
+		case 'e':
+			switch (screen_number)
+			{
+			case 2:
+				// 턴 종료
+
 				break;
 			}
 			break;

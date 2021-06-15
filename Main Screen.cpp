@@ -182,31 +182,17 @@ void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_numbe
 		if (is_in_rect(mx, my, rCharacter1))
 		{
 			 //0번째 캐릭터로 게임 시작
-			player->x = 200;
-			player->hp.Max_hp = player->hp.Current_hp = 80; // -*- 어떤지 몰라서 일단 이렇게 적었습니다.
-			player->money = 0;
-			player->occupation = 0;
-			player->isCharacterActive = TRUE;
-			player->animation_num = 0;
-			player->animation_state = 0;
-			master->player = *player;
-			master->game_seed = rand();
-			
-			*screen_number = 2;
+			Set_player(0, master);
+			make_map(master, cRect);
+
+
+			*screen_number = 1;
 		}
 
 		if (is_in_rect(mx, my, rCharacter2))
 		{
 			// 1번째 캐릭터로 게임 시작 - 아직 0번 캐릭터까지밖에 없습니다.
-			player->x = 200;
-			player->hp.Max_hp = player->hp.Current_hp = 70; // -*- 어떤지 몰라서 일단 이렇게 적었습니다.
-			player->money = 0;
-			player->occupation = 1;
-			player->isCharacterActive = TRUE;
-			player->animation_num = 0;
-			player->animation_state = 0;
-			master->player = *player;
-			master->game_seed = rand();
+			Set_player(1, master);
 
 			make_map(master, cRect);
 
@@ -257,4 +243,38 @@ void MS_MOUSEMOVE(int mx, int my, int main_menu)
 void MS_MENU_1(HWND hWnd,int answer, int *screen_number)
 {
 
+}
+
+
+void Set_player(int occupation,Master* master)
+{
+	switch (occupation)
+	{
+	case 0:
+		master->player.x = 200;
+		master->player.hp.Max_hp = master->player.hp.Current_hp = 80;
+		master->player.money = 0;
+		master->player.occupation = 0;
+		master->player.isCharacterActive = TRUE;
+		master->player.animation_num = 0;
+		master->player.animation_state = 0;
+		master->player.selectedCard = -1;
+		master->player.amount_of_card_draw = 5;
+		master->game_seed = rand();
+		SetCard(&master->player);
+		break;
+	case 1:
+		master->player.x = 200;
+		master->player.hp.Max_hp = master->player.hp.Current_hp = 70;
+		master->player.money = 0;
+		master->player.occupation = 1;
+		master->player.isCharacterActive = TRUE;
+		master->player.animation_num = 0;
+		master->player.animation_state = 0;
+		master->player.selectedCard = -1;
+		master->player.amount_of_card_draw = 5;
+		master->game_seed = rand();
+		SetCard(&master->player);
+		break;
+	}
 }

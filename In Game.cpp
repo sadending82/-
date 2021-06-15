@@ -511,7 +511,6 @@ void print_room(HDC hMapDC, Master master, RECT cRect,int room_print_count)
 //인 게임 - 스크린 넘버 2 출력화면
 void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos, int room_print_count)
 {
-	Set_IG_Img();
 	Set_IG_POINT(cRect);
 	//지도를 알맞게 출력한다.
 	int pw = cIG_Map.GetWidth();
@@ -532,16 +531,23 @@ void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos, i
 	}
 
 
-
 	// 옆에 나오는 목록 출력
-	pw = cStatus_Bar.GetWidth();
-	ph = cStatus_Bar.GetHeight();
-	cStatus_Bar.Draw(hMemDC, 0, 0, cRect.right, ph, 0, 0, pw, ph);
-	//맨 위에 상태창 출력
-	// 상태창 출력 함수 만들것
 	pw = cLegend.GetWidth();
 	ph = cLegend.GetHeight();
 	cLegend.Draw(hMemDC, cRect.right - pw - 150, cRect.bottom / 2 - ph / 2, pw, ph, 0, 0, pw, ph);
+
+	
+
+}
+
+void print_Status_Bar(HDC hMemDC, RECT cRect, Master master)
+{
+
+	//맨 위에 상태창 출력
+		// 상태창 출력 함수 만들것
+	int pw = cStatus_Bar.GetWidth();
+	int ph = cStatus_Bar.GetHeight();
+	cStatus_Bar.Draw(hMemDC, 0, 0, cRect.right, ph, 0, 0, pw, ph);
 	TCHAR Hp_bar[20];
 	TCHAR Money_bar[20];
 	TCHAR Deck_bar[20];
@@ -551,8 +557,7 @@ void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos, i
 	// 이 부분은 옛날 과제에서 팩맨 색 바꾸던 코드 참고
 	TextOut(hMemDC, 225, 7, Hp_bar, _tcslen(Hp_bar));
 	TextOut(hMemDC, 320, 7, Money_bar, _tcslen(Money_bar));
-	TextOut(hMemDC, cRect.right - cStatus_Bar.GetHeight() * 2+12, 17, Deck_bar, _tcslen(Deck_bar));
-
+	TextOut(hMemDC, cRect.right - cStatus_Bar.GetHeight() * 2 + 12, 17, Deck_bar, _tcslen(Deck_bar));
 }
 // 지도가 위 아래로 움직이는걸 구현할 함수
 void IG_MOUSEMOVE(int mx, int my, POINT* cursor)
@@ -648,3 +653,10 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 	if (is_in_rect(mx, my, tmp))
 			*is_pause = TRUE;
 }
+
+void Event_Basic_Enemy();
+void Event_Elite_Enemy();
+void Event_Rest();
+void Event_Relics();
+void Event_Merchant();
+void Event_Random();

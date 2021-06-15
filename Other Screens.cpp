@@ -20,15 +20,15 @@ void print_OS_Pause(HDC hMemDC, RECT cRect, Master master)
 	Set_OS_Img();
 
 	TCHAR str[20];
-	wsprintf(str, L"일시정지");
+	wsprintf(str, L"일시정지");// 왼쪽위로 출력
 	TextOut(hMemDC, cRect.right / 2, cRect.bottom / 2, str, _tcslen(str));
 	int pw = cPause.GetWidth();
 	int ph = cPause.GetHeight();
-	cPause.Draw(hMemDC, 0, 0, pw, ph, 0, 0, pw, ph);
+	cPause.Draw(hMemDC, (cRect.right - pw) / 2, (cRect.bottom - ph) / 2, pw, ph, 0, 0, pw, ph);
 }
 void OS_Pause_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL* is_pause)
 {
-	
+	// 옵션창 영역에서 위의 34 부분을 포함한 부분을 누르면 옵션 꺼짐 종료를 누르면 겜 종료
 }
 
 
