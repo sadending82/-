@@ -99,6 +99,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		
 		GetClientRect(hWnd, &cRect);
 		set_MS_Button(hWnd, cRect, g_hInst);
+		Set_IG_Img();
+		set_IG_Button(cRect);
+
 		map_yPos = 0;
 		cursor.x = cursor.y = 0;
 
@@ -285,18 +288,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		switch (screen_number)
 		{
 		case 0:
-			MS_LBUTTONDOWN(hWnd, mx, my, &main_menu, &screen_number, &master.player, &master, cRect);
+			MS_LBUTTONDOWN(hWnd, mx, my, &main_menu, &screen_number, &master.player, &master, cRect,&map_yPos);
 			break;
 		case 1:
 			if (!is_pause)
+			{
 				IG_LBUTTONDOWN(hWnd, mx, my, &master, cRect, &is_pause, &map_yPos, &screen_number);
+				Pause_LBUTTONDOWN(mx, my, cRect, &is_pause);
+			}
 			else
 				OS_Pause_LBUTTONDOWN(hWnd, mx, my, &master, cRect, &is_pause, &screen_number, &main_menu);
 			break;
 		case 2:
-			
 			if (!is_pause)
+			{
 				card_position = GP_LBUTTONDOWN(hWnd, mx, my, &master.player, card_position.x, card_position.y);
+				Pause_LBUTTONDOWN(mx, my, cRect, &is_pause);
+			}
 			else
 				OS_Pause_LBUTTONDOWN(hWnd, mx, my, &master, cRect, &is_pause, &screen_number, &main_menu);
 			break;
@@ -320,7 +328,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			break;
 		case 1:
 
-			IG_MOUSEMOVE(mx, my,&cursor);
+			IG_MOUSEMOVE(mx, my, &cursor, master, cRect);
 			break;
 		case 2:
 			GP_MOUSEMOVE(mx, my, &master.player);
@@ -379,9 +387,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				case 1:
 					// 0번째 캐릭터로 게임 시작
 					Set_player(0, &master);
-
-
-					
 					screen_number = 2;
 					StartStage(hWnd, &master.player, rand() % 3);
 					break;
@@ -406,12 +411,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					break;
 				case 1:
 					Set_player(1, &master);
-
 					make_map(&master, cRect);
-
 					screen_number = 1;
 					master.screen_numbers.In_Game_Screen_num = Out_of_game;
 					master.booleans.Is_print_map = TRUE;
+					map_yPos = 0;
 					break;
 				}
 				break;
@@ -448,6 +452,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				// 턴 종료
 
 				break;
+			}
+			break;
+		case 'm':
+		case 'M':
+			if (master.screen_numbers.In_Game_Screen_num != Out_of_game && screen_number == 1)
+			{
+				if (master.booleans.Is_print_map)
+					master.booleans.Is_print_map = FALSE;
+				else
+					master.booleans.Is_print_map = TRUE;
 			}
 			break;
 		}

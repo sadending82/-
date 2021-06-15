@@ -156,7 +156,7 @@ BOOL is_in_rect(int x, int y, RECT rect)
 		return FALSE;
 }
 
-void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_number, Player* player, Master* master, RECT cRect)
+void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_number, Player* player, Master* master, RECT cRect,int* map_yPos)
 {
 	int answer;
 	switch (*main_menu)
@@ -185,6 +185,7 @@ void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_numbe
 			Set_player(0, master);
 			make_map(master, cRect);
 
+			*map_yPos = 0;
 
 			*screen_number = 1;
 			master->screen_numbers.In_Game_Screen_num = Out_of_game;
@@ -197,6 +198,7 @@ void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_numbe
 			Set_player(1, master);
 
 			make_map(master, cRect);
+			*map_yPos = 0;
 
 
 			*screen_number = 1;
@@ -239,8 +241,6 @@ void MS_MOUSEMOVE(int mx, int my, int main_menu)
 		//위랑 비슷하게 볼드 효과
 		break;
 	}
-	
-
 }
 
 //??

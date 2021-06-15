@@ -43,8 +43,11 @@ static CImage cRest_Butten_;
 static CImage cEnchant_Butten;
 static CImage cEnchant_Butten_;
 
+static RECT rRest_Butten;
+static RECT rEnchant_Butten;
 
-
+static BOOL is_on_Rest_Butten;
+static BOOL is_on_Enchant_Butten;
 
 
 //이미지 세팅
@@ -107,8 +110,32 @@ void Set_IG_Img()
 		cRest_Butten.Load(L"Rest_Butten.png");
 	if (cEnchant_Butten.IsNull())
 		cEnchant_Butten.Load(L"Enchant_Butten.png");
+	if (cRest_Butten_.IsNull())
+		cRest_Butten_.Load(L"Rest_Butten_.png");
+	if (cEnchant_Butten_.IsNull())
+		cEnchant_Butten_.Load(L"Enchant_Butten_.png");
 }
 
+
+void set_IG_Button(RECT cRect)
+{
+	//	main_menu == 0
+	int pw = cRest_Butten.GetWidth();
+	int ph = cRest_Butten.GetHeight();
+
+	rRest_Butten.left = cRect.right / 2 - pw * 3;
+	rRest_Butten.right = rRest_Butten.left + pw*2;
+	rRest_Butten.top = cRect.bottom / 2;
+	rRest_Butten.bottom = rRest_Butten.top + ph*2;
+
+	pw = cEnchant_Butten.GetWidth();
+	ph = cEnchant_Butten.GetHeight();
+
+	rEnchant_Butten.left = cRect.right / 2 + pw;
+	rEnchant_Butten.right = rEnchant_Butten.left + pw*2;
+	rEnchant_Butten.top = cRect.bottom / 2;
+	rEnchant_Butten.bottom = rEnchant_Butten.top + ph*2;
+}
 void Set_IG_POINT(RECT cRect)
 {
 	pRoom.x = pRoom.y = 50;
@@ -528,20 +555,24 @@ void print_room(HDC hMapDC, Master master, RECT cRect,int room_print_count)
 //인 게임 - 스크린 넘버 2 출력화면
 void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos, int room_print_count)
 {
+	int pw, ph;
 	Set_IG_POINT(cRect);
 	//지도를 알맞게 출력한다.
 	switch (master.screen_numbers.In_Game_Screen_num)
 	{
-	case 0:
+	case Out_of_game:
 		// 플레이어만 서있는 화면이 나오거나 이전 전투 결과가 나온다.
 		break;
 	case Room_Rest:
 		// 휴식 화면 출력
 		// 배경 출력
-		//int pw = cRest_Screen.GetWidth();
-		//int ph = cRest_Screen.GetHeight();
-		//cRest_Screen.Draw(hMapDC, 0, 0, pIG_Map.x, pIG_Map.y, 0, 0, pw, ph);
+		pw = cRest_Screen.GetWidth();
+		ph = cRest_Screen.GetHeight();
+		cRest_Screen.Draw(hMemDC, 0, 0,cRect.right, cRect.bottom, 0, 0, pw, ph);
 		// 버튼 출력
+		print_button(hMemDC, is_on_Rest_Butten, &cRest_Butten, &cRest_Butten_, rRest_Butten);
+		print_button(hMemDC, is_on_Enchant_Butten, &cEnchant_Butten, &cEnchant_Butten_, rEnchant_Butten);
+
 		// 버튼 위에 커서가 올라갈 시 문장 출력
 		// EZ?
 		break;
@@ -554,8 +585,8 @@ void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos, i
 	}
 	if (master.booleans.Is_print_map)
 	{
-		int pw = cIG_Map.GetWidth();
-		int ph = cIG_Map.GetHeight();
+		pw = cIG_Map.GetWidth();
+		ph = cIG_Map.GetHeight();
 		cIG_Map.Draw(hMapDC, 0, 0, pIG_Map.x, pIG_Map.y, 0, 0, pw, ph);
 		BitBlt(hMemDC, cRect.right / 5, 0, pIG_Map.x, cRect.bottom, hMapDC, 0, map_yPos, SRCCOPY);
 		// 방 출력
@@ -607,10 +638,34 @@ void print_Status_Bar(HDC hMemDC, RECT cRect, Master master)
 	TextOut(hMemDC, 562, 7, Floor_bar, _tcslen(Floor_bar));
 }
 // 지도가 위 아래로 움직이는걸 구현할 함수
-void IG_MOUSEMOVE(int mx, int my, POINT* cursor)
+void IG_MOUSEMOVE(int mx, int my, POINT* cursor, Master master, RECT cRect)
 {
+	is_on_Rest_Butten = FALSE;
+	is_on_Enchant_Butten = FALSE;
 	cursor->x = mx;
 	cursor->y = my;
+
+	//
+	switch (master.screen_numbers.In_Game_Screen_num)
+	{
+	case Out_of_game:
+		// 플레이어만 서있는 화면이 나오거나 이전 전투 결과가 나온다.
+		break;
+	case Room_Rest:
+		// 버튼 위에 커서가 올라갈 시 문장 출력
+		if (is_in_rect(mx, my, rRest_Butten))
+			is_on_Rest_Butten = TRUE;
+		if (is_in_rect(mx, my, rEnchant_Butten))
+			is_on_Enchant_Butten = TRUE;
+		// EZ?
+		break;
+	case Room_Relics:
+		break;
+	case Room_Merchant:
+		break;
+	case Room_Random:
+		break;
+	}
 }
 void IG_Timer(POINT cursor, int* map_yPos, RECT cRect, Master* master)
 {
@@ -690,8 +745,8 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 						if (master->stage.map.Current_Room->next[j] != NULL && is_in_rect(mx, my, master->stage.map.Current_Room->next[j]->rect))
 						{
 							//master->booleans.Is_print_map = FALSE;
-							MessageBox(hWnd, str, L"노드 선택", MB_OK);// 완성하면 주석처리
-							room_type = master->stage.map.Current_Room->room_type;
+							//MessageBox(hWnd, str, L"노드 선택", MB_OK);// 완성하면 주석처리
+							room_type = master->stage.map.Current_Room->next[j]->room_type;
 							switch (room_type)
 							{
 							case Room_Basic_Enemy:
@@ -701,10 +756,12 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 								StartStage(hWnd, &master->player, rand() % 3);
 								break;
 							case Room_Rest:
-							case Room_Relics:
-							case Room_Merchant:
 								master->screen_numbers.In_Game_Screen_num = room_type;
 								master->booleans.Is_print_map = FALSE;// 테스트중
+								break;
+							case Room_Relics:
+							case Room_Merchant:
+								MessageBox(hWnd, str, L"노드 선택", MB_OK);// 완성하면 주석처리
 								break;
 							case Room_Random:
 								room_type = get_random_type_of_room();
@@ -717,10 +774,11 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 									StartStage(hWnd, &master->player, rand() % 3);
 									break;
 								case Room_Rest:
-								case Room_Relics:
-								case Room_Merchant:
 									master->screen_numbers.In_Game_Screen_num = room_type;
 									master->booleans.Is_print_map = FALSE;//테스트중
+									break;
+								case Room_Relics:
+								case Room_Merchant:
 									break;
 								case Room_Random:
 									// 위를 제외한 특별 이벤트 발생
@@ -733,17 +791,47 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 							master->stage.floor_num++;
 						}
 			}
-		RECT tmp;
-		tmp.left = cRect.right - cStatus_Bar.GetHeight();
-		tmp.right = cRect.right;
-		tmp.top = 0;
-		tmp.bottom = cStatus_Bar.GetHeight();
-		if (is_in_rect(mx, my, tmp))
-			*is_pause = TRUE;
+		
+		break;
+	case Room_Rest:
+		if (is_in_rect(mx, my, rRest_Butten))
+		{
+			wsprintf(str, L"체력을 30%% 회복합니다(%d)", master->player.hp.Max_hp / 10 * 3);
+			MessageBox(hWnd, str, L"휴식", MB_OK);// 완성하면 주석처리
+			master->player.hp.Current_hp + master->player.hp.Max_hp / 10 * 3;
+			if (master->player.hp.Current_hp > master->player.hp.Max_hp)
+				master->player.hp.Current_hp = master->player.hp.Max_hp;
+			master->screen_numbers.In_Game_Screen_num = Out_of_game;
+			master->booleans.Is_print_map = TRUE;
+		}
+		if (is_in_rect(mx, my, rEnchant_Butten))
+		{
+			MessageBox(hWnd, L"미구현", L"카드 강화", MB_OK);// 완성하면 주석처리
+			master->screen_numbers.In_Game_Screen_num = Out_of_game;
+			master->booleans.Is_print_map = TRUE;
+		}
+		// EZ?
+		break;
+	case Room_Relics:
+		break;
+	case Room_Merchant:
+		break;
+	case Room_Random:
 		break;
 	}
-	
 }
+
+void Pause_LBUTTONDOWN(int mx, int my, RECT cRect, BOOL* is_pause)
+{
+	RECT tmp;
+	tmp.left = cRect.right - cStatus_Bar.GetHeight();
+	tmp.right = cRect.right;
+	tmp.top = 0;
+	tmp.bottom = cStatus_Bar.GetHeight();
+	if (is_in_rect(mx, my, tmp))
+		*is_pause = TRUE;
+}
+
 
 void Event_Basic_Enemy();
 void Event_Elite_Enemy();
