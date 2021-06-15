@@ -32,6 +32,10 @@ static BOOL isAtkSelected = FALSE;
 static BOOL isTurnChange = FALSE;
 static BOOL isChangedTurn = FALSE;
 static BOOL isMouseUpTurnEnd = FALSE;
+
+static BOOL isMyTurnPrint = FALSE;
+static BOOL isEnemyTurnPrint = FALSE;
+
 static int MoveCard = 0;
 
 static int AtkMonster = 0;
@@ -84,6 +88,16 @@ void DisplayGame(HWND hWnd, HDC hDC, Player* player)
 	WCHAR str[20];
 	wsprintf(str, L"코스트 : %d", player->cost);
 	TextOut(hDC, 100, 400, str, lstrlen(str));
+
+	if (isMyTurnPrint)
+	{
+		TextOut(hDC, 550, 100, L"당신의 차례입니다.", lstrlen(L"당신의 차례입니다."));
+	}
+
+	if (isEnemyTurnPrint)
+	{
+		TextOut(hDC, 550, 100, L"적의 차례입니다.", lstrlen(L"적의 차례입니다.")); 
+	}
 
 	if (player->isMyTurn)
 	{
@@ -630,6 +644,7 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 							if (i == TurnMonsterNum && isChangedTurn)
 							{
 								SetTurnChangeTimer(hWnd);
+
 							}
 						}
 						break;
@@ -643,7 +658,7 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 						{
 							int mw = slmIdle1.GetWidth();
 							int mh = slmIdle1.GetHeight();
-							slmIdle1.Draw(hDC, monster[i].x - (mw / 2), 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							slmIdle1.Draw(hDC, monster[i].x - (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 5)
 							{
@@ -655,7 +670,7 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 						{
 							int mw = slmIdle2.GetWidth();
 							int mh = slmIdle2.GetHeight();
-							slmIdle2.Draw(hDC, monster[i].x - (mw / 2), 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							slmIdle2.Draw(hDC, monster[i].x - (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 10)
 							{
@@ -667,7 +682,7 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 						{
 							int mw = slmIdle3.GetWidth();
 							int mh = slmIdle3.GetHeight();
-							slmIdle3.Draw(hDC, monster[i].x - (mw / 2), 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							slmIdle3.Draw(hDC, monster[i].x - (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 15)
 							{
@@ -679,10 +694,10 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 						{
 							int mw = slmAttack1.GetWidth();
 							int mh = slmAttack1.GetHeight();
-							slmAttack1.Draw(hDC, player->x + (mw / 2) + 50, 350 + (monsterTimer[i] - 5) * 10, mw * 2, mh * 2, 0, 0, mw, mh);
+							slmAttack1.Draw(hDC, player->x + (mw / 2) + 50, 150 + (monsterTimer[i] - 1) * 15, mw * 2, mh * 2, 0, 0, mw, mh);
 							TextOut(hDC, 600, 200, L"공  격", 4);
 							monsterTimer[i]++;
-							if (monsterTimer[i] >= 25)
+							if (monsterTimer[i] >= 30)
 							{
 								monster[i].animation_num++;
 							}
@@ -692,7 +707,7 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 						{
 							int mw = slmAttack2.GetWidth();
 							int mh = slmAttack2.GetHeight();
-							slmAttack2.Draw(hDC, player->x + (mw / 2), 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							slmAttack2.Draw(hDC, player->x + (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
 							TextOut(hDC, 600, 200, L"공  격", 4);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 35)
@@ -705,7 +720,7 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 						{
 							int mw = slmAttack3.GetWidth();
 							int mh = slmAttack3.GetHeight();
-							slmAttack3.Draw(hDC, player->x + (mw / 2), 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							slmAttack3.Draw(hDC, player->x + (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
 							TextOut(hDC, 600, 200, L"공  격", 4);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 45)
@@ -718,7 +733,7 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 						{
 							int mw = slmAttack4.GetWidth();
 							int mh = slmAttack4.GetHeight();
-							slmAttack4.Draw(hDC, player->x + (mw / 2), 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							slmAttack4.Draw(hDC, player->x + (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
 							TextOut(hDC, 600, 200, L"공  격", 4);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 55)
@@ -731,7 +746,7 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 						{
 							int mw = slmAttack5.GetWidth();
 							int mh = slmAttack5.GetHeight();
-							slmAttack5.Draw(hDC, player->x + (mw / 2), 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							slmAttack5.Draw(hDC, player->x + (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
 							TextOut(hDC, 600, 200, L"공  격", 4);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 65)
@@ -744,7 +759,7 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 						{
 							int mw = slmAttack6.GetWidth();
 							int mh = slmAttack6.GetHeight();
-							slmAttack6.Draw(hDC, player->x + (mw / 2), 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							slmAttack6.Draw(hDC, player->x + (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
 							TextOut(hDC, 600, 200, L"공  격", 4);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 75)
@@ -912,7 +927,7 @@ POS GP_LBUTTONDOWN(HWND hWnd, int x, int y, Player* player, int Lx, int Ly)
 						isAtkSelected = TRUE;
 						player->isDragCard = TRUE;
 						isSelected = TRUE;
-						arrow_pos = { x, y };
+						arrow_pos = { player->deck.card[frontCard].left + 100, player->deck.card[frontCard].top + 130 };
 						arrow_endPos = { x, y };
 					}
 				}
@@ -1343,6 +1358,8 @@ POS StartStage(HWND hWnd, Player* player, int monsterNum)
 	CardAnimToXy(hWnd, 900, 800, Card_Timer, &(player->deck.card[4]), 4);
 	isCardMove = TRUE;
 	POS pos = { 300, 800 };
+	isMyTurnPrint = FALSE;
+	SetMyTurnPrint(hWnd);
 	return pos;
 }
 
@@ -1374,6 +1391,8 @@ void ChangePlayerTurn(HWND hWnd, Player* player)
 	POS* posp = GetPosPointer();
 	posp->x = 300;
 	posp->y = 800;
+
+	
 }
 
 void PlayerAttack(HWND hWnd, Player* player)
@@ -1588,6 +1607,7 @@ void TurnChange(HWND hWnd, Player* player)
 					TurnMonsterNum++;
 				}
 			}
+			SetEnemyTurnPrint(hWnd);
 	}
 	else
 	{
@@ -1614,6 +1634,7 @@ void TurnChange(HWND hWnd, Player* player)
 			player->isMyTurn = TRUE;
 			player->cost = 3;
 			ChangePlayerTurn(hWnd, player);
+			SetMyTurnPrint(hWnd);
 		}
 
 	}
@@ -1676,10 +1697,54 @@ void PlayerWin(HWND hWnd)
 
 void SetTurnChangeTimer(HWND hWnd)
 {
-	SetTimer(hWnd, 25, 500, NULL);
+	SetTimer(hWnd, TurnDelay_Timer, 500, NULL);
 }
 
 void GetTurnChangeTimer(HWND hWnd, Player* player)
 {
 	TurnChange(hWnd, player);
+}
+
+void SetMyTurnPrint(HWND hWnd)
+{
+	if (isMyTurnPrint == FALSE)
+	{
+		isMyTurnPrint = TRUE;
+		isEnemyTurnPrint = FALSE;
+		SetTimer(hWnd, Print_Timer, 2500, NULL);
+	}
+	else
+	{
+		isMyTurnPrint = FALSE;
+		KillTimer(hWnd, Print_Timer);
+	}
+}
+
+void SetEnemyTurnPrint(HWND hWnd)
+{
+	if (isEnemyTurnPrint == FALSE)
+	{
+		isEnemyTurnPrint = TRUE;
+		isMyTurnPrint = FALSE;
+		SetTimer(hWnd, Print_Timer, 2500, NULL);
+	}
+	else
+	{
+		isEnemyTurnPrint = FALSE;
+		KillTimer(hWnd, Print_Timer);
+	}
+}
+
+int GetPrint()
+{
+	if (isMyTurnPrint == TRUE)
+	{
+		return 1;
+	}
+	else if (isEnemyTurnPrint == TRUE)
+	{
+		return 2;
+	}
+
+	return 0;
 }

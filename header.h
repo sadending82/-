@@ -95,6 +95,8 @@
 #define Base_Timer 1
 #define Player_Timer 2
 #define Card_Timer 10
+#define Print_Timer 17
+#define TurnDelay_Timer 25
 
 // 스테이지 2를 만들때 아래도 추가해주세요.
 //...
@@ -311,7 +313,7 @@ typedef struct {
 }Master;
 
 
-// base에서 가지고 와야할 정보가 있어 Get 함수를 만들겠습니다.
+// -*- base에서 가지고 와야할 정보가 있어 Get 함수를 만들겠습니다.
 
 POS* GetPosPointer();
 
@@ -324,6 +326,9 @@ void CardAnimToXy(HWND hWnd, int x, int y, int animNum, Card* card, int cardNum)
 POS StartStage(HWND hWnd, Player* player, int monsterNum);
 void GP_MOUSEMOVE(int, int, Player*);
 void GetTurnChangeTimer(HWND hWnd, Player* player);
+void SetMyTurnPrint(HWND hWnd);
+void SetEnemyTurnPrint(HWND hWnd);
+int GetPrint();
 
 
 // From Main Screen

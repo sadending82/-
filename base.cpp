@@ -190,7 +190,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	{
 		switch (wParam)
 		{
-		case 1:
+		case Base_Timer:
 		{
 			if(!is_pause)
 				IG_Timer(cursor, &map_yPos, cRect, &master);
@@ -204,7 +204,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			InvalidateRect(hWnd, NULL, FALSE);
 		}
 			break;
-		case 10:
+		case Card_Timer:
 		{
 			int num = 0;
 			for (int i = 0; i < 50; ++i)
@@ -224,7 +224,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 		}
 			break;
-		case 25:
+		case Print_Timer:
+		{
+			int printNum = GetPrint();
+			switch (printNum)
+			{
+			case 1:
+				SetMyTurnPrint(hWnd);
+				break;
+			case 2:
+				SetEnemyTurnPrint(hWnd);
+				break;
+			default:
+				break;
+			}
+		}
+		break;
+		case TurnDelay_Timer:
 		{
 			KillTimer(hWnd, 25);
 			GetTurnChangeTimer(hWnd, &player);
