@@ -1149,7 +1149,12 @@ static void DrawCard(HWND hWnd, HDC hDC, Player* player)
 						player->deck.card[i].right - player->deck.card[i].left, player->deck.card[i].bottom - player->deck.card[i].top, 0, 0, pw, ph);
 					WCHAR lstr[10] = { 0 };
 					wsprintf(lstr, L"%d", CalcDmg(player));
+					if (player->deck.card[i].is_enhanced)
+					{
+						SetTextColor(hDC, RGB(0, 255, 0));
+					}
 					TextOut(hDC, player->deck.card[frontCard].left + 98, player->deck.card[frontCard].top + 183, lstr, lstrlen(lstr));
+					SetTextColor(hDC, white);
 				}
 				else if (player->deck.card[i].type == Card_Type_Deffence)
 				{
@@ -1159,7 +1164,12 @@ static void DrawCard(HWND hWnd, HDC hDC, Player* player)
 						player->deck.card[i].right - player->deck.card[i].left, player->deck.card[i].bottom - player->deck.card[i].top, 0, 0, pw, ph);
 					WCHAR lstr[10] = { 0 };
 					wsprintf(lstr, L"%d", CalcShield(player));
+					if (player->deck.card[i].is_enhanced)
+					{
+						SetTextColor(hDC, RGB(0, 255, 0));
+					}
 					TextOut(hDC, player->deck.card[frontCard].left + 98, player->deck.card[frontCard].top + 183, lstr, lstrlen(lstr));
+					SetTextColor(hDC, white);
 				}
 			}
 		}
@@ -2811,7 +2821,14 @@ void SetCardPos(HWND hWnd, Player* player, int num)
 
 int CalcDmg(Player* player)
 {
-	myAtkDmg = 5 + player->item.buffs[0].num;
+	if (player->deck.card[frontCard].is_enhanced)
+	{
+		myAtkDmg = 8 + player->item.buffs[0].num;
+	}
+	else
+	{
+		myAtkDmg = 5 + player->item.buffs[0].num;
+	}
 	return myAtkDmg;
 }
 
@@ -2850,7 +2867,15 @@ void CalcDmg(Player* player, Monster monster)
 }
 int CalcShield(Player* player)
 {
-	return 5 + player->item.buffs[1].num;
+	if (player->deck.card[frontCard].is_enhanced)
+	{
+		return 8 + player->item.buffs[1].num;
+	}
+	else
+	{
+		return 5 + player->item.buffs[1].num;
+	}
+
 }
 
 void TurnChange(HWND hWnd, Player* player)
