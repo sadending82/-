@@ -151,7 +151,12 @@ void DisplayGame(HWND hWnd, HDC hDC, Player* player)
 					player->deck.card[frontCard].right - player->deck.card[frontCard].left, player->deck.card[frontCard].bottom - player->deck.card[frontCard].top, 0, 0, pw, ph);
 				WCHAR lstr[10] = { 0 };
 				wsprintf(lstr, L"%d", CalcDmg(player));
+				if (player->deck.card[frontCard].is_enhanced)
+				{
+					SetTextColor(hDC, RGB(0, 255, 0));
+				}
 				TextOut(hDC, player->deck.card[frontCard].left + 98, player->deck.card[frontCard].top + 183, lstr, lstrlen(lstr));
+				SetTextColor(hDC, white);
 
 			}
 			else if (player->deck.card[frontCard].type == Card_Type_Deffence)
@@ -162,7 +167,12 @@ void DisplayGame(HWND hWnd, HDC hDC, Player* player)
 					player->deck.card[frontCard].right - player->deck.card[frontCard].left, player->deck.card[frontCard].bottom - player->deck.card[frontCard].top, 0, 0, pw, ph);
 				WCHAR lstr[10] = { 0 };
 				wsprintf(lstr, L"%d", CalcShield(player));
+				if (player->deck.card[frontCard].is_enhanced)
+				{
+					SetTextColor(hDC, RGB(0, 255, 0));
+				}
 				TextOut(hDC, player->deck.card[frontCard].left + 98, player->deck.card[frontCard].top + 183, lstr, lstrlen(lstr));
+				SetTextColor(hDC, white);
 			}
 		}
 
@@ -2990,14 +3000,6 @@ void CheckState(HWND hWnd, Player* player)
 		}
 	}
 
-	if (!isCharMove)
-	{
-		if (player->cost == 0)
-		{
-			SetTurnChangeTimer(hWnd);
-			return;
-		}
-	}
 }
 
 
