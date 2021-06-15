@@ -3052,14 +3052,14 @@ int GetPrint()
 
 void PlayerDefeat(HWND hWnd)
 {
-	
-	KillTimer(hWnd, 1);
-	MessageBox(hWnd, L"플레이어 패배", L"패배", MB_OK);
+	ChangeScreenNumber(0);
 }
 
 void PlayerWin(HWND hWnd)
 {
-
+	Master* master = GetMaster();
+	master->screen_numbers.In_Game_Screen_num = Out_of_game;
+	master->booleans.Is_print_map = TRUE;
 	ChangeScreenNumber(1);
 }
 
