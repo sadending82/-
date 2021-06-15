@@ -277,7 +277,7 @@ void make_map(Master* master, RECT cRect)
 	Set_IG_POINT(cRect);
 		// 시작 방에서 고정된 맵을 생성하고 랜덤한 타입값을 준다.
 	master->stage.map.num_of_rooms = 13;
-	
+	master->stage.floor_num = 1;
 	if(master->stage.map.All_room==NULL)
 		master->stage.map.All_room = (Room**)malloc(sizeof(Room*) * master->stage.map.num_of_rooms);
 	//실행이 안 되면 위 방들을 초기화해줘라
@@ -564,13 +564,20 @@ void print_Status_Bar(HDC hMemDC, RECT cRect, Master master)
 	TCHAR Hp_bar[20];
 	TCHAR Money_bar[20];
 	TCHAR Deck_bar[20];
+	TCHAR Stage_bar[20];
+	TCHAR Floor_bar[20];
+
 	wsprintf(Hp_bar, L"%d / %d", master.player.hp.Current_hp, master.player.hp.Max_hp);
 	wsprintf(Money_bar, L"%3d", master.player.money);
 	wsprintf(Deck_bar, L"%2d", master.player.deck.num_of_cards);
-	// 이 부분은 옛날 과제에서 팩맨 색 바꾸던 코드 참고
+	wsprintf(Stage_bar, L"%d", master.stage.stage_num);
+	wsprintf(Floor_bar, L"%d", master.stage.floor_num);
+
 	TextOut(hMemDC, 225, 7, Hp_bar, _tcslen(Hp_bar));
 	TextOut(hMemDC, 320, 7, Money_bar, _tcslen(Money_bar));
 	TextOut(hMemDC, cRect.right - cStatus_Bar.GetHeight() * 2 + 12, 17, Deck_bar, _tcslen(Deck_bar));
+	TextOut(hMemDC, 612, 7, Stage_bar, _tcslen(Stage_bar));
+	TextOut(hMemDC, 562, 7, Floor_bar, _tcslen(Floor_bar));
 }
 // 지도가 위 아래로 움직이는걸 구현할 함수
 void IG_MOUSEMOVE(int mx, int my, POINT* cursor)
@@ -667,6 +674,7 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 						}
 						// 위 작업이 끝나면 아래 코드가 실행되어야함
 						master->stage.map.Current_Room = master->stage.map.All_room[i];
+						master->stage.floor_num++;
 					}
 		}
 	RECT tmp;

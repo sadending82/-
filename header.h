@@ -144,6 +144,7 @@ typedef struct {
 
 typedef struct {
 	int stage_num;
+	int floor_num;
 	Map map;
 }Stage;
 

@@ -245,7 +245,7 @@ void MS_MENU_1(HWND hWnd,int answer, int *screen_number)
 
 }
 
-
+// 캐릭터 선택할때 한번만 불려야함
 void Set_player(int occupation,Master* master)
 {
 	switch (occupation)
@@ -277,4 +277,5 @@ void Set_player(int occupation,Master* master)
 		SetCard(&master->player);
 		break;
 	}
+	master->stage.stage_num = 1; // 
 }
