@@ -22,6 +22,7 @@ static CImage slmIdle1, slmIdle2, slmIdle3, slmIdle4, slmIdle5, slmIdle6;
 static CImage slmAttack1, slmAttack2, slmAttack3, slmAttack4, slmAttack5, slmAttack6;
 static CImage turnEnd, turnEnd_;
 static CImage HPbar, HPred;
+static CImage shield;
 
 static int frontCard = 0;
 static BOOL isFront = FALSE;
@@ -37,9 +38,15 @@ static BOOL isMouseUpTurnEnd = FALSE;
 static BOOL isMyTurnPrint = FALSE;
 static BOOL isEnemyTurnPrint = FALSE;
 
+static BOOL isEnemyDmgPrint = FALSE;
+static BOOL isMyDmgPrint = FALSE;
+
 static int MoveCard = 0;
 
 static int AtkMonster = 0;
+
+static int monsterAtkDmg = 0;
+static int myAtkDmg = 0;
 
 static Monster monster[3] = { 0 };
 static int monsterCount = 0;
@@ -47,6 +54,7 @@ static int monsterCount = 0;
 static int timer = 0;
 static int monsterTimer[3] = { 0 };
 static int CardTimer[50] = { 0 };
+static int DmgTimer = 0;
 
 static int TurnMonsterNum = 0;
 
@@ -66,7 +74,8 @@ void PlayerDeffence(HWND hWnd, Player* player);
 void TurnChange(HWND hWnd, Player* player);
 void SetCardPos(HWND hWnd, Player* player, int num);
 int CalcDmg(Player* player);
-int CalcDmg(Monster monster);
+void CalcDmg(Player* player, Monster monster);
+int CalcShield(Player* player);
 void PlayerDefeat(HWND hWnd);
 void PlayerWin(HWND hWnd);
 void CheckState(HWND hWnd, Player* player);
@@ -321,6 +330,10 @@ void SetImg()
 	{
 		HPred.Load(L"HP_Bar_HP.png");
 	}
+	if (shield.IsNull())
+	{
+		shield.Load(L"¹æÆÐ.png");
+	}
 	
 }
 
@@ -347,6 +360,24 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 				int intper = (int)percent;
 				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
 			}
+			HFONT hFont, oldFont;
+			hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+			oldFont = (HFONT)SelectObject(hDC, hFont);
+			WCHAR str[20];
+			wsprintf(str, L"%d / %d", player->hp.Current_hp, player->hp.Max_hp);
+			SIZE size;
+			GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
+			SelectObject(hDC, oldFont);
+			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++;
 			if (timer >= 10)
 			{
@@ -367,6 +398,24 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 				float percent = hpw * (player->hp.Current_hp / (float)(player->hp.Max_hp));
 				int intper = (int)percent;
 				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
+			}
+			HFONT hFont, oldFont;
+			hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+			oldFont = (HFONT)SelectObject(hDC, hFont);
+			WCHAR str[20];
+			wsprintf(str, L"%d / %d", player->hp.Current_hp, player->hp.Max_hp);
+			SIZE size;
+			GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
+			SelectObject(hDC, oldFont);
+			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
 			}
 			timer++;
 			if (timer >= 20)
@@ -389,6 +438,24 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 				int intper = (int)percent;
 				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
 			}
+			HFONT hFont, oldFont;
+			hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+			oldFont = (HFONT)SelectObject(hDC, hFont);
+			WCHAR str[20];
+			wsprintf(str, L"%d / %d", player->hp.Current_hp, player->hp.Max_hp);
+			SIZE size;
+			GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
+			SelectObject(hDC, oldFont);
+			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++;
 			if (timer >= 30)
 			{
@@ -410,6 +477,24 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 				int intper = (int)percent;
 				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
 			}
+			HFONT hFont, oldFont;
+			hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+			oldFont = (HFONT)SelectObject(hDC, hFont);
+			WCHAR str[20];
+			wsprintf(str, L"%d / %d", player->hp.Current_hp, player->hp.Max_hp);
+			SIZE size;
+			GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
+			SelectObject(hDC, oldFont);
+			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++;
 			if (timer >= 40)
 			{
@@ -430,6 +515,24 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 				float percent = hpw * (player->hp.Current_hp / (float)(player->hp.Max_hp));
 				int intper = (int)percent;
 				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
+			}
+			HFONT hFont, oldFont;
+			hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+			oldFont = (HFONT)SelectObject(hDC, hFont);
+			WCHAR str[20];
+			wsprintf(str, L"%d / %d", player->hp.Current_hp, player->hp.Max_hp);
+			SIZE size;
+			GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
+			SelectObject(hDC, oldFont);
+			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
 			}
 			timer++; 
 			if (timer >= 50)
@@ -468,6 +571,24 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
 			}
 			TextOut(hDC, 600, 200, L"°ø  °Ý", 4);
+			HFONT hFont, oldFont;
+			hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+			oldFont = (HFONT)SelectObject(hDC, hFont);
+			WCHAR str[20];
+			wsprintf(str, L"%d / %d", player->hp.Current_hp, player->hp.Max_hp);
+			SIZE size;
+			GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
+			SelectObject(hDC, oldFont);
+			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++;
 			if (timer >= 7)
 			{
@@ -489,6 +610,24 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 				float percent = hpw * (player->hp.Current_hp / (float)(player->hp.Max_hp));
 				int intper = (int)percent;
 				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
+			}
+			HFONT hFont, oldFont;
+			hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+			oldFont = (HFONT)SelectObject(hDC, hFont);
+			WCHAR str[20];
+			wsprintf(str, L"%d / %d", player->hp.Current_hp, player->hp.Max_hp);
+			SIZE size;
+			GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
+			SelectObject(hDC, oldFont);
+			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
 			}
 			timer++;
 			if (timer >= 14)
@@ -513,6 +652,24 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 				int intper = (int)percent;
 				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
 			}
+			HFONT hFont, oldFont;
+			hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+			oldFont = (HFONT)SelectObject(hDC, hFont);
+			WCHAR str[20];
+			wsprintf(str, L"%d / %d", player->hp.Current_hp, player->hp.Max_hp);
+			SIZE size;
+			GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
+			SelectObject(hDC, oldFont);
+			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++;
 			if (timer >= 21)
 			{
@@ -535,10 +692,41 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 				int intper = (int)percent;
 				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
 			}
+			HFONT hFont, oldFont;
+			hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+			oldFont = (HFONT)SelectObject(hDC, hFont);
+			WCHAR str[20];
+			wsprintf(str, L"%d / %d", player->hp.Current_hp, player->hp.Max_hp);
+			SIZE size;
+			GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
+			SelectObject(hDC, oldFont);
+			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++;
 			if (timer >= 28)
 			{
 				player->animation_num++;
+
+				monster[AtkMonster].hp.Current_hp -= CalcDmg(player);
+
+				if (monster[AtkMonster].hp.Current_hp <= 0)
+				{
+					monster[AtkMonster].hp.Current_hp = 0;
+				}
+
+				monster[AtkMonster].animation_state = State_Attacked;
+				monster[AtkMonster].animation_num = 0;
+				monsterTimer[AtkMonster] = 0;
+				DmgTimer = 0;
+				SetMyDmgPrint(hWnd);
 			}
 
 		}
@@ -557,6 +745,24 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 				float percent = hpw * (player->hp.Current_hp / (float)(player->hp.Max_hp));
 				int intper = (int)percent;
 				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
+			}
+			HFONT hFont, oldFont;
+			hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+			oldFont = (HFONT)SelectObject(hDC, hFont);
+			WCHAR str[20];
+			wsprintf(str, L"%d / %d", player->hp.Current_hp, player->hp.Max_hp);
+			SIZE size;
+			GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
+			SelectObject(hDC, oldFont);
+			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
 			}
 			timer++;
 			if (timer >= 35)
@@ -580,6 +786,24 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 				int intper = (int)percent;
 				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
 			}
+			HFONT hFont, oldFont;
+			hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+			oldFont = (HFONT)SelectObject(hDC, hFont);
+			WCHAR str[20];
+			wsprintf(str, L"%d / %d", player->hp.Current_hp, player->hp.Max_hp);
+			SIZE size;
+			GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
+			SelectObject(hDC, oldFont);
+			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++;
 			if (timer >= 42)
 			{
@@ -602,6 +826,24 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 				int intper = (int)percent;
 				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
 			}
+			HFONT hFont, oldFont;
+			hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+			oldFont = (HFONT)SelectObject(hDC, hFont);
+			WCHAR str[20];
+			wsprintf(str, L"%d / %d", player->hp.Current_hp, player->hp.Max_hp);
+			SIZE size;
+			GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
+			SelectObject(hDC, oldFont);
+			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++;
 			if (timer >= 49)
 			{
@@ -623,6 +865,24 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 				float percent = hpw * (player->hp.Current_hp / (float)(player->hp.Max_hp));
 				int intper = (int)percent;
 				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
+			}
+			HFONT hFont, oldFont;
+			hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+			oldFont = (HFONT)SelectObject(hDC, hFont);
+			WCHAR str[20];
+			wsprintf(str, L"%d / %d", player->hp.Current_hp, player->hp.Max_hp);
+			SIZE size;
+			GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
+			SelectObject(hDC, oldFont);
+			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
 			}
 			timer++;
 			if (timer >= 56)
@@ -658,6 +918,24 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			int intper = (int)percent;
 			HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
 		}
+		HFONT hFont, oldFont;
+		hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+		oldFont = (HFONT)SelectObject(hDC, hFont);
+		WCHAR str[20];
+		wsprintf(str, L"%d / %d", player->hp.Current_hp, player->hp.Max_hp);
+		SIZE size;
+		GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+		TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
+		SelectObject(hDC, oldFont);
+		DeleteObject(hFont);
+		if (player->hp.Shield_figure > 0)
+		{
+			wsprintf(str, L"+     %d", player->hp.Shield_figure);
+			TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+			int sw = shield.GetWidth();
+			int sh = shield.GetHeight();
+			shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+		}
 		timer++;
 		if (timer >= 56)
 		{
@@ -675,7 +953,177 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 	}
 	else if (player->animation_state == State_Attacked)
 	{
+		switch (player->animation_num)
+		{
+		case 0:
+		{
+			int pw = charIdle1.GetWidth();
+			int ph = charIdle1.GetHeight();
+			charIdle1.Draw(hDC, player->x - 30, 350, pw * 2, ph * 2, 0, 0, pw, ph);
+			int hpw = HPbar.GetWidth();
+			int hph = HPbar.GetHeight();
+			HPbar.Draw(hDC, player->x + (pw / 2), 350 + (ph * 2), hpw, hph, 0, 0, hpw, hph);
+			if (player->hp.Current_hp > 0)
+			{
+				float percent = hpw * (player->hp.Current_hp / (float)(player->hp.Max_hp));
+				int intper = (int)percent;
+				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
+			}
+			HFONT hFont, oldFont;
+			hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+			oldFont = (HFONT)SelectObject(hDC, hFont);
+			WCHAR str[20];
+			wsprintf(str, L"%d / %d", player->hp.Current_hp, player->hp.Max_hp);
+			SIZE size;
+			GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
+			SelectObject(hDC, oldFont);
+			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
+			timer++;
+			if (timer >= 5)
+			{
+				player->animation_num++;
+			}
+		}
+			break;
+		case 1:
+		{
+			int pw = charIdle1.GetWidth();
+			int ph = charIdle1.GetHeight();
+			charIdle1.Draw(hDC, player->x - 20, 350, pw * 2, ph * 2, 0, 0, pw, ph);
+			int hpw = HPbar.GetWidth();
+			int hph = HPbar.GetHeight();
+			HPbar.Draw(hDC, player->x + (pw / 2), 350 + (ph * 2), hpw, hph, 0, 0, hpw, hph);
+			if (player->hp.Current_hp > 0)
+			{
+				float percent = hpw * (player->hp.Current_hp / (float)(player->hp.Max_hp));
+				int intper = (int)percent;
+				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
+			}
+			HFONT hFont, oldFont;
+			hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+			oldFont = (HFONT)SelectObject(hDC, hFont);
+			WCHAR str[20];
+			wsprintf(str, L"%d / %d", player->hp.Current_hp, player->hp.Max_hp);
+			SIZE size;
+			GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
+			SelectObject(hDC, oldFont);
+			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
+			timer++;
+			if (timer >= 15)
+			{
+				player->animation_num++;
+			}
+		}
+			break;
+		case 2:
+		{
+			int pw = charIdle1.GetWidth();
+			int ph = charIdle1.GetHeight();
+			charIdle1.Draw(hDC, player->x - 10, 350, pw * 2, ph * 2, 0, 0, pw, ph);
+			int hpw = HPbar.GetWidth();
+			int hph = HPbar.GetHeight();
+			HPbar.Draw(hDC, player->x + (pw / 2), 350 + (ph * 2), hpw, hph, 0, 0, hpw, hph);
+			if (player->hp.Current_hp > 0)
+			{
+				float percent = hpw * (player->hp.Current_hp / (float)(player->hp.Max_hp));
+				int intper = (int)percent;
+				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
+			}
+			HFONT hFont, oldFont;
+			hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+			oldFont = (HFONT)SelectObject(hDC, hFont);
+			WCHAR str[20];
+			wsprintf(str, L"%d / %d", player->hp.Current_hp, player->hp.Max_hp);
+			SIZE size;
+			GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
+			SelectObject(hDC, oldFont);
+			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
+			timer++;
+			if (timer >= 25)
+			{
+				player->animation_num++;
+			}
+		}
+			break;
+		case 3:
+		{
+			int pw = charIdle1.GetWidth();
+			int ph = charIdle1.GetHeight();
+			charIdle1.Draw(hDC, player->x, 350, pw * 2, ph * 2, 0, 0, pw, ph);
+			int hpw = HPbar.GetWidth();
+			int hph = HPbar.GetHeight();
+			HPbar.Draw(hDC, player->x + (pw / 2), 350 + (ph * 2), hpw, hph, 0, 0, hpw, hph);
+			if (player->hp.Current_hp > 0)
+			{
+				float percent = hpw * (player->hp.Current_hp / (float)(player->hp.Max_hp));
+				int intper = (int)percent;
+				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
+			}
+			HFONT hFont, oldFont;
+			hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+			oldFont = (HFONT)SelectObject(hDC, hFont);
+			WCHAR str[20];
+			wsprintf(str, L"%d / %d", player->hp.Current_hp, player->hp.Max_hp);
+			SIZE size;
+			GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
+			SelectObject(hDC, oldFont);
+			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
+			timer++;
+			if (timer >= 35)
+			{
+				player->animation_num = 0;
+				player->animation_state = State_Idle;
+				timer = 0;
+			}
+		}
+			break;
+		}
+	}
 
+	if (isEnemyDmgPrint)
+	{
+		DmgTimer++;
+		WCHAR tstr[20] = { 0 };
+		int pw = charIdle1.GetWidth();
+		int ph = charIdle1.GetHeight();
+		wsprintf(tstr, L"%d", monsterAtkDmg);
+		TextOut(hDC, player->x + 100, 350 - DmgTimer, tstr, lstrlen(tstr));
 	}
 }
 
@@ -736,6 +1184,16 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 								int intper = (int)percent;
 								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
 							}
+							HFONT hFont, oldFont;
+							hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+							oldFont = (HFONT)SelectObject(hDC, hFont);
+							WCHAR str[20];
+							wsprintf(str, L"%d / %d", monster[i].hp.Current_hp, monster[i].hp.Max_hp);
+							SIZE size;
+							GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+							TextOut(hDC, monster[i].x - (mw / 2) + (size.cx / 2) + 7, 550 + (mh * 2), str, lstrlen(str));
+							SelectObject(hDC, oldFont);
+							DeleteObject(hFont);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 5)
 							{
@@ -757,6 +1215,16 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 								int intper = (int)percent;
 								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
 							}
+							HFONT hFont, oldFont;
+							hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+							oldFont = (HFONT)SelectObject(hDC, hFont);
+							WCHAR str[20];
+							wsprintf(str, L"%d / %d", monster[i].hp.Current_hp, monster[i].hp.Max_hp);
+							SIZE size;
+							GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+							TextOut(hDC, monster[i].x - (mw / 2) + (size.cx / 2) + 7, 550 + (mh * 2), str, lstrlen(str));
+							SelectObject(hDC, oldFont);
+							DeleteObject(hFont);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 10)
 							{
@@ -778,6 +1246,16 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 								int intper = (int)percent;
 								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
 							}
+							HFONT hFont, oldFont;
+							hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+							oldFont = (HFONT)SelectObject(hDC, hFont);
+							WCHAR str[20];
+							wsprintf(str, L"%d / %d", monster[i].hp.Current_hp, monster[i].hp.Max_hp);
+							SIZE size;
+							GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+							TextOut(hDC, monster[i].x - (mw / 2) + (size.cx / 2) + 7, 550 + (mh * 2), str, lstrlen(str));
+							SelectObject(hDC, oldFont);
+							DeleteObject(hFont);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 15)
 							{
@@ -799,6 +1277,16 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 								int intper = (int)percent;
 								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
 							}
+							HFONT hFont, oldFont;
+							hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+							oldFont = (HFONT)SelectObject(hDC, hFont);
+							WCHAR str[20];
+							wsprintf(str, L"%d / %d", monster[i].hp.Current_hp, monster[i].hp.Max_hp);
+							SIZE size;
+							GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+							TextOut(hDC, monster[i].x - (mw / 2) + (size.cx / 2) + 7, 550 + (mh * 2), str, lstrlen(str));
+							SelectObject(hDC, oldFont);
+							DeleteObject(hFont);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 20)
 							{
@@ -820,6 +1308,16 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 								int intper = (int)percent;
 								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
 							}
+							HFONT hFont, oldFont;
+							hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+							oldFont = (HFONT)SelectObject(hDC, hFont);
+							WCHAR str[20];
+							wsprintf(str, L"%d / %d", monster[i].hp.Current_hp, monster[i].hp.Max_hp);
+							SIZE size;
+							GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+							TextOut(hDC, monster[i].x - (mw / 2) + (size.cx / 2) + 7, 550 + (mh * 2), str, lstrlen(str));
+							SelectObject(hDC, oldFont);
+							DeleteObject(hFont);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 25)
 							{
@@ -841,6 +1339,16 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 								int intper = (int)percent;
 								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
 							}
+							HFONT hFont, oldFont;
+							hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+							oldFont = (HFONT)SelectObject(hDC, hFont);
+							WCHAR str[20];
+							wsprintf(str, L"%d / %d", monster[i].hp.Current_hp, monster[i].hp.Max_hp);
+							SIZE size;
+							GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+							TextOut(hDC, monster[i].x - (mw / 2) + (size.cx / 2) + 7, 550 + (mh * 2), str, lstrlen(str));
+							SelectObject(hDC, oldFont);
+							DeleteObject(hFont);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 30)
 							{
@@ -865,6 +1373,25 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 							int mw = slmIdle1.GetWidth();
 							int mh = slmIdle1.GetHeight();
 							slmIdle1.Draw(hDC, monster[i].x - (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							int hpw = HPbar.GetWidth();
+							int hph = HPbar.GetHeight();
+							HPbar.Draw(hDC, monster[i].x - (mw / 2), 550 + (mh * 2), hpw, hph, 0, 0, hpw, hph);
+							if (monster[i].hp.Current_hp > 0)
+							{
+								float percent = hpw * (monster[i].hp.Current_hp / (float)(monster[i].hp.Max_hp));
+								int intper = (int)percent;
+								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
+							}
+							HFONT hFont, oldFont;
+							hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+							oldFont = (HFONT)SelectObject(hDC, hFont);
+							WCHAR str[20];
+							wsprintf(str, L"%d / %d", monster[i].hp.Current_hp, monster[i].hp.Max_hp);
+							SIZE size;
+							GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+							TextOut(hDC, monster[i].x - (mw / 2) + (size.cx / 2) + 7, 550 + (mh * 2), str, lstrlen(str));
+							SelectObject(hDC, oldFont);
+							DeleteObject(hFont);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 5)
 							{
@@ -877,6 +1404,25 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 							int mw = slmIdle2.GetWidth();
 							int mh = slmIdle2.GetHeight();
 							slmIdle2.Draw(hDC, monster[i].x - (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							int hpw = HPbar.GetWidth();
+							int hph = HPbar.GetHeight();
+							HPbar.Draw(hDC, monster[i].x - (mw / 2), 550 + (mh * 2), hpw, hph, 0, 0, hpw, hph);
+							if (monster[i].hp.Current_hp > 0)
+							{
+								float percent = hpw * (monster[i].hp.Current_hp / (float)(monster[i].hp.Max_hp));
+								int intper = (int)percent;
+								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
+							}
+							HFONT hFont, oldFont;
+							hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+							oldFont = (HFONT)SelectObject(hDC, hFont);
+							WCHAR str[20];
+							wsprintf(str, L"%d / %d", monster[i].hp.Current_hp, monster[i].hp.Max_hp);
+							SIZE size;
+							GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+							TextOut(hDC, monster[i].x - (mw / 2) + (size.cx / 2) + 7, 550 + (mh * 2), str, lstrlen(str));
+							SelectObject(hDC, oldFont);
+							DeleteObject(hFont);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 10)
 							{
@@ -889,6 +1435,25 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 							int mw = slmIdle3.GetWidth();
 							int mh = slmIdle3.GetHeight();
 							slmIdle3.Draw(hDC, monster[i].x - (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							int hpw = HPbar.GetWidth();
+							int hph = HPbar.GetHeight();
+							HPbar.Draw(hDC, monster[i].x - (mw / 2), 550 + (mh * 2), hpw, hph, 0, 0, hpw, hph);
+							if (monster[i].hp.Current_hp > 0)
+							{
+								float percent = hpw * (monster[i].hp.Current_hp / (float)(monster[i].hp.Max_hp));
+								int intper = (int)percent;
+								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
+							}
+							HFONT hFont, oldFont;
+							hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+							oldFont = (HFONT)SelectObject(hDC, hFont);
+							WCHAR str[20];
+							wsprintf(str, L"%d / %d", monster[i].hp.Current_hp, monster[i].hp.Max_hp);
+							SIZE size;
+							GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+							TextOut(hDC, monster[i].x - (mw / 2) + (size.cx / 2) + 7, 550 + (mh * 2), str, lstrlen(str));
+							SelectObject(hDC, oldFont);
+							DeleteObject(hFont);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 15)
 							{
@@ -902,15 +1467,37 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 							int mh = slmAttack1.GetHeight();
 							slmAttack1.Draw(hDC, player->x + (mw / 2) + 50, 150 + (monsterTimer[i] - 1) * 15, mw * 2, mh * 2, 0, 0, mw, mh);
 							TextOut(hDC, 600, 200, L"°ø  °Ý", 4);
+							mw = slmIdle1.GetWidth();
+							mh = slmIdle1.GetHeight();
+							int hpw = HPbar.GetWidth();
+							int hph = HPbar.GetHeight();
+							HPbar.Draw(hDC, monster[i].x - (mw / 2), 550 + (mh * 2), hpw, hph, 0, 0, hpw, hph);
+							if (monster[i].hp.Current_hp > 0)
+							{
+								float percent = hpw * (monster[i].hp.Current_hp / (float)(monster[i].hp.Max_hp));
+								int intper = (int)percent;
+								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
+							}
+							HFONT hFont, oldFont;
+							hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+							oldFont = (HFONT)SelectObject(hDC, hFont);
+							WCHAR str[20];
+							wsprintf(str, L"%d / %d", monster[i].hp.Current_hp, monster[i].hp.Max_hp);
+							SIZE size;
+							GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+							TextOut(hDC, monster[i].x - (mw / 2) + (size.cx / 2) + 7, 550 + (mh * 2), str, lstrlen(str));
+							SelectObject(hDC, oldFont);
+							DeleteObject(hFont);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 30)
 							{
 								monster[i].animation_num++;
-								player->hp.Current_hp -= CalcDmg(monster[TurnMonsterNum]);
-								if (player->hp.Current_hp <= 0)
-								{
-									player->hp.Current_hp = 0;
-								}
+								CalcDmg(player, monster[i]);
+								DmgTimer = 0;
+								SetEnemyDmgPrint(hWnd);
+
+								player->animation_state = State_Attacked;
+								player->animation_num = 0;
 							}
 						}
 						break;
@@ -920,6 +1507,27 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 							int mh = slmAttack2.GetHeight();
 							slmAttack2.Draw(hDC, player->x + (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
 							TextOut(hDC, 600, 200, L"°ø  °Ý", 4);
+							mw = slmIdle1.GetWidth();
+							mh = slmIdle1.GetHeight();
+							int hpw = HPbar.GetWidth();
+							int hph = HPbar.GetHeight();
+							HPbar.Draw(hDC, monster[i].x - (mw / 2), 550 + (mh * 2), hpw, hph, 0, 0, hpw, hph);
+							if (monster[i].hp.Current_hp > 0)
+							{
+								float percent = hpw * (monster[i].hp.Current_hp / (float)(monster[i].hp.Max_hp));
+								int intper = (int)percent;
+								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
+							}
+							HFONT hFont, oldFont;
+							hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+							oldFont = (HFONT)SelectObject(hDC, hFont);
+							WCHAR str[20];
+							wsprintf(str, L"%d / %d", monster[i].hp.Current_hp, monster[i].hp.Max_hp);
+							SIZE size;
+							GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+							TextOut(hDC, monster[i].x - (mw / 2) + (size.cx / 2) + 7, 550 + (mh * 2), str, lstrlen(str));
+							SelectObject(hDC, oldFont);
+							DeleteObject(hFont);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 35)
 							{
@@ -933,6 +1541,27 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 							int mh = slmAttack3.GetHeight();
 							slmAttack3.Draw(hDC, player->x + (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
 							TextOut(hDC, 600, 200, L"°ø  °Ý", 4);
+							mw = slmIdle1.GetWidth();
+							mh = slmIdle1.GetHeight();
+							int hpw = HPbar.GetWidth();
+							int hph = HPbar.GetHeight();
+							HPbar.Draw(hDC, monster[i].x - (mw / 2), 550 + (mh * 2), hpw, hph, 0, 0, hpw, hph);
+							if (monster[i].hp.Current_hp > 0)
+							{
+								float percent = hpw * (monster[i].hp.Current_hp / (float)(monster[i].hp.Max_hp));
+								int intper = (int)percent;
+								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
+							}
+							HFONT hFont, oldFont;
+							hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+							oldFont = (HFONT)SelectObject(hDC, hFont);
+							WCHAR str[20];
+							wsprintf(str, L"%d / %d", monster[i].hp.Current_hp, monster[i].hp.Max_hp);
+							SIZE size;
+							GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+							TextOut(hDC, monster[i].x - (mw / 2) + (size.cx / 2) + 7, 550 + (mh * 2), str, lstrlen(str));
+							SelectObject(hDC, oldFont);
+							DeleteObject(hFont);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 45)
 							{
@@ -946,6 +1575,27 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 							int mh = slmAttack4.GetHeight();
 							slmAttack4.Draw(hDC, player->x + (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
 							TextOut(hDC, 600, 200, L"°ø  °Ý", 4);
+							mw = slmIdle1.GetWidth();
+							mh = slmIdle1.GetHeight();
+							int hpw = HPbar.GetWidth();
+							int hph = HPbar.GetHeight();
+							HPbar.Draw(hDC, monster[i].x - (mw / 2), 550 + (mh * 2), hpw, hph, 0, 0, hpw, hph);
+							if (monster[i].hp.Current_hp > 0)
+							{
+								float percent = hpw * (monster[i].hp.Current_hp / (float)(monster[i].hp.Max_hp));
+								int intper = (int)percent;
+								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
+							}
+							HFONT hFont, oldFont;
+							hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+							oldFont = (HFONT)SelectObject(hDC, hFont);
+							WCHAR str[20];
+							wsprintf(str, L"%d / %d", monster[i].hp.Current_hp, monster[i].hp.Max_hp);
+							SIZE size;
+							GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+							TextOut(hDC, monster[i].x - (mw / 2) + (size.cx / 2) + 7, 550 + (mh * 2), str, lstrlen(str));
+							SelectObject(hDC, oldFont);
+							DeleteObject(hFont);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 55)
 							{
@@ -959,6 +1609,27 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 							int mh = slmAttack5.GetHeight();
 							slmAttack5.Draw(hDC, player->x + (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
 							TextOut(hDC, 600, 200, L"°ø  °Ý", 4);
+							mw = slmIdle1.GetWidth();
+							mh = slmIdle1.GetHeight();
+							int hpw = HPbar.GetWidth();
+							int hph = HPbar.GetHeight();
+							HPbar.Draw(hDC, monster[i].x - (mw / 2), 550 + (mh * 2), hpw, hph, 0, 0, hpw, hph);
+							if (monster[i].hp.Current_hp > 0)
+							{
+								float percent = hpw * (monster[i].hp.Current_hp / (float)(monster[i].hp.Max_hp));
+								int intper = (int)percent;
+								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
+							}
+							HFONT hFont, oldFont;
+							hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+							oldFont = (HFONT)SelectObject(hDC, hFont);
+							WCHAR str[20];
+							wsprintf(str, L"%d / %d", monster[i].hp.Current_hp, monster[i].hp.Max_hp);
+							SIZE size;
+							GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+							TextOut(hDC, monster[i].x - (mw / 2) + (size.cx / 2) + 7, 550 + (mh * 2), str, lstrlen(str));
+							SelectObject(hDC, oldFont);
+							DeleteObject(hFont);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 65)
 							{
@@ -972,6 +1643,27 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 							int mh = slmAttack6.GetHeight();
 							slmAttack6.Draw(hDC, player->x + (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
 							TextOut(hDC, 600, 200, L"°ø  °Ý", 4);
+							mw = slmIdle1.GetWidth();
+							mh = slmIdle1.GetHeight();
+							int hpw = HPbar.GetWidth();
+							int hph = HPbar.GetHeight();
+							HPbar.Draw(hDC, monster[i].x - (mw / 2), 550 + (mh * 2), hpw, hph, 0, 0, hpw, hph);
+							if (monster[i].hp.Current_hp > 0)
+							{
+								float percent = hpw * (monster[i].hp.Current_hp / (float)(monster[i].hp.Max_hp));
+								int intper = (int)percent;
+								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
+							}
+							HFONT hFont, oldFont;
+							hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+							oldFont = (HFONT)SelectObject(hDC, hFont);
+							WCHAR str[20];
+							wsprintf(str, L"%d / %d", monster[i].hp.Current_hp, monster[i].hp.Max_hp);
+							SIZE size;
+							GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+							TextOut(hDC, monster[i].x - (mw / 2) + (size.cx / 2) + 7, 550 + (mh * 2), str, lstrlen(str));
+							SelectObject(hDC, oldFont);
+							DeleteObject(hFont);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 75)
 							{
@@ -1066,6 +1758,139 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 						break;
 						}
 					}
+					else if (State_Attacked)
+					{
+						switch (monster[i].animation_num)
+						{
+						case 0:
+						{
+							int mw = slmIdle1.GetWidth();
+							int mh = slmIdle1.GetHeight();
+							slmIdle1.Draw(hDC, monster[i].x - (mw / 2) + 30, 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							int hpw = HPbar.GetWidth();
+							int hph = HPbar.GetHeight();
+							HPbar.Draw(hDC, monster[i].x - (mw / 2), 550 + (mh * 2), hpw, hph, 0, 0, hpw, hph);
+							if (monster[i].hp.Current_hp > 0)
+							{
+								float percent = hpw * (monster[i].hp.Current_hp / (float)(monster[i].hp.Max_hp));
+								int intper = (int)percent;
+								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
+							}
+
+							HFONT hFont, oldFont;
+							hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+							oldFont = (HFONT)SelectObject(hDC, hFont);
+							WCHAR str[20];
+							wsprintf(str, L"%d / %d", monster[i].hp.Current_hp, monster[i].hp.Max_hp);
+							SIZE size;
+							GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+							TextOut(hDC, monster[i].x - (mw / 2) + (size.cx / 2) + 7, 550 + (mh * 2), str, lstrlen(str));
+							SelectObject(hDC, oldFont);
+							DeleteObject(hFont);
+							monsterTimer[i]++;
+							if (monsterTimer[i] >= 5)
+							{
+								monster[i].animation_num++;
+							}
+						}
+						break;
+						case 1:
+						{
+							int mw = slmIdle1.GetWidth();
+							int mh = slmIdle1.GetHeight();
+							slmIdle1.Draw(hDC, monster[i].x - (mw / 2) + 20, 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							int hpw = HPbar.GetWidth();
+							int hph = HPbar.GetHeight();
+							HPbar.Draw(hDC, monster[i].x - (mw / 2), 550 + (mh * 2), hpw, hph, 0, 0, hpw, hph);
+							if (monster[i].hp.Current_hp > 0)
+							{
+								float percent = hpw * (monster[i].hp.Current_hp / (float)(monster[i].hp.Max_hp));
+								int intper = (int)percent;
+								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
+							}
+							HFONT hFont, oldFont;
+							hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+							oldFont = (HFONT)SelectObject(hDC, hFont);
+							WCHAR str[20];
+							wsprintf(str, L"%d / %d", monster[i].hp.Current_hp, monster[i].hp.Max_hp);
+							SIZE size;
+							GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+							TextOut(hDC, monster[i].x - (mw / 2) + (size.cx / 2) + 7, 550 + (mh * 2), str, lstrlen(str));
+							SelectObject(hDC, oldFont);
+							DeleteObject(hFont);
+							monsterTimer[i]++;
+							if (monsterTimer[i] >= 15)
+							{
+								monster[i].animation_num++;
+							}
+						}
+						break;
+						case 2:
+						{
+							int mw = slmIdle1.GetWidth();
+							int mh = slmIdle1.GetHeight();
+							slmIdle1.Draw(hDC, monster[i].x - (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							int hpw = HPbar.GetWidth();
+							int hph = HPbar.GetHeight();
+							HPbar.Draw(hDC, monster[i].x - (mw / 2), 550 + (mh * 2), hpw, hph, 0, 0, hpw, hph);
+							if (monster[i].hp.Current_hp > 0)
+							{
+								float percent = hpw * (monster[i].hp.Current_hp / (float)(monster[i].hp.Max_hp));
+								int intper = (int)percent;
+								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
+							}
+							HFONT hFont, oldFont;
+							hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+							oldFont = (HFONT)SelectObject(hDC, hFont);
+							WCHAR str[20];
+							wsprintf(str, L"%d / %d", monster[i].hp.Current_hp, monster[i].hp.Max_hp);
+							SIZE size;
+							GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+							TextOut(hDC, monster[i].x - (mw / 2) + (size.cx / 2) + 7, 550 + (mh * 2), str, lstrlen(str));
+							SelectObject(hDC, oldFont);
+							DeleteObject(hFont);
+							monsterTimer[i]++;
+							if (monsterTimer[i] >= 25)
+							{
+								monster[i].animation_num++;
+							}
+						}
+						break;
+						case 3:
+						{
+							int mw = slmIdle1.GetWidth();
+							int mh = slmIdle1.GetHeight();
+							slmIdle1.Draw(hDC, monster[i].x - (mw / 2), 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							int hpw = HPbar.GetWidth();
+							int hph = HPbar.GetHeight();
+							HPbar.Draw(hDC, monster[i].x - (mw / 2), 550 + (mh * 2), hpw, hph, 0, 0, hpw, hph);
+							if (monster[i].hp.Current_hp > 0)
+							{
+								float percent = hpw * (monster[i].hp.Current_hp / (float)(monster[i].hp.Max_hp));
+								int intper = (int)percent;
+								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
+							}
+							HFONT hFont, oldFont;
+							hFont = CreateFont(15, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, L"±Ã¼­");
+							oldFont = (HFONT)SelectObject(hDC, hFont);
+							WCHAR str[20];
+							wsprintf(str, L"%d / %d", monster[i].hp.Current_hp, monster[i].hp.Max_hp);
+							SIZE size;
+							GetTextExtentPoint(hDC, str, lstrlen(str), &size);
+							TextOut(hDC, monster[i].x - (mw / 2) + (size.cx / 2) + 7, 550 + (mh * 2), str, lstrlen(str));
+							SelectObject(hDC, oldFont);
+							DeleteObject(hFont);
+							monsterTimer[i]++;
+							if (monsterTimer[i] >= 35)
+							{
+								monster[i].animation_state = State_Idle;
+								monster[i].animation_num = 0;
+								monsterTimer[i] = 0;
+							}
+						}
+						break;
+						}
+					}
 				}
 				break;
 				default:
@@ -1094,6 +1919,16 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 			}
 
 		}
+	}
+
+	if (isMyDmgPrint)
+	{
+		DmgTimer++;
+		WCHAR tstr[20] = { 0 };
+		int mw = slmIdle1.GetWidth();
+		int mh = slmIdle1.GetHeight();
+		wsprintf(tstr, L"%d", myAtkDmg);
+		TextOut(hDC, monster[AtkMonster].x - (mw / 2) + 50, 500 - DmgTimer, tstr, lstrlen(tstr));
 	}
 }
 
@@ -1635,12 +2470,7 @@ void PlayerAttack(HWND hWnd, Player* player)
 	isCharMove = TRUE;
 	timer = 0;
 
-	monster[AtkMonster].hp.Current_hp -= CalcDmg(player);
 
-	if (monster[AtkMonster].hp.Current_hp <= 0)
-	{
-		monster[AtkMonster].hp.Current_hp = 0;
-	}
 
 
 	isFront = FALSE;
@@ -1679,6 +2509,8 @@ void PlayerDeffence(HWND hWnd, Player* player)
 	player->animation_num = 0;
 	isCharMove = TRUE;
 	timer = 0;
+
+	player->hp.Shield_figure += CalcShield(player);
 
 	isFront = FALSE;
 	isSelected = FALSE;
@@ -1785,11 +2617,46 @@ void SetCardPos(HWND hWnd, Player* player, int num)
 
 int CalcDmg(Player* player)
 {
-	return 5;
+	myAtkDmg = 5 + player->item.buffs[0].num;
+	return myAtkDmg;
 }
-int CalcDmg(Monster monster)
+
+void CalcDmg(Player* player, Monster monster)
 {
-	return rand() % (monster.maxDmg-monster.minDmg + 1) + monster.minDmg;
+
+	monsterAtkDmg = rand() % (monster.maxDmg-monster.minDmg + 1) + monster.minDmg;
+	if (player->hp.Shield_figure > 0)
+	{
+		if (player->hp.Shield_figure >= monsterAtkDmg)
+		{
+			player->hp.Shield_figure -= monsterAtkDmg;
+		}
+		else
+		{
+			player->hp.Current_hp -= (monsterAtkDmg - player->hp.Shield_figure);
+
+			if (player->hp.Current_hp <= 0)
+			{
+				player->hp.Current_hp = 0;
+			}
+
+			player->hp.Shield_figure = 0;
+
+		}
+	}
+	else
+	{
+		player->hp.Current_hp -= monsterAtkDmg;
+
+		if (player->hp.Current_hp <= 0)
+		{
+			player->hp.Current_hp = 0;
+		}
+	}
+}
+int CalcShield(Player* player)
+{
+	return 5 + player->item.buffs[1].num;
 }
 
 void TurnChange(HWND hWnd, Player* player)
@@ -1948,6 +2815,50 @@ void SetEnemyTurnPrint(HWND hWnd)
 	}
 }
 
+void SetEnemyDmgPrint(HWND hWnd)
+{
+	if (isEnemyDmgPrint == FALSE)
+	{
+		isEnemyDmgPrint = TRUE;
+		isMyDmgPrint = FALSE;
+		SetTimer(hWnd, DmgPrint_Timer, 1500, NULL);
+	}
+	else
+	{
+		isEnemyDmgPrint = FALSE;
+		KillTimer(hWnd, DmgPrint_Timer);
+	}
+}
+
+void SetMyDmgPrint(HWND hWnd)
+{
+	if (isMyDmgPrint == FALSE)
+	{
+		isMyDmgPrint = TRUE;
+		isEnemyDmgPrint = FALSE;
+		SetTimer(hWnd, DmgPrint_Timer, 1500, NULL);
+	}
+	else
+	{
+		isMyDmgPrint = FALSE;
+		KillTimer(hWnd, DmgPrint_Timer);
+	}
+}
+
+int GetDmgPrint()
+{
+	if (isMyDmgPrint)
+	{
+		return 1;
+	}
+	else if (isEnemyDmgPrint)
+	{
+		return 2;
+	}
+
+	return 0;
+}
+
 int GetPrint()
 {
 	if (isMyTurnPrint == TRUE)
@@ -1975,3 +2886,4 @@ void PlayerWin(HWND hWnd)
 	MessageBox(hWnd, L"ÇÃ·¹ÀÌ¾î ½Â¸®", L"½Â¸®", MB_OK);
 
 }
+
