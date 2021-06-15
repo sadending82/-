@@ -204,8 +204,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		{
 		case Base_Timer:
 		{
-			if(!is_pause&&screen_number == -1&& screen_number == -2)
-				IG_Timer(cursor, &map_yPos, cRect, &master);
+			if(!is_pause)
+				if ( screen_number == 1 || screen_number == 2)
+					IG_Timer(cursor, &map_yPos, cRect, &master);
 
 			room_print_count_2++;
 			if (room_print_count_2 % 10 == 0)// 속도 배율
