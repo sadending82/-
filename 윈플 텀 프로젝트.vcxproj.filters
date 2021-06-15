@@ -242,6 +242,21 @@
     <Image Include="방패.png">
       <Filter>리소스 파일</Filter>
     </Image>
+    <Image Include="Enchant_Butten.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Enchant_Butten_.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Rest_Butten.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Rest_Butten_.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Rest_Screen.PNG">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Font Include="휴면편지체.TTF" />

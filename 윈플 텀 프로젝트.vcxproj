@@ -167,6 +167,8 @@
     <Image Include="Elite_Enemy.png" />
     <Image Include="Elite_Enemy_.png" />
     <Image Include="Elite_Enemy_2.png" />
+    <Image Include="Enchant_Butten.png" />
+    <Image Include="Enchant_Butten_.png" />
     <Image Include="Exit.png" />
     <Image Include="Exit_.png" />
     <Image Include="HP_Bar_Empty.png" />
@@ -196,6 +198,9 @@
     <Image Include="Rest.png" />
     <Image Include="Rest_.png" />
     <Image Include="Rest_2.png" />
+    <Image Include="Rest_Butten.png" />
+    <Image Include="Rest_Butten_.png" />
+    <Image Include="Rest_Screen.PNG" />
     <Image Include="slime_attack1.png" />
     <Image Include="slime_attack2.png" />
     <Image Include="slime_attack3.png" />
