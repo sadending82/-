@@ -340,6 +340,7 @@ void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_numbe
 void MS_MOUSEMOVE(int mx, int my, int main_menu);
 void Set_MS_Img();
 void MS_MENU_1(HWND hWnd, int answer, int* screen_number);// 현재 비어잇음
+void Set_player(int occupation, Master* master);
 
 // From In Game
 
@@ -352,6 +353,9 @@ void print_room(HDC hMapDC, Master master, RECT cRect, int room_print_count);
 void IG_MOUSEMOVE(int mx, int my, POINT* cursor);
 void IG_Timer(POINT cursor, int* map_yPos, RECT cRect, Master* master);
 void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL* is_pause);
+void print_Status_Bar(HDC hMemDC, RECT cRect, Master master);
+
+
 
 void print_OS_Pause(HDC hMemDC, RECT cRect, Master master);
 

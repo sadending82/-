@@ -194,7 +194,6 @@ void DisplayGame(HWND hWnd, HDC hDC, Player* player)
 void SetCard(Player* player)
 { // 임시로 막 넣었음.
 	Card tmpCard;
-
 	tmpCard.is_Active = TRUE;
 	tmpCard.is_enhanced = FALSE;
 	tmpCard.is_inhand = FALSE;
@@ -233,6 +232,15 @@ void SetCard(Player* player)
 	player->deck.card[7] = tmpCard;
 	player->deck.card[8] = tmpCard;
 	player->deck.card[9] = tmpCard;
+	//직업 전용 카드 추가
+	switch (player->occupation)
+	{
+	case 0:
+		break;
+	case 1:
+		break;
+	}
+
 }
 
 void SetImg()
