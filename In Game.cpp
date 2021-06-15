@@ -51,6 +51,7 @@ static BOOL is_on_Enchant_Butten;
 
 // Merchant
 static CImage cMerchant_Screen;
+static CImage cMerchant_hand;
 
 static CImage cCard_Removal_Butten;
 static CImage cCard_Removal_Butten_;
@@ -136,7 +137,9 @@ void Set_IG_Img()
 	// Merchant
 	if (cMerchant_Screen.IsNull())
 		cMerchant_Screen.Load(L"Merchant_Screen.png");
-
+	if (cMerchant_hand.IsNull())
+		cMerchant_hand.Load(L"Merchant_hand.png");
+	
 	if (cCard_Removal_Butten.IsNull())
 		cCard_Removal_Butten.Load(L"Card_Removal_Butten.png");
 	if (cCard_Removal_Butten_.IsNull())
