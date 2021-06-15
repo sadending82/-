@@ -253,6 +253,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 		}
 			break;
+		case DmgPrint_Timer:
+		{
+			int printNum = GetDmgPrint();
+
+			switch (printNum)
+			{
+			case 1:
+				SetMyDmgPrint(hWnd);
+				break;
+			case 2:
+				SetEnemyDmgPrint(hWnd);
+				break;
+			default:
+				break;
+			}
+		}
+			break;
 		default:
 			break;
 		}

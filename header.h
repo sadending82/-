@@ -100,6 +100,7 @@
 #define Card_Timer 10
 #define Print_Timer 17
 #define TurnDelay_Timer 25
+#define DmgPrint_Timer 30
 
 // 스테이지 2를 만들때 아래도 추가해주세요.
 //...
@@ -355,6 +356,7 @@ void GetTurnChangeTimer(HWND hWnd, Player* player);
 void SetMyTurnPrint(HWND hWnd);
 void SetEnemyTurnPrint(HWND hWnd);
 int GetPrint();
+int GetDmgPrint();
 
 
 // From Main Screen
@@ -367,6 +369,8 @@ void MS_MOUSEMOVE(int mx, int my, int main_menu);
 void Set_MS_Img();
 void MS_MENU_1(HWND hWnd, int answer, int* screen_number);// 현재 비어잇음
 void Set_player(int occupation, Master* master);
+void SetMyDmgPrint(HWND hWnd);
+void SetEnemyDmgPrint(HWND hWnd);
 
 // From In Game
 
