@@ -2471,7 +2471,7 @@ void PlayerAttack(HWND hWnd, Player* player)
 	player->animation_state = State_Attack;
 	player->animation_num = 0;
 	isCharMove = TRUE;
-	timer = 0;
+	timer = 0; 
 
 
 

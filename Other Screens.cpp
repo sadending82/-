@@ -20,7 +20,7 @@ void print_OS_Pause(HDC hMemDC, RECT cRect, Master master)
 	Set_OS_Img();
 
 	TCHAR str[20];
-	wsprintf(str, L"일시정지");// 왼쪽위로 출력
+	wsprintf(str, L"일시정지");// 왼쪽위로 출력 
 	TextOut(hMemDC, cRect.right / 2, cRect.bottom / 2, str, _tcslen(str));
 	int pw = cPause.GetWidth();
 	int ph = cPause.GetHeight();

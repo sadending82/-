@@ -375,7 +375,7 @@ void SetEnemyDmgPrint(HWND hWnd);
 
 // From In Game
 
-void Set_IG_Img();
+void Set_IG_Img(); 
 void Set_IG_POINT(RECT cRect);
 void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos, int room_print_count);
 void make_random_map(Master master);

@@ -300,7 +300,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			else
 				OS_Pause_LBUTTONDOWN(hWnd, mx, my, &master, cRect, &is_pause, &screen_number, &main_menu);
 			break;
-		}
+		} 
 	}
 		break;
 	case WM_LBUTTONUP:

@@ -281,7 +281,7 @@ void Set_player(int occupation,Master* master)
 		master->player.cost = 3;
 		master->game_seed = rand();
 		SetCard(&master->player);
-		break;
+		break;  
 	}
 	master->stage.stage_num = 1; // 
 }

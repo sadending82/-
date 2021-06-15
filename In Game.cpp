@@ -301,7 +301,7 @@ void make_map(Master* master, RECT cRect)
 	boss_room->room_type = Room_Boss;
 
 	start_room.next[0] = master->stage.map.All_room[0];
-	start_room.next[1] = master->stage.map.All_room[1];
+	start_room.next[1] = master->stage.map.All_room[1]; 
 	start_room.next[2] = master->stage.map.All_room[2];
 	//						여기나    여기가 증가하고				여기도 증가 - 랜덤 생성 함수 만들때 고려해볼걸
 	master->stage.map.All_room[0]->next[0] = master->stage.map.All_room[3];
