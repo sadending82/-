@@ -20,6 +20,7 @@ static CImage DeffenceCardImg;
 
 static CImage slmIdle1, slmIdle2, slmIdle3, slmIdle4, slmIdle5, slmIdle6;
 static CImage slmAttack1, slmAttack2, slmAttack3, slmAttack4, slmAttack5, slmAttack6;
+static CImage turnEnd, turnEnd_;
 
 static int frontCard = 0;
 static BOOL isFront = FALSE;
@@ -28,6 +29,13 @@ static int selected = -1;
 static BOOL isSelected = FALSE;
 static BOOL isCardMove = FALSE;
 static BOOL isAtkSelected = FALSE;
+static BOOL isTurnChange = FALSE;
+static BOOL isChangedTurn = FALSE;
+static BOOL isMouseUpTurnEnd = FALSE;
+
+static BOOL isMyTurnPrint = FALSE;
+static BOOL isEnemyTurnPrint = FALSE;
+
 static int MoveCard = 0;
 
 static int AtkMonster = 0;
@@ -48,18 +56,22 @@ static const COLORREF red = RGB(255, 0, 0);
 static const COLORREF white = RGB(255, 255, 255);
 
 static void SetImg();
-void DrawPlayer(HDC hDC, Player* player);
-void DrawCard(HDC hDC, Player* player);
-void DrawMonster(HDC hDC);
+void DrawPlayer(HWND hWnd, HDC hDC, Player* player);
+void DrawCard(HWND hWnd, HDC hDC, Player* player);
+void DrawMonster(HWND hWnd, HDC hDC, Player* player);
 
 void PlayerAttack(HWND hWnd, Player* player);
 void PlayerDeffence(HWND hWnd, Player* player);
-void TurnChange(Player* player);
+void TurnChange(HWND hWnd, Player* player);
 void SetCardPos(HWND hWnd, Player* player, int num);
 int CalcDmg(Player* player);
 int CalcDmg(Monster monster);
+void PlayerDefeat(HWND hWnd);
+void PlayerWin(HWND hWnd);
+void CheckState(HWND hWnd, Player* player);
+void SetTurnChangeTimer(HWND hWnd);
 
-void DisplayGame(HDC hDC, Player* player)
+void DisplayGame(HWND hWnd, HDC hDC, Player* player)
 {
 	/*이미지 설정*/
 	SetImg();
@@ -73,21 +85,51 @@ void DisplayGame(HDC hDC, Player* player)
 	/*캐릭터 그리기*/
 
 	/*카드 설정(현재는 아무것도 없음)*/
-	
+	WCHAR str[20];
+	wsprintf(str, L"코스트 : %d", player->cost);
+	TextOut(hDC, 100, 400, str, lstrlen(str));
+
+	if (isMyTurnPrint)
+	{
+		TextOut(hDC, 550, 100, L"당신의 차례입니다.", lstrlen(L"당신의 차례입니다."));
+	}
+
+	if (isEnemyTurnPrint)
+	{
+		TextOut(hDC, 550, 100, L"적의 차례입니다.", lstrlen(L"적의 차례입니다.")); 
+	}
+
+	if (player->isMyTurn)
+	{
+		if (isMouseUpTurnEnd)
+		{
+			int pw = turnEnd.GetWidth();
+			int ph = turnEnd.GetHeight();
+			turnEnd.Draw(hDC, 1050, 650, pw, ph, 0, 0, pw, ph);
+		}
+		else
+		{
+			int pw = turnEnd_.GetWidth();
+			int ph = turnEnd_.GetHeight();
+			turnEnd_.Draw(hDC, 1050, 650, pw, ph, 0, 0, pw, ph);
+		}
+	}
 
 	if (player->isCharacterActive == TRUE)
 	{
 		if (player->isMyTurn)
 		{
-			DrawPlayer(hDC, player);
-			DrawMonster(hDC);
+			DrawMonster(hWnd, hDC, player);
+			DrawPlayer(hWnd, hDC, player);
+
 		}
 		else
 		{
-			DrawMonster(hDC);
-			DrawPlayer(hDC, player);
+			DrawPlayer(hWnd, hDC, player);
+			DrawMonster(hWnd, hDC, player);
+
 		}
-		DrawCard(hDC, player);
+		DrawCard(hWnd, hDC, player);
 
 		if (isFront)
 		{
@@ -164,6 +206,7 @@ void SetCard(Player* player)
 	tmpCard.right = 1100;
 	tmpCard.top = 470;
 	tmpCard.bottom = 730;
+	tmpCard.cost = 1;
 
 
 	player->deck.card[0] = tmpCard;
@@ -183,6 +226,7 @@ void SetCard(Player* player)
 	tmpCard.right = 1100;
 	tmpCard.top = 470;
 	tmpCard.bottom = 730;
+	tmpCard.cost = 1;
 
 	player->deck.card[5] = tmpCard;
 	player->deck.card[6] = tmpCard;
@@ -241,6 +285,14 @@ void SetImg()
 	{
 		DeffenceCardImg.Load(L"방어카드.png");
 	}
+	if (turnEnd.IsNull())
+	{
+		turnEnd.Load(L"TurnEnd1.png");
+	}
+	if (turnEnd_.IsNull())
+	{
+		turnEnd_.Load(L"TurnEnd1_.png");
+	}
 
 	
 }
@@ -248,7 +300,7 @@ void SetImg()
 
 
 
-void DrawPlayer(HDC hDC, Player* player)
+void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 {
 	if (player->animation_state == State_Idle)
 	{
@@ -312,7 +364,12 @@ void DrawPlayer(HDC hDC, Player* player)
 			{
 				player->animation_num = 0;
 				timer = 0;
-				CheckState();
+				if (isTurnChange)
+				{
+					isTurnChange = FALSE;
+					SetTurnChangeTimer(hWnd);
+				}
+				CheckState(hWnd, player);
 			}
 		}
 			break;
@@ -324,6 +381,7 @@ void DrawPlayer(HDC hDC, Player* player)
 	{
 		switch (player->animation_num)
 		{
+
 		case 0:
 		{
 			int pw = charIdle1.GetWidth();
@@ -429,14 +487,24 @@ void DrawPlayer(HDC hDC, Player* player)
 				player->animation_state = State_Idle;
 				player->animation_num = 0;
 				isCharMove = FALSE;
-				CheckState();
+				if (isTurnChange)
+				{
+					isTurnChange = FALSE;
+					SetTurnChangeTimer(hWnd);
+				}
+				CheckState(hWnd, player);
 			}
+
+
 		}
 		break;
 		}
 	}
 	else if (player->animation_state == State_Deffence)
 	{
+		int pw = charIdle1.GetWidth();
+		int ph = charIdle1.GetHeight();
+		charIdle1.Draw(hDC, player->x, 350, pw * 2, ph * 2, 0, 0, pw, ph);
 		TextOut(hDC, 600, 200, L"방  어", 4);
 		timer++;
 		if (timer >= 56)
@@ -444,7 +512,13 @@ void DrawPlayer(HDC hDC, Player* player)
 			player->animation_state = State_Idle;
 			player->animation_num = 0;
 			isCharMove = FALSE;
-			CheckState();
+			if (isTurnChange)
+			{
+				isTurnChange = FALSE;
+				SetTurnChangeTimer(hWnd);
+			}
+			CheckState(hWnd, player);
+
 		}
 	}
 	else if (player->animation_state == State_Attacked)
@@ -453,7 +527,7 @@ void DrawPlayer(HDC hDC, Player* player)
 	}
 }
 
-static void DrawCard(HDC hDC, Player* player)
+static void DrawCard(HWND hWnd, HDC hDC, Player* player)
 {
 	for (int i = 0; i < 50; ++i)
 	{
@@ -480,7 +554,7 @@ static void DrawCard(HDC hDC, Player* player)
 	}
 }
 
-static void DrawMonster(HDC hDC)
+static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 {
 	for (int i = 0; i < monsterCount; ++i)
 	{
@@ -567,6 +641,11 @@ static void DrawMonster(HDC hDC)
 								monster[i].animation_num = 0;
 								monsterTimer[i] = 0;
 							}
+							if (i == TurnMonsterNum && isChangedTurn)
+							{
+								SetTurnChangeTimer(hWnd);
+
+							}
 						}
 						break;
 						}
@@ -577,50 +656,119 @@ static void DrawMonster(HDC hDC)
 						{
 						case 0:
 						{
-							int mw = slmAttack1.GetWidth();
-							int mh = slmAttack1.GetHeight();
-							slmAttack1.Draw(hDC, monster[i].x - (mw / 2), 350, mw * 2, mh * 2, 0, 0, mw, mh);
-							TextOut(hDC, 600, 200, L"공  격", 4);
+							int mw = slmIdle1.GetWidth();
+							int mh = slmIdle1.GetHeight();
+							slmIdle1.Draw(hDC, monster[i].x - (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							monsterTimer[i]++;
+							if (monsterTimer[i] >= 5)
+							{
+								monster[i].animation_num++;
+							}
 						}
 						break;
 						case 1:
 						{
-							int mw = slmAttack2.GetWidth();
-							int mh = slmAttack2.GetHeight();
-							slmAttack2.Draw(hDC, monster[i].x - (mw / 2), 350, mw * 2, mh * 2, 0, 0, mw, mh);
-							TextOut(hDC, 600, 200, L"공  격", 4);
+							int mw = slmIdle2.GetWidth();
+							int mh = slmIdle2.GetHeight();
+							slmIdle2.Draw(hDC, monster[i].x - (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							monsterTimer[i]++;
+							if (monsterTimer[i] >= 10)
+							{
+								monster[i].animation_num++;
+							}
 						}
 						break;
 						case 2:
 						{
-							int mw = slmAttack3.GetWidth();
-							int mh = slmAttack3.GetHeight();
-							slmAttack3.Draw(hDC, monster[i].x - (mw / 2), 350, mw * 2, mh * 2, 0, 0, mw, mh);
-							TextOut(hDC, 600, 200, L"공  격", 4);
+							int mw = slmIdle3.GetWidth();
+							int mh = slmIdle3.GetHeight();
+							slmIdle3.Draw(hDC, monster[i].x - (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							monsterTimer[i]++;
+							if (monsterTimer[i] >= 15)
+							{
+								monster[i].animation_num++;
+							}
 						}
 						break;
 						case 3:
 						{
-							int mw = slmAttack4.GetWidth();
-							int mh = slmAttack4.GetHeight();
-							slmAttack4.Draw(hDC, monster[i].x - (mw / 2), 350, mw * 2, mh * 2, 0, 0, mw, mh);
+							int mw = slmAttack1.GetWidth();
+							int mh = slmAttack1.GetHeight();
+							slmAttack1.Draw(hDC, player->x + (mw / 2) + 50, 150 + (monsterTimer[i] - 1) * 15, mw * 2, mh * 2, 0, 0, mw, mh);
 							TextOut(hDC, 600, 200, L"공  격", 4);
+							monsterTimer[i]++;
+							if (monsterTimer[i] >= 30)
+							{
+								monster[i].animation_num++;
+							}
 						}
 						break;
 						case 4:
 						{
-							int mw = slmAttack5.GetWidth();
-							int mh = slmAttack5.GetHeight();
-							slmAttack5.Draw(hDC, monster[i].x - (mw / 2), 350, mw * 2, mh * 2, 0, 0, mw, mh);
+							int mw = slmAttack2.GetWidth();
+							int mh = slmAttack2.GetHeight();
+							slmAttack2.Draw(hDC, player->x + (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
 							TextOut(hDC, 600, 200, L"공  격", 4);
+							monsterTimer[i]++;
+							if (monsterTimer[i] >= 35)
+							{
+								monster[i].animation_num++;
+							}
 						}
 						break;
 						case 5:
 						{
+							int mw = slmAttack3.GetWidth();
+							int mh = slmAttack3.GetHeight();
+							slmAttack3.Draw(hDC, player->x + (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							TextOut(hDC, 600, 200, L"공  격", 4);
+							monsterTimer[i]++;
+							if (monsterTimer[i] >= 45)
+							{
+								monster[i].animation_num++;
+							}
+						}
+						break;
+						case 6:
+						{
+							int mw = slmAttack4.GetWidth();
+							int mh = slmAttack4.GetHeight();
+							slmAttack4.Draw(hDC, player->x + (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							TextOut(hDC, 600, 200, L"공  격", 4);
+							monsterTimer[i]++;
+							if (monsterTimer[i] >= 55)
+							{
+								monster[i].animation_num++;
+							}
+						}
+						break;
+						case 7:
+						{
+							int mw = slmAttack5.GetWidth();
+							int mh = slmAttack5.GetHeight();
+							slmAttack5.Draw(hDC, player->x + (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							TextOut(hDC, 600, 200, L"공  격", 4);
+							monsterTimer[i]++;
+							if (monsterTimer[i] >= 65)
+							{
+								monster[i].animation_num++;
+							}
+						}
+						break;
+						case 8:
+						{
 							int mw = slmAttack6.GetWidth();
 							int mh = slmAttack6.GetHeight();
-							slmAttack6.Draw(hDC, monster[i].x - (mw / 2), 350, mw * 2, mh * 2, 0, 0, mw, mh);
+							slmAttack6.Draw(hDC, player->x + (mw / 2) + 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
 							TextOut(hDC, 600, 200, L"공  격", 4);
+							monsterTimer[i]++;
+							if (monsterTimer[i] >= 75)
+							{
+								monster[i].animation_state = State_Idle;
+								monster[i].animation_num = 0;
+								monsterTimer[i] = 0;
+							}
+
 						}
 						break;
 						}
@@ -699,6 +847,7 @@ static void DrawMonster(HDC hDC)
 							{
 								monsterTimer[i] = 0;
 								monster[i].is_Active = FALSE;
+								isCharMove = FALSE;
 							}
 						}
 						break;
@@ -752,24 +901,36 @@ POS GP_LBUTTONDOWN(HWND hWnd, int x, int y, Player* player, int Lx, int Ly)
 		{
 			if (player->deck.card[frontCard].type == Card_Type_Deffence)
 			{
-				POS pos = { x, y };
-				pos.x = player->deck.card[frontCard].left + 100;
-				pos.y = player->deck.card[frontCard].top + 130;
-				player->isDragCard = TRUE;
-				isSelected = TRUE;
-				player->deck.card[frontCard].left = x - 100;
-				player->deck.card[frontCard].right = x + 100;
-				player->deck.card[frontCard].top = y - 130;
-				player->deck.card[frontCard].bottom = y + 130;
-				return pos;
+				if (isFront)
+				{
+					if (player->cost >= 1)
+					{
+						POS pos = { x, y };
+						pos.x = player->deck.card[frontCard].left + 100;
+						pos.y = player->deck.card[frontCard].top + 130;
+						player->isDragCard = TRUE;
+						isSelected = TRUE;
+						player->deck.card[frontCard].left = x - 100;
+						player->deck.card[frontCard].right = x + 100;
+						player->deck.card[frontCard].top = y - 130;
+						player->deck.card[frontCard].bottom = y + 130;
+						return pos;
+					}
+				}
 			}
 			else if (player->deck.card[frontCard].type == Card_Type_Attack)
 			{
-				isAtkSelected = TRUE;
-				player->isDragCard = TRUE;
-				isSelected = TRUE;
-				arrow_pos = { x, y };
-				arrow_endPos = { x, y };
+				if (isFront)
+				{
+					if (player->cost >= 1)
+					{
+						isAtkSelected = TRUE;
+						player->isDragCard = TRUE;
+						isSelected = TRUE;
+						arrow_pos = { player->deck.card[frontCard].left + 100, player->deck.card[frontCard].top + 130 };
+						arrow_endPos = { x, y };
+					}
+				}
 			}
 		}
 		else
@@ -781,7 +942,10 @@ POS GP_LBUTTONDOWN(HWND hWnd, int x, int y, Player* player, int Lx, int Ly)
 				CardTimer[frontCard] = 0;
 				if (arrow_endPos.y <= 500)
 				{
-					PlayerDeffence(hWnd, player);
+					if (player->cost >= 1)
+					{
+						PlayerDeffence(hWnd, player);
+					}
 				}
 				else
 				{
@@ -790,31 +954,59 @@ POS GP_LBUTTONDOWN(HWND hWnd, int x, int y, Player* player, int Lx, int Ly)
 			}
 			else if (player->deck.card[frontCard].type == Card_Type_Attack)
 			{
-				isAtkSelected = FALSE;
-				player->isDragCard = FALSE;
-				isSelected = FALSE;
-				
-				RECT rect;
-				BOOL isInRect = FALSE;
-				int num = 0;
-
-				for (int i = 0; i < 3; ++i)
+				if (player->cost >= 1)
 				{
-					rect.left = monster[i].x;
-					rect.top = 550;
-					rect.right = monster[i].x + 60;
-					rect.bottom = 600;
-					if (is_in_rect(arrow_endPos.x, arrow_endPos.y, rect))
+					isAtkSelected = FALSE;
+					player->isDragCard = FALSE;
+					isSelected = FALSE;
+
+					RECT rect;
+					BOOL isInRect = FALSE;
+					int num = 0;
+
+					for (int i = 0; i < 3; ++i)
 					{
-						isInRect = TRUE;
-						AtkMonster = i;
-						break;
+						rect.left = monster[i].x;
+						rect.top = 550;
+						rect.right = monster[i].x + 60;
+						rect.bottom = 600;
+						if (is_in_rect(arrow_endPos.x, arrow_endPos.y, rect))
+						{
+							if (monster[i].hp.Current_hp != 0)
+							{
+								isInRect = TRUE;
+								AtkMonster = i;
+								break;
+							}
+						}
+					}
+
+					if (isInRect)
+					{
+
+						PlayerAttack(hWnd, player);
 					}
 				}
+			}
+		}
+		if (player->isMyTurn)
+		{
+			RECT lrect;
 
-				if (isInRect)
+			lrect.left = 1050;
+			lrect.top = 650;
+			lrect.right = 1050 + turnEnd.GetWidth();
+			lrect.bottom = 650 + turnEnd.GetHeight();
+
+			if (is_in_rect(x, y, lrect))
+			{
+				if (!isCardMove && !isCharMove)
 				{
-					PlayerAttack(hWnd, player);
+					for (int i = 0; i < 50; ++i)
+					{
+						player->deck.card[i] = { 0 };
+					}
+					SetTurnChangeTimer(hWnd);
 				}
 			}
 		}
@@ -882,6 +1074,22 @@ void GP_MOUSEMOVE(int x, int y, Player* player)
 			else if (player->deck.card[frontCard].type == Card_Type_Attack)
 			{
 				arrow_endPos = { x, y };
+			}
+		}
+		if (player->isMyTurn)
+		{
+			RECT lrect;
+			lrect.left = 1050;
+			lrect.top = 650;
+			lrect.right = 1050 + turnEnd.GetWidth();
+			lrect.bottom = 650 + turnEnd.GetHeight();
+			if (is_in_rect(x, y, lrect))
+			{
+				isMouseUpTurnEnd = TRUE;
+			}
+			else
+			{
+				isMouseUpTurnEnd = FALSE;
 			}
 		}
 	}
@@ -1150,6 +1358,8 @@ POS StartStage(HWND hWnd, Player* player, int monsterNum)
 	CardAnimToXy(hWnd, 900, 800, Card_Timer, &(player->deck.card[4]), 4);
 	isCardMove = TRUE;
 	POS pos = { 300, 800 };
+	isMyTurnPrint = FALSE;
+	SetMyTurnPrint(hWnd);
 	return pos;
 }
 
@@ -1165,6 +1375,13 @@ void ChangePlayerTurn(HWND hWnd, Player* player)
 	player->deck.card[2].is_inhand = TRUE;
 	player->deck.card[3].is_inhand = TRUE;
 	player->deck.card[4].is_inhand = TRUE;
+	for (int i = 0; i < 5; ++i)
+	{
+		player->deck.card[i].left = 1200;
+		player->deck.card[i].right = 1400;
+		player->deck.card[i].top = 800;
+		player->deck.card[i].bottom = 1060;
+	}
 	CardAnimToXy(hWnd, 300, 800, Card_Timer, &(player->deck.card[0]), 0);
 	CardAnimToXy(hWnd, 450, 800, Card_Timer, &(player->deck.card[1]), 1);
 	CardAnimToXy(hWnd, 600, 800, Card_Timer, &(player->deck.card[2]), 2);
@@ -1174,11 +1391,14 @@ void ChangePlayerTurn(HWND hWnd, Player* player)
 	POS* posp = GetPosPointer();
 	posp->x = 300;
 	posp->y = 800;
+
+	
 }
 
 void PlayerAttack(HWND hWnd, Player* player)
 {
 	player->deck.card[frontCard] = { 0 };
+	player->cost--;
 	int targetNum = frontCard;
 	for (int i = 0; player->deck.card[targetNum + 1].is_Active && frontCard + 1 < MNCD; ++i)
 	{
@@ -1213,11 +1433,17 @@ void PlayerAttack(HWND hWnd, Player* player)
 	isFront = FALSE;
 	isSelected = FALSE;
 
+	if (player->cost == 0)
+	{
+		isTurnChange = TRUE;
+	}
+
 }
 
 void PlayerDeffence(HWND hWnd, Player* player)
 {
 	player->deck.card[frontCard] = { 0 };
+	player->cost--;
 	int targetNum = frontCard;
 	for (int i = 0; player->deck.card[targetNum + 1].is_Active && frontCard + 1 < MNCD; ++i)
 	{
@@ -1244,6 +1470,11 @@ void PlayerDeffence(HWND hWnd, Player* player)
 	isFront = FALSE;
 	isSelected = FALSE;
 
+	if (player->cost == 0)
+	{
+		isTurnChange = TRUE;
+	}
+
 }
 
 void SetCardPos(HWND hWnd, Player* player, int num)
@@ -1252,7 +1483,8 @@ void SetCardPos(HWND hWnd, Player* player, int num)
 	{
 	case 0:
 	{
-		TurnChange(player);
+		isTurnChange = TRUE;
+
 	}
 	break;
 	case 1:
@@ -1344,33 +1576,175 @@ int CalcDmg(Player* player)
 }
 int CalcDmg(Monster monster)
 {
-	return rand() % 3 + 4;
+	return rand() % (monster.maxDmg-monster.minDmg + 1) + monster.minDmg;
 }
 
-void TurnChange(Player* player)
+void TurnChange(HWND hWnd, Player* player)
 {
 	if (player->isMyTurn)
 	{
 
-		player->isMyTurn = FALSE;
-		TurnMonsterNum = 0;
-
+			isTurnChange = FALSE;
+			isChangedTurn = TRUE;
+			player->isMyTurn = FALSE;
+			for (int i = 0; i < MNCD; ++i)
+			{
+				player->deck.card[i] = { 0 };
+			}
+			TurnMonsterNum = 0;
+			for (int i = TurnMonsterNum; i < 3; ++i)
+			{
+				if (monster[TurnMonsterNum].is_Active)
+				{
+					monster[TurnMonsterNum].animation_state = State_Attack;
+					monster[TurnMonsterNum].animation_num = 0;
+					monsterTimer[TurnMonsterNum] = 0;
+					player->hp.Current_hp -= CalcDmg(monster[TurnMonsterNum]);
+					break;
+				}
+				else
+				{
+					TurnMonsterNum++;
+				}
+			}
+			SetEnemyTurnPrint(hWnd);
 	}
 	else
 	{
+		BOOL isMonsterTurnNoneEnd = FALSE;
+
+		TurnMonsterNum++;
+
+		for (int i = TurnMonsterNum; i < 3; ++i)
+		{
+			if (monster[i].is_Active)
+			{
+				monster[i].animation_state = State_Attack;
+				monster[i].animation_num = 0;
+				monsterTimer[i] = 0;
+				player->hp.Current_hp -= CalcDmg(monster[i]);
+				TurnMonsterNum = i;
+				isMonsterTurnNoneEnd = TRUE;
+				break;
+			}
+		}
 		
-		player->isMyTurn = TRUE;
+		if (!isMonsterTurnNoneEnd)
+		{
+			player->isMyTurn = TRUE;
+			player->cost = 3;
+			ChangePlayerTurn(hWnd, player);
+			SetMyTurnPrint(hWnd);
+		}
 
 	}
 }
 
-void CheckState()
+void CheckState(HWND hWnd, Player* player)
 {
+
+	BOOL isWin = TRUE;
+
+	for (int i = 0; i < 3; ++i)
+	{
+		if (monster[i].is_Active)
+		{
+			isWin = FALSE;
+		}
+	}
+
+	if (isWin)
+	{
+		PlayerWin(hWnd);
+		return;
+	}
+
+	if (player->hp.Current_hp == 0)
+	{
+		PlayerDefeat(hWnd);
+		return;
+	}
+
 	for (int i = 0; i < 3; ++i)
 	{
 		if (monster[i].hp.Current_hp == 0)
 		{
-			monster[i].animation_state = State_Dead;
+			if (monster[i].is_Active)
+			{
+				monster[i].animation_state = State_Dead;
+				isCharMove = TRUE;
+				return;
+			}
 		}
 	}
+
+
+}
+
+void PlayerDefeat(HWND hWnd)
+{
+	KillTimer(hWnd, 1);
+	MessageBox(hWnd, L"플레이어 패배", L"패배", MB_OK);
+
+}
+
+void PlayerWin(HWND hWnd)
+{
+	KillTimer(hWnd, 1);
+	MessageBox(hWnd, L"플레이어 승리", L"승리", MB_OK);
+
+}
+
+void SetTurnChangeTimer(HWND hWnd)
+{
+	SetTimer(hWnd, TurnDelay_Timer, 500, NULL);
+}
+
+void GetTurnChangeTimer(HWND hWnd, Player* player)
+{
+	TurnChange(hWnd, player);
+}
+
+void SetMyTurnPrint(HWND hWnd)
+{
+	if (isMyTurnPrint == FALSE)
+	{
+		isMyTurnPrint = TRUE;
+		isEnemyTurnPrint = FALSE;
+		SetTimer(hWnd, Print_Timer, 2500, NULL);
+	}
+	else
+	{
+		isMyTurnPrint = FALSE;
+		KillTimer(hWnd, Print_Timer);
+	}
+}
+
+void SetEnemyTurnPrint(HWND hWnd)
+{
+	if (isEnemyTurnPrint == FALSE)
+	{
+		isEnemyTurnPrint = TRUE;
+		isMyTurnPrint = FALSE;
+		SetTimer(hWnd, Print_Timer, 2500, NULL);
+	}
+	else
+	{
+		isEnemyTurnPrint = FALSE;
+		KillTimer(hWnd, Print_Timer);
+	}
+}
+
+int GetPrint()
+{
+	if (isMyTurnPrint == TRUE)
+	{
+		return 1;
+	}
+	else if (isEnemyTurnPrint == TRUE)
+	{
+		return 2;
+	}
+
+	return 0;
 }
