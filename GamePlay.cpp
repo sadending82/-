@@ -249,28 +249,29 @@ void SetCard(Player* player)
 	player->deck.holdingCard[3] = tmpCard;
 	player->deck.holdingCard[4] = tmpCard;
 
-	tmpCard.is_Active = TRUE;
-	tmpCard.is_enhanced = FALSE;
-	tmpCard.is_inhand = FALSE;
-	tmpCard.is_Moving = FALSE;
-	tmpCard.occupation = Card_Occu_ALL;
-	tmpCard.type = Card_Type_Deffence;
-	tmpCard.number = 0;
-	tmpCard.left = 900;
-	tmpCard.right = 1100;
-	tmpCard.top = 470;
-	tmpCard.bottom = 730;
-	tmpCard.cost = 1;
-
-	player->deck.holdingCard[5] = tmpCard;
-	player->deck.holdingCard[6] = tmpCard;
-	player->deck.holdingCard[7] = tmpCard;
-	player->deck.holdingCard[8] = tmpCard;
-	player->deck.holdingCard[9] = tmpCard;
+	
 	//직업 전용 카드 추가
 	switch (player->occupation)
 	{
 	case 0:
+		tmpCard.is_Active = TRUE;
+		tmpCard.is_enhanced = FALSE;
+		tmpCard.is_inhand = FALSE;
+		tmpCard.is_Moving = FALSE;
+		tmpCard.occupation = Card_Occu_ALL;
+		tmpCard.type = Card_Type_Deffence;
+		tmpCard.number = 0;
+		tmpCard.left = 900;
+		tmpCard.right = 1100;
+		tmpCard.top = 470;
+		tmpCard.bottom = 730;
+		tmpCard.cost = 1;
+
+		player->deck.holdingCard[5] = tmpCard;
+		player->deck.holdingCard[6] = tmpCard;
+		player->deck.holdingCard[7] = tmpCard;
+		player->deck.holdingCard[8] = tmpCard;
+		player->deck.holdingCard[9] = tmpCard;
 		break;
 	case 1:
 		break;

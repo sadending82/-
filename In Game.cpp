@@ -832,7 +832,7 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 	switch (master->screen_numbers.In_Game_Screen_num)
 	{
 	case Out_of_game:
-		if (master->player.occupation == 0)
+		if (master->player.occupation == 1)
 		{
 			if (is_in_rect(mx, my, master->stage.map.Boss_Room->rect) /*&& master->stage.map.Current_Room->next[0] == master->stage.map.Boss_Room*/)
 			{
