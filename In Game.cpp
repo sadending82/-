@@ -728,24 +728,55 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 	switch (master->screen_numbers.In_Game_Screen_num)
 	{
 	case Out_of_game:
-		if (is_in_rect(mx, my, master->stage.map.Boss_Room->rect))// 보스와 싸울 수 없을때 클릭이 불가능하도록 바꿔야함
+		if (master->player.occupation == 0)
 		{
-			MessageBox(hWnd, L"보스방", L"노드 선택", MB_OK);
-			master->stage.map.Current_Room = master->stage.map.Boss_Room;// 이건 필요 없음
-			// 보스와 전투 시작 코드 추가
-			// 전투가 끝나면 다음 스테이지로 가거나 마지막 스테이지면 점수가 나오고 메인 화면으로
-			//	보스와의 전투에서 승리시
-			master->stage.stage_num++;
-			if (master->stage.stage_num == 4)
-				;//최대 스테이지는 3 이므로 점수를 출력하고 게임을 종료
-			else
+			if (is_in_rect(mx, my, master->stage.map.Boss_Room->rect) /*&& master->stage.map.Current_Room->next[0] == master->stage.map.Boss_Room*/)
 			{
-				*map_yPos = 0;
-				make_map(master, cRect);
-			}
+				MessageBox(hWnd, L"보스방", L"노드 선택", MB_OK);
+				master->stage.map.Current_Room = master->stage.map.Boss_Room;// 이건 필요 없음
+				// 보스와 전투 시작 코드 추가
+				// 전투가 끝나면 다음 스테이지로 가거나 마지막 스테이지면 점수가 나오고 메인 화면으로
+				//	보스와의 전투에서 승리시
+				master->stage.stage_num++;
+				if (master->stage.stage_num == 4)
+				{
+					MessageBox(hWnd, L"무야호", L"게임 클리어", MB_OK);
+					*screen_number = 0;
+				}
+				//최대 스테이지는 3 이므로 점수를 출력하고 게임을 종료
+				else
+				{
+					*map_yPos = 0;
+					make_map(master, cRect);
+				}
 
+			}
 		}
 		else
+		{
+			if (is_in_rect(mx, my, master->stage.map.Boss_Room->rect) && master->stage.map.Current_Room->next[0] == master->stage.map.Boss_Room)
+			{
+				MessageBox(hWnd, L"보스방", L"노드 선택", MB_OK);
+				master->stage.map.Current_Room = master->stage.map.Boss_Room;// 이건 필요 없음
+				// 보스와 전투 시작 코드 추가
+				// 전투가 끝나면 다음 스테이지로 가거나 마지막 스테이지면 점수가 나오고 메인 화면으로
+				//	보스와의 전투에서 승리시
+				master->stage.stage_num++;
+				if (master->stage.stage_num == 4)
+				{
+					MessageBox(hWnd, L"무야호", L"게임 클리어", MB_OK);
+					*screen_number = 0;
+				}
+				//최대 스테이지는 3 이므로 점수를 출력하고 게임을 종료
+				else
+				{
+					*map_yPos = 0;
+					make_map(master, cRect);
+				}
+
+			}
+		}
+		
 			for (int i = 0; i < 13; i++)
 			{
 				wsprintf(str, L"%d", i);
