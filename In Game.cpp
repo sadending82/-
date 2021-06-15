@@ -642,7 +642,11 @@ void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos, i
 		cMerchant_Screen.Draw(hMemDC, 0, 0, cRect.right, cRect.bottom, 0, 0, pw, ph);
 		// 버튼 출력
 		print_button(hMemDC, is_on_Card_Removal_Butten, &cCard_Removal_Butten, &cCard_Removal_Butten_, rCard_Removal_Butten);
+		// 가격 표시
+		wsprintf(str, L"%d", master.player.Card_Removal_Count * 25 + 75);
+		TextOut(hMemDC, rCard_Removal_Butten.left + 50, rCard_Removal_Butten.bottom + 5, str, _tcslen(str));
 		print_button(hMemDC, is_on_Merchant_Exit_Butten, &cMerchant_Exit_Butten, &cMerchant_Exit_Butten_, rMerchant_Exit_Butten);
+		
 		// 카드 제거버튼과 나가기 버튼
 		// 상인의 손 만들기... 이건 생각좀 해보자
 		break;
@@ -944,6 +948,7 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 			if (master->player.deck.num_of_cards > 6 && master->player.money >= 75 + master->player.Card_Removal_Count * 25)
 			{
 				master->player.money = master->player.money - 75 + master->player.Card_Removal_Count * 25;
+				master->player.Card_Removal_Count++;
 				if (random_num == -1)
 					MessageBox(hWnd, L"저런! 제거에 실패했어요!", L"꽝!", MB_OK);
 				else if (master->player.deck.holdingCard[random_num].is_enhanced == FALSE)
