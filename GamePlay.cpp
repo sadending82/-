@@ -3172,7 +3172,7 @@ void PlayerWin(HWND hWnd)
 	KillTimer(hWnd, TurnDelay_Timer);
 	KillTimer(hWnd, DmgPrint_Timer);
 
-	int gold = (rand() % 5 + 5) * monsterCount;
+	int gold = ((rand() % 5 + 5) * monsterCount) * 20;
 
 	MessageBox(hWnd, L"ÀüÅõ¿¡¼­ ½Â¸®ÇÏ¼Ì½À´Ï´Ù.", L"½Â¸®", MB_OK);
 	WCHAR str[30] = { 0 };
