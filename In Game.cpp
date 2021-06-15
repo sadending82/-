@@ -904,6 +904,7 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 		
 		break;
 	case Room_Rest:
+		int random;
 		if (is_in_rect(mx, my, rRest_Butten))
 		{
 			wsprintf(str, L"체력을 30%% 회복합니다(%d)", master->player.hp.Max_hp / 10 * 3);
@@ -916,7 +917,17 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 		}
 		if (is_in_rect(mx, my, rEnchant_Butten))
 		{
-			MessageBox(hWnd, L"미구현", L"카드 강화", MB_OK);// 완성하면 주석처리
+			MessageBox(hWnd, L"보유한 카드중 하나를 무작위로 강화합니다", L"카드 강화", MB_OK);// 완성하면 주석처리
+			random = rand() % (master->player.deck.num_of_cards + 1) - 1;
+			if(random == -1|| master->player.deck.card[random].is_enhanced == TRUE)
+				MessageBox(hWnd, L"저런! 그럴 수 있..지?", L"실패!", MB_OK);// 완성하면 주석처리
+			else if (master->player.deck.card[random].is_enhanced == FALSE)
+			{
+				master->player.deck.card[random].is_enhanced = TRUE;
+				wsprintf(str, L"%d번 카드를 강화합니다.", random);
+				MessageBox(hWnd, str, L"성공!", MB_OK);// 완성하면 주석처리
+			}
+
 			master->screen_numbers.In_Game_Screen_num = Out_of_game;
 			master->booleans.Is_print_map = TRUE;
 		}
