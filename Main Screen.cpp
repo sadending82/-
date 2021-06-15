@@ -287,6 +287,8 @@ void Set_player(int occupation,Master* master)
 		master->player.cost = 3;
 		master->player.Card_Removal_Count = 0;
 		master->game_seed = rand();
+		master->player.item.buffs[0].num = 3;
+		master->player.item.buffs[1].num = 3;
 		SetCard(&master->player);
 		break;  
 	}
