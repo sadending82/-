@@ -936,10 +936,20 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 	case Room_Relics:
 		break;
 	case Room_Merchant:
+		int random;
 		if (is_in_rect(mx, my, rCard_Removal_Butten))
 		{
 			// 카드 제거
-			MessageBox(hWnd, L"미구현", L"카드 제거", MB_OK);// 완성하면 주석처리
+			random = rand() % (master->player.deck.num_of_cards + 1) - 1;
+			MessageBox(hWnd, L"랜덤한 카드를 제거합니다(실패 가능)", L"카드 제거", MB_OK);
+			if (random == -1)
+				MessageBox(hWnd, L"저런! 제거에 실패했어요!", L"꽝!", MB_OK);
+			else if (master->player.deck.card[random].is_enhanced == FALSE)
+			{
+				master->player.deck.card[random];
+				wsprintf(str, L"%d번 카드를 제거합니다.", random);
+				MessageBox(hWnd, str, L"성공!", MB_OK);// 완성하면 주석처리
+			}
 		}
 		if (is_in_rect(mx, my, rMerchant_Exit_Butten))
 		{
