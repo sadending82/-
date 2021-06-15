@@ -242,6 +242,17 @@ void SetCard(Player* player)
 		break;
 	}
 
+	int tmp = 0;
+
+	for (int i = 0; i < MNCD; ++i)
+	{
+		if (player->deck.card[i].is_Active)
+		{
+			tmp++;
+		}
+	}
+
+	player->deck.num_of_cards = tmp;
 }
 
 void SetImg()
@@ -447,6 +458,15 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			int pw = charIdle1.GetWidth();
 			int ph = charIdle1.GetHeight();
 			charIdle1.Draw(hDC, player->x, 350, pw * 2, ph * 2, 0, 0, pw, ph);
+			int hpw = HPbar.GetWidth();
+			int hph = HPbar.GetHeight();
+			HPbar.Draw(hDC, player->x + (pw / 2), 350 + (ph * 2), hpw, hph, 0, 0, hpw, hph);
+			if (player->hp.Current_hp > 0)
+			{
+				float percent = hpw * (player->hp.Current_hp / (float)(player->hp.Max_hp));
+				int intper = (int)percent;
+				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
+			}
 			TextOut(hDC, 600, 200, L"공  격", 4);
 			timer++;
 			if (timer >= 7)
@@ -461,6 +481,15 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			int ph = charAttack1.GetHeight();
 			charAttack1.Draw(hDC, monster[AtkMonster].x - 250 , 350, pw * 2, ph * 2, 0, 0, pw, ph);
 			TextOut(hDC, 600, 200, L"공  격", 4);
+			int hpw = HPbar.GetWidth();
+			int hph = HPbar.GetHeight();
+			HPbar.Draw(hDC, player->x + (pw / 2), 350 + (ph * 2), hpw, hph, 0, 0, hpw, hph);
+			if (player->hp.Current_hp > 0)
+			{
+				float percent = hpw * (player->hp.Current_hp / (float)(player->hp.Max_hp));
+				int intper = (int)percent;
+				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
+			}
 			timer++;
 			if (timer >= 14)
 			{
@@ -475,6 +504,15 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			int ph = charAttack2.GetHeight();
 			charAttack2.Draw(hDC, monster[AtkMonster].x - 250, 350, pw * 2, ph * 2, 0, 0, pw, ph);
 			TextOut(hDC, 600, 200, L"공  격", 4);
+			int hpw = HPbar.GetWidth();
+			int hph = HPbar.GetHeight();
+			HPbar.Draw(hDC, player->x + (pw / 2), 350 + (ph * 2), hpw, hph, 0, 0, hpw, hph);
+			if (player->hp.Current_hp > 0)
+			{
+				float percent = hpw * (player->hp.Current_hp / (float)(player->hp.Max_hp));
+				int intper = (int)percent;
+				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
+			}
 			timer++;
 			if (timer >= 21)
 			{
@@ -488,6 +526,15 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			int ph = charAttack3.GetHeight();
 			charAttack3.Draw(hDC, monster[AtkMonster].x - 250 + (charAttack3.GetWidth() / 2), 350, pw * 2, ph * 2, 0, 0, pw, ph);
 			TextOut(hDC, 600, 200, L"공  격", 4);
+			int hpw = HPbar.GetWidth();
+			int hph = HPbar.GetHeight();
+			HPbar.Draw(hDC, player->x + (pw / 2), 350 + (ph * 2), hpw, hph, 0, 0, hpw, hph);
+			if (player->hp.Current_hp > 0)
+			{
+				float percent = hpw * (player->hp.Current_hp / (float)(player->hp.Max_hp));
+				int intper = (int)percent;
+				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
+			}
 			timer++;
 			if (timer >= 28)
 			{
@@ -502,6 +549,15 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			int ph = charAttack4.GetHeight();
 			charAttack4.Draw(hDC, monster[AtkMonster].x - 250 + (charAttack4.GetWidth() / 2), 350, pw * 2, ph * 2, 0, 0, pw, ph);
 			TextOut(hDC, 600, 200, L"공  격", 4);
+			int hpw = HPbar.GetWidth();
+			int hph = HPbar.GetHeight();
+			HPbar.Draw(hDC, player->x + (pw / 2), 350 + (ph * 2), hpw, hph, 0, 0, hpw, hph);
+			if (player->hp.Current_hp > 0)
+			{
+				float percent = hpw * (player->hp.Current_hp / (float)(player->hp.Max_hp));
+				int intper = (int)percent;
+				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
+			}
 			timer++;
 			if (timer >= 35)
 			{
@@ -515,6 +571,15 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			int ph = charAttack5.GetHeight();
 			charAttack5.Draw(hDC, monster[AtkMonster].x - 250 + (charAttack5.GetWidth() / 2), 350, pw * 2, ph * 2, 0, 0, pw, ph);
 			TextOut(hDC, 600, 200, L"공  격", 4);
+			int hpw = HPbar.GetWidth();
+			int hph = HPbar.GetHeight();
+			HPbar.Draw(hDC, player->x + (pw / 2), 350 + (ph * 2), hpw, hph, 0, 0, hpw, hph);
+			if (player->hp.Current_hp > 0)
+			{
+				float percent = hpw * (player->hp.Current_hp / (float)(player->hp.Max_hp));
+				int intper = (int)percent;
+				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
+			}
 			timer++;
 			if (timer >= 42)
 			{
@@ -528,6 +593,15 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			int ph = charAttack6.GetHeight();
 			charAttack6.Draw(hDC, monster[AtkMonster].x - 250 + (charAttack6.GetWidth() / 2), 350, pw * 2, ph * 2, 0, 0, pw, ph);
 			TextOut(hDC, 600, 200, L"공  격", 4);
+			int hpw = HPbar.GetWidth();
+			int hph = HPbar.GetHeight();
+			HPbar.Draw(hDC, player->x + (pw / 2), 350 + (ph * 2), hpw, hph, 0, 0, hpw, hph);
+			if (player->hp.Current_hp > 0)
+			{
+				float percent = hpw * (player->hp.Current_hp / (float)(player->hp.Max_hp));
+				int intper = (int)percent;
+				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
+			}
 			timer++;
 			if (timer >= 49)
 			{
@@ -541,6 +615,15 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			int ph = charAttack7.GetHeight();
 			charAttack7.Draw(hDC, monster[AtkMonster].x - 250, 350, pw * 2, ph * 2, 0, 0, pw, ph);
 			TextOut(hDC, 600, 200, L"공  격", 4);
+			int hpw = HPbar.GetWidth();
+			int hph = HPbar.GetHeight();
+			HPbar.Draw(hDC, player->x + (pw / 2), 350 + (ph * 2), hpw, hph, 0, 0, hpw, hph);
+			if (player->hp.Current_hp > 0)
+			{
+				float percent = hpw * (player->hp.Current_hp / (float)(player->hp.Max_hp));
+				int intper = (int)percent;
+				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
+			}
 			timer++;
 			if (timer >= 56)
 			{
@@ -566,6 +649,15 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 		int ph = charIdle1.GetHeight();
 		charIdle1.Draw(hDC, player->x, 350, pw * 2, ph * 2, 0, 0, pw, ph);
 		TextOut(hDC, 600, 200, L"방  어", 4);
+		int hpw = HPbar.GetWidth();
+		int hph = HPbar.GetHeight();
+		HPbar.Draw(hDC, player->x + (pw / 2), 350 + (ph * 2), hpw, hph, 0, 0, hpw, hph);
+		if (player->hp.Current_hp > 0)
+		{
+			float percent = hpw * (player->hp.Current_hp / (float)(player->hp.Max_hp));
+			int intper = (int)percent;
+			HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
+		}
 		timer++;
 		if (timer >= 56)
 		{
@@ -635,6 +727,15 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 							int mw = slmIdle1.GetWidth();
 							int mh = slmIdle1.GetHeight();
 							slmIdle1.Draw(hDC, monster[i].x - (mw / 2), 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							int hpw = HPbar.GetWidth();
+							int hph = HPbar.GetHeight();
+							HPbar.Draw(hDC, monster[i].x - (mw / 2), 550 + (mh * 2), hpw, hph, 0, 0, hpw, hph);
+							if (monster[i].hp.Current_hp > 0)
+							{
+								float percent = hpw * (monster[i].hp.Current_hp / (float)(monster[i].hp.Max_hp));
+								int intper = (int)percent;
+								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
+							}
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 5)
 							{
@@ -647,6 +748,15 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 							int mw = slmIdle2.GetWidth();
 							int mh = slmIdle2.GetHeight();
 							slmIdle2.Draw(hDC, monster[i].x - (mw / 2), 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							int hpw = HPbar.GetWidth();
+							int hph = HPbar.GetHeight();
+							HPbar.Draw(hDC, monster[i].x - (mw / 2), 550 + (mh * 2), hpw, hph, 0, 0, hpw, hph);
+							if (monster[i].hp.Current_hp > 0)
+							{
+								float percent = hpw * (monster[i].hp.Current_hp / (float)(monster[i].hp.Max_hp));
+								int intper = (int)percent;
+								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
+							}
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 10)
 							{
@@ -659,6 +769,15 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 							int mw = slmIdle3.GetWidth();
 							int mh = slmIdle3.GetHeight();
 							slmIdle3.Draw(hDC, monster[i].x - (mw / 2), 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							int hpw = HPbar.GetWidth();
+							int hph = HPbar.GetHeight();
+							HPbar.Draw(hDC, monster[i].x - (mw / 2), 550 + (mh * 2), hpw, hph, 0, 0, hpw, hph);
+							if (monster[i].hp.Current_hp > 0)
+							{
+								float percent = hpw * (monster[i].hp.Current_hp / (float)(monster[i].hp.Max_hp));
+								int intper = (int)percent;
+								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
+							}
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 15)
 							{
@@ -671,6 +790,15 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 							int mw = slmIdle4.GetWidth();
 							int mh = slmIdle4.GetHeight();
 							slmIdle3.Draw(hDC, monster[i].x - (mw / 2), 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							int hpw = HPbar.GetWidth();
+							int hph = HPbar.GetHeight();
+							HPbar.Draw(hDC, monster[i].x - (mw / 2), 550 + (mh * 2), hpw, hph, 0, 0, hpw, hph);
+							if (monster[i].hp.Current_hp > 0)
+							{
+								float percent = hpw * (monster[i].hp.Current_hp / (float)(monster[i].hp.Max_hp));
+								int intper = (int)percent;
+								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
+							}
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 20)
 							{
@@ -683,6 +811,15 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 							int mw = slmIdle5.GetWidth();
 							int mh = slmIdle5.GetHeight();
 							slmIdle5.Draw(hDC, monster[i].x - (mw / 2), 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							int hpw = HPbar.GetWidth();
+							int hph = HPbar.GetHeight();
+							HPbar.Draw(hDC, monster[i].x - (mw / 2), 550 + (mh * 2), hpw, hph, 0, 0, hpw, hph);
+							if (monster[i].hp.Current_hp > 0)
+							{
+								float percent = hpw * (monster[i].hp.Current_hp / (float)(monster[i].hp.Max_hp));
+								int intper = (int)percent;
+								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
+							}
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 25)
 							{
@@ -695,6 +832,15 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 							int mw = slmIdle6.GetWidth();
 							int mh = slmIdle6.GetHeight();
 							slmIdle6.Draw(hDC, monster[i].x - (mw / 2), 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							int hpw = HPbar.GetWidth();
+							int hph = HPbar.GetHeight();
+							HPbar.Draw(hDC, monster[i].x - (mw / 2), 550 + (mh * 2), hpw, hph, 0, 0, hpw, hph);
+							if (monster[i].hp.Current_hp > 0)
+							{
+								float percent = hpw * (monster[i].hp.Current_hp / (float)(monster[i].hp.Max_hp));
+								int intper = (int)percent;
+								HPred.Draw(hDC, monster[i].x - (mw / 2) - 1, 550 + (mh * 2) + 1, intper, hph, 0, 0, intper, hph);
+							}
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 30)
 							{
