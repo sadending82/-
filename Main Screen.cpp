@@ -270,6 +270,7 @@ void Set_player(int occupation,Master* master)
 		master->player.selectedCard = -1;
 		master->player.amount_of_card_draw = 5;
 		master->player.cost = 3;
+		master->player.Card_Removal_Count = 0;
 		master->game_seed = rand();
 		SetCard(&master->player);
 		break;
@@ -284,6 +285,7 @@ void Set_player(int occupation,Master* master)
 		master->player.selectedCard = -1;
 		master->player.amount_of_card_draw = 5;
 		master->player.cost = 3;
+		master->player.Card_Removal_Count = 0;
 		master->game_seed = rand();
 		SetCard(&master->player);
 		break;  

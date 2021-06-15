@@ -287,6 +287,7 @@ typedef struct {
 	int selectedCard; // 선택된 카드
 	int amount_of_card_draw; // 카드 드로우 양
 	int cost;
+	int Card_Removal_Count;// 상점에 사용
 	Deck deck;
 	Item item;
 	BOOL isCharacterActive; // 화면에 캐릭터를 출력할 것인지 아닌지 확인하는 변수 (전투 화면에 출력할 때만 TRUE)

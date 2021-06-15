@@ -35,7 +35,7 @@ static CImage cRandom_2;
 static CImage cMerchant_2;
 static CImage cBoss_2;
 
-
+// Rest
 static CImage cRest_Screen;
 
 static CImage cRest_Butten;
@@ -48,6 +48,23 @@ static RECT rEnchant_Butten;
 
 static BOOL is_on_Rest_Butten;
 static BOOL is_on_Enchant_Butten;
+
+// Merchant
+static CImage cMerchant_Screen;
+
+static CImage cCard_Removal_Butten;
+static CImage cCard_Removal_Butten_;
+
+static CImage cMerchant_Exit_Butten;
+static CImage cMerchant_Exit_Butten_;
+
+static RECT rCard_Removal_Butten;
+static RECT rMerchant_Exit_Butten;
+
+static BOOL is_on_Card_Removal_Butten;
+static BOOL is_on_Merchant_Exit_Butten;
+
+
 
 
 //이미지 세팅
@@ -104,6 +121,7 @@ void Set_IG_Img()
 	if (cBoss_2.IsNull())
 		cBoss_2.Load(L"Boss_2.png");
 
+	// Rest
 	if (cRest_Screen.IsNull())
 		cRest_Screen.Load(L"Rest_Screen.png");
 	if (cRest_Butten.IsNull())
@@ -114,12 +132,24 @@ void Set_IG_Img()
 		cRest_Butten_.Load(L"Rest_Butten_.png");
 	if (cEnchant_Butten_.IsNull())
 		cEnchant_Butten_.Load(L"Enchant_Butten_.png");
-}
 
+	// Merchant
+	if (cMerchant_Screen.IsNull())
+		cMerchant_Screen.Load(L"Merchant_Screen.png");
+
+	if (cCard_Removal_Butten.IsNull())
+		cCard_Removal_Butten.Load(L"Card_Removal_Butten.png");
+	if (cCard_Removal_Butten_.IsNull())
+		cCard_Removal_Butten_.Load(L"Card_Removal_Butten_.png");
+	if (cMerchant_Exit_Butten.IsNull())
+		cMerchant_Exit_Butten.Load(L"Merchant_Exit_Butten.png");
+	if (cMerchant_Exit_Butten_.IsNull())
+		cMerchant_Exit_Butten_.Load(L"Merchant_Exit_Butten_.png");
+}
 
 void set_IG_Button(RECT cRect)
 {
-	//	main_menu == 0
+	// Rest
 	int pw = cRest_Butten.GetWidth();
 	int ph = cRest_Butten.GetHeight();
 
@@ -135,6 +165,20 @@ void set_IG_Button(RECT cRect)
 	rEnchant_Butten.right = rEnchant_Butten.left + pw*2;
 	rEnchant_Butten.top = cRect.bottom / 2;
 	rEnchant_Butten.bottom = rEnchant_Butten.top + ph*2;
+
+
+	// Merchant
+	rCard_Removal_Butten.right = cRect.right - 150;
+	rCard_Removal_Butten.bottom = cRect.bottom - 60;
+	rCard_Removal_Butten.left = rCard_Removal_Butten.right - 200;
+	rCard_Removal_Butten.top = rCard_Removal_Butten.bottom - 320;
+
+	rMerchant_Exit_Butten.left = cRect.left;
+	rMerchant_Exit_Butten.top = cRect.bottom - 150;
+	rMerchant_Exit_Butten.right = rMerchant_Exit_Butten.left + 200;
+	rMerchant_Exit_Butten.bottom = rMerchant_Exit_Butten.top + 80;
+
+
 }
 void Set_IG_POINT(RECT cRect)
 {
@@ -589,6 +633,15 @@ void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos, i
 	case Room_Relics:
 		break;
 	case Room_Merchant:
+		// 배경 출력
+		pw = cMerchant_Screen.GetWidth();
+		ph = cMerchant_Screen.GetHeight();
+		cMerchant_Screen.Draw(hMemDC, 0, 0, cRect.right, cRect.bottom, 0, 0, pw, ph);
+		// 버튼 출력
+		print_button(hMemDC, is_on_Card_Removal_Butten, &cCard_Removal_Butten, &cCard_Removal_Butten_, rCard_Removal_Butten);
+		print_button(hMemDC, is_on_Merchant_Exit_Butten, &cMerchant_Exit_Butten, &cMerchant_Exit_Butten_, rMerchant_Exit_Butten);
+		// 카드 제거버튼과 나가기 버튼
+		// 상인의 손 만들기... 이건 생각좀 해보자
 		break;
 	case Room_Random:
 		break;
@@ -658,7 +711,8 @@ void IG_MOUSEMOVE(int mx, int my, POINT* cursor, Master master, RECT cRect)
 {
 	is_on_Rest_Butten = FALSE;
 	is_on_Enchant_Butten = FALSE;
-	
+	is_on_Card_Removal_Butten = FALSE;
+	is_on_Merchant_Exit_Butten = FALSE;
 
 	//
 	switch (master.screen_numbers.In_Game_Screen_num)
@@ -677,6 +731,10 @@ void IG_MOUSEMOVE(int mx, int my, POINT* cursor, Master master, RECT cRect)
 	case Room_Relics:
 		break;
 	case Room_Merchant:
+		if (is_in_rect(mx, my, rCard_Removal_Butten))
+			is_on_Card_Removal_Butten = TRUE;
+		if (is_in_rect(mx, my, rMerchant_Exit_Butten))
+			is_on_Merchant_Exit_Butten = TRUE;
 		break;
 	case Room_Random:
 		break;
@@ -806,11 +864,11 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 								*screen_number = 2;
 								StartStage(hWnd, &master->player, rand() % 3);
 							case Room_Rest:
+							case Room_Merchant:
 								master->screen_numbers.In_Game_Screen_num = room_type;
 								master->booleans.Is_print_map = FALSE;// 테스트중
 								break;
 							case Room_Relics:
-							case Room_Merchant:
 								MessageBox(hWnd, str, L"노드 선택", MB_OK);// 완성하면 주석처리
 								break;
 							case Room_Random:
@@ -823,11 +881,11 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 									*screen_number = 2;
 									StartStage(hWnd, &master->player, rand() % 3);
 								case Room_Rest:
+								case Room_Merchant:
 									master->screen_numbers.In_Game_Screen_num = room_type;
 									master->booleans.Is_print_map = FALSE;//테스트중
 									break;
 								case Room_Relics:
-								case Room_Merchant:
 									break;
 								case Room_Random:
 									// 위를 제외한 특별 이벤트 발생
@@ -864,6 +922,16 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 	case Room_Relics:
 		break;
 	case Room_Merchant:
+		if (is_in_rect(mx, my, rCard_Removal_Butten))
+		{
+			// 카드 제거
+			MessageBox(hWnd, L"미구현", L"카드 제거", MB_OK);// 완성하면 주석처리
+		}
+		if (is_in_rect(mx, my, rMerchant_Exit_Butten))
+		{
+			master->screen_numbers.In_Game_Screen_num = Out_of_game;
+			master->booleans.Is_print_map = TRUE;
+		}
 		break;
 	case Room_Random:
 		break;
