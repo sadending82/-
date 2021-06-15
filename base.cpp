@@ -376,7 +376,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 					
 					screen_number = 2;
-					card_position = StartStage(hWnd, &master.player, rand() % 3);
+					StartStage(hWnd, &master.player, rand() % 3);
 					break;
 				case 2:
 					//아래에서 처리
