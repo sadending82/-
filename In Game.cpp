@@ -941,8 +941,9 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 			// 카드 제거
 			random_num = rand() % (master->player.deck.num_of_cards + 1) - 1;
 			MessageBox(hWnd, L"랜덤한 카드를 제거합니다(실패 가능)", L"카드 제거", MB_OK);
-			if (master->player.deck.num_of_cards > 2)
+			if (master->player.deck.num_of_cards > 2 && master->player.money >= 75 + master->player.Card_Removal_Count * 25)
 			{
+				master->player.money = master->player.money - 75 + master->player.Card_Removal_Count * 25;
 				if (random_num == -1)
 					MessageBox(hWnd, L"저런! 제거에 실패했어요!", L"꽝!", MB_OK);
 				else if (master->player.deck.holdingCard[random_num].is_enhanced == FALSE)
@@ -955,7 +956,7 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 				}
 			}
 			else
-				MessageBox(hWnd, L"보유한 카드의 수가 보족합니다", L"실패!", MB_OK);
+				MessageBox(hWnd, L"보유한 카드의 수or 돈이 부족합니다", L"실패!", MB_OK);
 
 		}
 		if (is_in_rect(mx, my, rMerchant_Exit_Butten))
