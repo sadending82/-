@@ -36,6 +36,13 @@ static CImage cMerchant_2;
 static CImage cBoss_2;
 
 
+static CImage cRest_Butten;
+static CImage cRest_Butten_;
+static CImage cEnchant_Butten;
+static CImage cEnchant_Butten_;
+
+
+
 
 
 //이미지 세팅
@@ -91,6 +98,11 @@ void Set_IG_Img()
 		cMerchant_2.Load(L"Merchant_2.png");
 	if (cBoss_2.IsNull())
 		cBoss_2.Load(L"Boss_2.png");
+
+	if (cRest_Butten.IsNull())
+		cRest_Butten.Load(L"Rest_Butten.png");
+	if (cEnchant_Butten.IsNull())
+		cEnchant_Butten.Load(L"Enchant_Butten.png");
 }
 
 void Set_IG_POINT(RECT cRect)
@@ -266,7 +278,8 @@ void make_map(Master* master, RECT cRect)
 		// 시작 방에서 고정된 맵을 생성하고 랜덤한 타입값을 준다.
 	master->stage.map.num_of_rooms = 13;
 	
-	master->stage.map.All_room = (Room**)malloc(sizeof(Room*) * master->stage.map.num_of_rooms);
+	if(master->stage.map.All_room==NULL)
+		master->stage.map.All_room = (Room**)malloc(sizeof(Room*) * master->stage.map.num_of_rooms);
 	//실행이 안 되면 위 방들을 초기화해줘라
 	for (int i = 0; i < master->stage.map.num_of_rooms; i++)
 	{
@@ -605,7 +618,7 @@ void IG_Timer(POINT cursor, int* map_yPos, RECT cRect, Master* master)
 	// rect 영역 움직여주는 함수 갔다가 쓰자.
 	
 }
-void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL* is_pause)
+void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL* is_pause, int* map_yPos)
 {
 	TCHAR str[20];
 	if (is_in_rect(mx, my, master->stage.map.Boss_Room->rect))
@@ -614,6 +627,16 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 		master->stage.map.Current_Room = master->stage.map.Boss_Room;// 이건 필요 없음
 		// 보스와 전투 시작 코드 추가
 		// 전투가 끝나면 다음 스테이지로 가거나 마지막 스테이지면 점수가 나오고 메인 화면으로
+		//	보스와의 전투에서 승리시
+		master->stage.stage_num++;
+		if (master->stage.stage_num == 4)
+			;//최대 스테이지는 3 이므로 점수를 출력하고 게임을 종료
+		else
+		{
+			*map_yPos = 0;
+			make_map(master, cRect);
+		}
+
 	}
 	else
 		for (int i = 0; i < 13; i++)
@@ -633,6 +656,7 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 						case Room_Elite_Enemy:
 							break;
 						case Room_Rest:
+							Event_Rest(hWnd, mx, my, master, cRect, is_pause);
 							break;
 						case Room_Relics:
 							break;
@@ -656,7 +680,30 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 
 void Event_Basic_Enemy();
 void Event_Elite_Enemy();
-void Event_Rest();
+void Event_Rest(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL* is_pause)
+{
+	// 휴식 화면 출력
+	// 배경 출력
+	// 버튼 출력
+	// 버튼 위에 커서가 올라갈 시 문장 출력
+	// EZ?
+}
 void Event_Relics();
 void Event_Merchant();
-void Event_Random();
+void Event_Random()
+{
+	switch (get_random_type_of_room())
+	{
+	case Room_Basic_Enemy:
+		break;
+	case Room_Elite_Enemy:
+		break;
+	case Room_Rest:
+		break;
+	case Room_Relics:
+		break;
+	case Room_Random:
+		// 위를 제외한 특별 이벤트 발생
+		break;
+	}
+}

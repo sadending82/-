@@ -271,7 +271,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			break;
 		case 1:
 			if (!is_pause)
-				IG_LBUTTONDOWN(hWnd, mx, my, &master, cRect,&is_pause);
+				IG_LBUTTONDOWN(hWnd, mx, my, &master, cRect, &is_pause, &map_yPos);
 			break;
 		case 2:
 			card_position = GP_LBUTTONDOWN(hWnd, mx, my, &player, card_position.x, card_position.y);
