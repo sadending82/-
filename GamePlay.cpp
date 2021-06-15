@@ -224,11 +224,11 @@ void SetCard(Player* player)
 	tmpCard.cost = 1;
 
 
-	player->deck.card[0] = tmpCard;
-	player->deck.card[1] = tmpCard;
-	player->deck.card[2] = tmpCard;
-	player->deck.card[3] = tmpCard;
-	player->deck.card[4] = tmpCard;
+	player->deck.holdingCard[0] = tmpCard;
+	player->deck.holdingCard[1] = tmpCard;
+	player->deck.holdingCard[2] = tmpCard;
+	player->deck.holdingCard[3] = tmpCard;
+	player->deck.holdingCard[4] = tmpCard;
 
 	tmpCard.is_Active = TRUE;
 	tmpCard.is_enhanced = FALSE;
@@ -243,11 +243,11 @@ void SetCard(Player* player)
 	tmpCard.bottom = 730;
 	tmpCard.cost = 1;
 
-	player->deck.card[5] = tmpCard;
-	player->deck.card[6] = tmpCard;
-	player->deck.card[7] = tmpCard;
-	player->deck.card[8] = tmpCard;
-	player->deck.card[9] = tmpCard;
+	player->deck.holdingCard[5] = tmpCard;
+	player->deck.holdingCard[6] = tmpCard;
+	player->deck.holdingCard[7] = tmpCard;
+	player->deck.holdingCard[8] = tmpCard;
+	player->deck.holdingCard[9] = tmpCard;
 	//직업 전용 카드 추가
 	switch (player->occupation)
 	{
@@ -268,6 +268,14 @@ void SetCard(Player* player)
 	}
 
 	player->deck.num_of_cards = tmp;
+}
+
+void SetGameCard(Player* player)
+{
+	for (int i = 0; i < MNCD; ++i)
+	{
+		player->deck.holdingCard[i] = player->deck.card[i];
+	}
 }
 
 void SetImg()
@@ -2586,7 +2594,7 @@ void StartStage(HWND hWnd, Player* player, int monsterNum)
 {
 	Master* master = GetMaster();
 	master->stage.floor_num--;
-	SetCard(player);
+	SetGameCard(player);
 	SetMonster(monsterNum);
 
 	player->isMyTurn = TRUE;
