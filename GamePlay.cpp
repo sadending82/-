@@ -261,7 +261,7 @@ void SetCard(Player* player)
 
 	for (int i = 0; i < MNCD; ++i)
 	{
-		if (player->deck.card[i].is_Active)
+		if (player->deck.holdingCard[i].is_Active)
 		{
 			tmp++;
 		}
@@ -2602,7 +2602,7 @@ void StartStage(HWND hWnd, Player* player, int monsterNum)
 	player->hp.Shield_figure = 0;
 	player->cost = 3;
 
-	Shupple(player, 10);
+	Shupple(player, player->deck.num_of_cards);
 	player->deck.card[0].is_inhand = TRUE;
 	player->deck.card[1].is_inhand = TRUE;
 	player->deck.card[2].is_inhand = TRUE;
@@ -2629,7 +2629,7 @@ void ChangePlayerTurn(HWND hWnd, Player* player)
 
 	player->isMyTurn = TRUE;
 
-	Shupple(player, 10);
+	Shupple(player, player->deck.num_of_cards);
 	player->deck.card[0].is_inhand = TRUE;
 	player->deck.card[1].is_inhand = TRUE;
 	player->deck.card[2].is_inhand = TRUE;
