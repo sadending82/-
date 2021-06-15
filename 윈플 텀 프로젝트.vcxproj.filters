@@ -239,6 +239,9 @@
     <Image Include="HP_Bar_Empty.png">
       <Filter>리소스 파일</Filter>
     </Image>
+    <Image Include="방패.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Font Include="휴면편지체.TTF" />

@@ -22,6 +22,7 @@ static CImage slmIdle1, slmIdle2, slmIdle3, slmIdle4, slmIdle5, slmIdle6;
 static CImage slmAttack1, slmAttack2, slmAttack3, slmAttack4, slmAttack5, slmAttack6;
 static CImage turnEnd, turnEnd_;
 static CImage HPbar, HPred;
+static CImage shield;
 
 static int frontCard = 0;
 static BOOL isFront = FALSE;
@@ -37,9 +38,15 @@ static BOOL isMouseUpTurnEnd = FALSE;
 static BOOL isMyTurnPrint = FALSE;
 static BOOL isEnemyTurnPrint = FALSE;
 
+static BOOL isEnemyDmgPrint = FALSE;
+static BOOL isMyDmgPrint = FALSE;
+
 static int MoveCard = 0;
 
 static int AtkMonster = 0;
+
+static int monsterAtkDmg = 0;
+static int myAtkDmg = 0;
 
 static Monster monster[3] = { 0 };
 static int monsterCount = 0;
@@ -47,6 +54,7 @@ static int monsterCount = 0;
 static int timer = 0;
 static int monsterTimer[3] = { 0 };
 static int CardTimer[50] = { 0 };
+static int DmgTimer = 0;
 
 static int TurnMonsterNum = 0;
 
@@ -66,7 +74,8 @@ void PlayerDeffence(HWND hWnd, Player* player);
 void TurnChange(HWND hWnd, Player* player);
 void SetCardPos(HWND hWnd, Player* player, int num);
 int CalcDmg(Player* player);
-int CalcDmg(Monster monster);
+void CalcDmg(Player* player, Monster monster);
+int CalcShield(Player* player);
 void PlayerDefeat(HWND hWnd);
 void PlayerWin(HWND hWnd);
 void CheckState(HWND hWnd, Player* player);
@@ -321,6 +330,10 @@ void SetImg()
 	{
 		HPred.Load(L"HP_Bar_HP.png");
 	}
+	if (shield.IsNull())
+	{
+		shield.Load(L"¹æÆÐ.png");
+	}
 	
 }
 
@@ -357,6 +370,14 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
 			SelectObject(hDC, oldFont);
 			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++;
 			if (timer >= 10)
 			{
@@ -388,6 +409,14 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
 			SelectObject(hDC, oldFont);
 			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++;
 			if (timer >= 20)
 			{
@@ -419,6 +448,14 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
 			SelectObject(hDC, oldFont);
 			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++;
 			if (timer >= 30)
 			{
@@ -450,6 +487,14 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
 			SelectObject(hDC, oldFont);
 			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++;
 			if (timer >= 40)
 			{
@@ -481,6 +526,14 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
 			SelectObject(hDC, oldFont);
 			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++; 
 			if (timer >= 50)
 			{
@@ -528,6 +581,14 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
 			SelectObject(hDC, oldFont);
 			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++;
 			if (timer >= 7)
 			{
@@ -560,6 +621,14 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
 			SelectObject(hDC, oldFont);
 			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++;
 			if (timer >= 14)
 			{
@@ -593,6 +662,14 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
 			SelectObject(hDC, oldFont);
 			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++;
 			if (timer >= 21)
 			{
@@ -625,6 +702,14 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
 			SelectObject(hDC, oldFont);
 			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++;
 			if (timer >= 28)
 			{
@@ -640,6 +725,8 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 				monster[AtkMonster].animation_state = State_Attacked;
 				monster[AtkMonster].animation_num = 0;
 				monsterTimer[AtkMonster] = 0;
+				DmgTimer = 0;
+				SetMyDmgPrint(hWnd);
 			}
 
 		}
@@ -669,6 +756,14 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
 			SelectObject(hDC, oldFont);
 			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++;
 			if (timer >= 35)
 			{
@@ -701,6 +796,14 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
 			SelectObject(hDC, oldFont);
 			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++;
 			if (timer >= 42)
 			{
@@ -733,6 +836,14 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
 			SelectObject(hDC, oldFont);
 			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++;
 			if (timer >= 49)
 			{
@@ -765,6 +876,14 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
 			SelectObject(hDC, oldFont);
 			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++;
 			if (timer >= 56)
 			{
@@ -809,6 +928,14 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 		TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
 		SelectObject(hDC, oldFont);
 		DeleteObject(hFont);
+		if (player->hp.Shield_figure > 0)
+		{
+			wsprintf(str, L"+     %d", player->hp.Shield_figure);
+			TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+			int sw = shield.GetWidth();
+			int sh = shield.GetHeight();
+			shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+		}
 		timer++;
 		if (timer >= 56)
 		{
@@ -852,6 +979,14 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
 			SelectObject(hDC, oldFont);
 			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++;
 			if (timer >= 5)
 			{
@@ -883,6 +1018,14 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
 			SelectObject(hDC, oldFont);
 			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++;
 			if (timer >= 15)
 			{
@@ -914,6 +1057,14 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
 			SelectObject(hDC, oldFont);
 			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++;
 			if (timer >= 25)
 			{
@@ -945,6 +1096,14 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			TextOut(hDC, player->x + pw - (size.cx) + 7, 350 + (ph * 2), str, lstrlen(str));
 			SelectObject(hDC, oldFont);
 			DeleteObject(hFont);
+			if (player->hp.Shield_figure > 0)
+			{
+				wsprintf(str, L"+     %d", player->hp.Shield_figure);
+				TextOut(hDC, player->x + pw + 40, 350 + (ph * 2) + 1, str, lstrlen(str));
+				int sw = shield.GetWidth();
+				int sh = shield.GetHeight();
+				shield.Draw(hDC, player->x + pw + 55, 350 + (ph * 2) - 5, sw, sh, 0, 0, sw, sh);
+			}
 			timer++;
 			if (timer >= 35)
 			{
@@ -955,6 +1114,16 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 		}
 			break;
 		}
+	}
+
+	if (isEnemyDmgPrint)
+	{
+		DmgTimer++;
+		WCHAR tstr[20] = { 0 };
+		int pw = charIdle1.GetWidth();
+		int ph = charIdle1.GetHeight();
+		wsprintf(tstr, L"%d", monsterAtkDmg);
+		TextOut(hDC, player->x + 100, 350 - DmgTimer, tstr, lstrlen(tstr));
 	}
 }
 
@@ -1323,11 +1492,10 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 							if (monsterTimer[i] >= 30)
 							{
 								monster[i].animation_num++;
-								player->hp.Current_hp -= CalcDmg(monster[TurnMonsterNum]);
-								if (player->hp.Current_hp <= 0)
-								{
-									player->hp.Current_hp = 0;
-								}
+								CalcDmg(player, monster[i]);
+								DmgTimer = 0;
+								SetEnemyDmgPrint(hWnd);
+
 								player->animation_state = State_Attacked;
 								player->animation_num = 0;
 							}
@@ -1751,6 +1919,16 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 			}
 
 		}
+	}
+
+	if (isMyDmgPrint)
+	{
+		DmgTimer++;
+		WCHAR tstr[20] = { 0 };
+		int mw = slmIdle1.GetWidth();
+		int mh = slmIdle1.GetHeight();
+		wsprintf(tstr, L"%d", myAtkDmg);
+		TextOut(hDC, monster[AtkMonster].x - (mw / 2) + 50, 500 - DmgTimer, tstr, lstrlen(tstr));
 	}
 }
 
@@ -2332,6 +2510,8 @@ void PlayerDeffence(HWND hWnd, Player* player)
 	isCharMove = TRUE;
 	timer = 0;
 
+	player->hp.Shield_figure += CalcShield(player);
+
 	isFront = FALSE;
 	isSelected = FALSE;
 
@@ -2437,11 +2617,46 @@ void SetCardPos(HWND hWnd, Player* player, int num)
 
 int CalcDmg(Player* player)
 {
-	return 5;
+	myAtkDmg = 5 + player->item.buffs[0].num;
+	return myAtkDmg;
 }
-int CalcDmg(Monster monster)
+
+void CalcDmg(Player* player, Monster monster)
 {
-	return rand() % (monster.maxDmg-monster.minDmg + 1) + monster.minDmg;
+
+	monsterAtkDmg = rand() % (monster.maxDmg-monster.minDmg + 1) + monster.minDmg;
+	if (player->hp.Shield_figure > 0)
+	{
+		if (player->hp.Shield_figure >= monsterAtkDmg)
+		{
+			player->hp.Shield_figure -= monsterAtkDmg;
+		}
+		else
+		{
+			player->hp.Current_hp -= (monsterAtkDmg - player->hp.Shield_figure);
+
+			if (player->hp.Current_hp <= 0)
+			{
+				player->hp.Current_hp = 0;
+			}
+
+			player->hp.Shield_figure = 0;
+
+		}
+	}
+	else
+	{
+		player->hp.Current_hp -= monsterAtkDmg;
+
+		if (player->hp.Current_hp <= 0)
+		{
+			player->hp.Current_hp = 0;
+		}
+	}
+}
+int CalcShield(Player* player)
+{
+	return 5 + player->item.buffs[1].num;
 }
 
 void TurnChange(HWND hWnd, Player* player)
@@ -2600,6 +2815,50 @@ void SetEnemyTurnPrint(HWND hWnd)
 	}
 }
 
+void SetEnemyDmgPrint(HWND hWnd)
+{
+	if (isEnemyDmgPrint == FALSE)
+	{
+		isEnemyDmgPrint = TRUE;
+		isMyDmgPrint = FALSE;
+		SetTimer(hWnd, DmgPrint_Timer, 1500, NULL);
+	}
+	else
+	{
+		isEnemyDmgPrint = FALSE;
+		KillTimer(hWnd, DmgPrint_Timer);
+	}
+}
+
+void SetMyDmgPrint(HWND hWnd)
+{
+	if (isMyDmgPrint == FALSE)
+	{
+		isMyDmgPrint = TRUE;
+		isEnemyDmgPrint = FALSE;
+		SetTimer(hWnd, DmgPrint_Timer, 1500, NULL);
+	}
+	else
+	{
+		isMyDmgPrint = FALSE;
+		KillTimer(hWnd, DmgPrint_Timer);
+	}
+}
+
+int GetDmgPrint()
+{
+	if (isMyDmgPrint)
+	{
+		return 1;
+	}
+	else if (isEnemyDmgPrint)
+	{
+		return 2;
+	}
+
+	return 0;
+}
+
 int GetPrint()
 {
 	if (isMyTurnPrint == TRUE)
@@ -2627,3 +2886,4 @@ void PlayerWin(HWND hWnd)
 	MessageBox(hWnd, L"ÇÃ·¹ÀÌ¾î ½Â¸®", L"½Â¸®", MB_OK);
 
 }
+
