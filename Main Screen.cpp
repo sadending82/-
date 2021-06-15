@@ -277,7 +277,7 @@ void Set_player(int occupation,Master* master)
 	case 1:
 		master->player.x = 200;
 		master->player.hp.Max_hp = master->player.hp.Current_hp = 70;
-		master->player.money = 0;
+		master->player.money = 200;
 		master->player.occupation = 1;
 		master->player.isCharacterActive = TRUE;
 		master->player.animation_num = 0;
