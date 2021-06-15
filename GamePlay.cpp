@@ -21,6 +21,7 @@ static CImage DeffenceCardImg;
 static CImage slmIdle1, slmIdle2, slmIdle3, slmIdle4, slmIdle5, slmIdle6;
 static CImage slmAttack1, slmAttack2, slmAttack3, slmAttack4, slmAttack5, slmAttack6;
 static CImage turnEnd, turnEnd_;
+static CImage HPbar, HPred;
 
 static int frontCard = 0;
 static BOOL isFront = FALSE;
@@ -293,7 +294,14 @@ void SetImg()
 	{
 		turnEnd_.Load(L"TurnEnd1_.png");
 	}
-
+	if (HPbar.IsNull())
+	{
+		HPbar.Load(L"HP_Bar_Empty.png");
+	}
+	if (HPred.IsNull())
+	{
+		HPred.Load(L"HP_Bar_HP.png");
+	}
 	
 }
 
@@ -311,6 +319,15 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			int pw = charIdle1.GetWidth();
 			int ph = charIdle1.GetHeight();
 			charIdle1.Draw(hDC, player->x, 350, pw*2, ph*2, 0, 0, pw, ph);
+			int hpw = HPbar.GetWidth();
+			int hph = HPbar.GetHeight();
+			HPbar.Draw(hDC, player->x + (pw / 2), 350 + (ph * 2), hpw, hph, 0, 0, hpw, hph);
+			if (player->hp.Current_hp > 0)
+			{
+				float percent = hpw * (player->hp.Current_hp / (float)(player->hp.Max_hp));
+				int intper = (int)percent;
+				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
+			}
 			timer++;
 			if (timer >= 10)
 			{
@@ -323,6 +340,15 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			int pw = charIdle1.GetWidth();
 			int ph = charIdle1.GetHeight();
 			charIdle1.Draw(hDC, player->x, 350 - 2, pw * 2, ph * 2 + 2, 0, 0, pw, ph);
+			int hpw = HPbar.GetWidth();
+			int hph = HPbar.GetHeight();
+			HPbar.Draw(hDC, player->x + (pw / 2), 350 + (ph * 2), hpw, hph, 0, 0, hpw, hph);
+			if (player->hp.Current_hp > 0)
+			{
+				float percent = hpw * (player->hp.Current_hp / (float)(player->hp.Max_hp));
+				int intper = (int)percent;
+				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
+			}
 			timer++;
 			if (timer >= 20)
 			{
@@ -335,6 +361,15 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			int pw = charIdle1.GetWidth();
 			int ph = charIdle1.GetHeight();
 			charIdle1.Draw(hDC, player->x, 350 - 4, pw * 2, ph * 2 + 4, 0, 0, pw, ph);
+			int hpw = HPbar.GetWidth();
+			int hph = HPbar.GetHeight();
+			HPbar.Draw(hDC, player->x + (pw / 2), 350 + (ph * 2), hpw, hph, 0, 0, hpw, hph);
+			if (player->hp.Current_hp > 0)
+			{
+				float percent = hpw * (player->hp.Current_hp / (float)(player->hp.Max_hp));
+				int intper = (int)percent;
+				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
+			}
 			timer++;
 			if (timer >= 30)
 			{
@@ -347,6 +382,15 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			int pw = charIdle1.GetWidth();
 			int ph = charIdle1.GetHeight();
 			charIdle1.Draw(hDC, player->x, 350 - 2, pw * 2, ph * 2 + 2, 0, 0, pw, ph);
+			int hpw = HPbar.GetWidth();
+			int hph = HPbar.GetHeight();
+			HPbar.Draw(hDC, player->x + (pw / 2), 350 + (ph * 2), hpw, hph, 0, 0, hpw, hph);
+			if (player->hp.Current_hp > 0)
+			{
+				float percent = hpw * (player->hp.Current_hp / (float)(player->hp.Max_hp));
+				int intper = (int)percent;
+				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
+			}
 			timer++;
 			if (timer >= 40)
 			{
@@ -359,6 +403,15 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			int pw = charIdle1.GetWidth();
 			int ph = charIdle1.GetHeight();
 			charIdle1.Draw(hDC, player->x, 350, pw * 2, ph * 2, 0, 0, pw, ph);
+			int hpw = HPbar.GetWidth();
+			int hph = HPbar.GetHeight();
+			HPbar.Draw(hDC, player->x + (pw / 2), 350 + (ph * 2), hpw, hph, 0, 0, hpw, hph);
+			if (player->hp.Current_hp > 0)
+			{
+				float percent = hpw * (player->hp.Current_hp / (float)(player->hp.Max_hp));
+				int intper = (int)percent;
+				HPred.Draw(hDC, player->x + (pw / 2) - 1, 350 + (ph * 2) + 1, intper, hph, 0, 0, intper, hph);
+			}
 			timer++; 
 			if (timer >= 50)
 			{
@@ -369,7 +422,6 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 					isTurnChange = FALSE;
 					SetTurnChangeTimer(hWnd);
 				}
-				CheckState(hWnd, player);
 			}
 		}
 			break;
@@ -700,6 +752,11 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 							if (monsterTimer[i] >= 30)
 							{
 								monster[i].animation_num++;
+								player->hp.Current_hp -= CalcDmg(monster[TurnMonsterNum]);
+								if (player->hp.Current_hp <= 0)
+								{
+									player->hp.Current_hp = 0;
+								}
 							}
 						}
 						break;
@@ -767,6 +824,7 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 								monster[i].animation_state = State_Idle;
 								monster[i].animation_num = 0;
 								monsterTimer[i] = 0;
+
 							}
 
 						}
@@ -779,9 +837,9 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 						{
 						case 0:
 						{
-							int mw = slmIdle1.GetWidth();
-							int mh = slmIdle1.GetHeight();
-							slmIdle1.Draw(hDC, monster[i].x - (mw / 2), 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							int mw = slmIdle4.GetWidth();
+							int mh = slmIdle4.GetHeight();
+							slmIdle4.Draw(hDC, monster[i].x - (mw / 2), 550, mw * 2, mh * 2, 0, 0, mw, mh);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 10)
 							{
@@ -791,9 +849,9 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 						break;
 						case 1:
 						{
-							int mw = slmIdle1.GetWidth();
-							int mh = slmIdle1.GetHeight();
-							slmIdle1.Draw(hDC, monster[i].x - (mw / 2), 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							int mw = slmIdle5.GetWidth();
+							int mh = slmIdle5.GetHeight();
+							slmIdle5.Draw(hDC, monster[i].x - (mw / 2), 550, mw * 2, mh * 2, 0, 0, mw, mh);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 20)
 							{
@@ -803,9 +861,9 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 						break;
 						case 2:
 						{
-							int mw = slmIdle1.GetWidth();
-							int mh = slmIdle1.GetHeight();
-							slmIdle1.Draw(hDC, monster[i].x - (mw / 2), 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							int mw = slmIdle6.GetWidth();
+							int mh = slmIdle6.GetHeight();
+							slmIdle6.Draw(hDC, monster[i].x - (mw / 2), 550, mw * 2, mh * 2, 0, 0, mw, mh);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 30)
 							{
@@ -815,9 +873,9 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 						break;
 						case 3:
 						{
-							int mw = slmIdle1.GetWidth();
-							int mh = slmIdle1.GetHeight();
-							slmIdle1.Draw(hDC, monster[i].x - (mw / 2), 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							int mw = slmAttack4.GetWidth();
+							int mh = slmAttack4.GetHeight();
+							slmAttack4.Draw(hDC, monster[i].x - (mw / 2) - 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 40)
 							{
@@ -827,9 +885,9 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 						break;
 						case 4:
 						{
-							int mw = slmIdle1.GetWidth();
-							int mh = slmIdle1.GetHeight();
-							slmIdle1.Draw(hDC, monster[i].x - (mw / 2), 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							int mw = slmAttack3.GetWidth();
+							int mh = slmAttack3.GetHeight();
+							slmAttack3.Draw(hDC, monster[i].x - (mw / 2) - 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 50)
 							{
@@ -839,15 +897,16 @@ static void DrawMonster(HWND hWnd, HDC hDC, Player* player)
 						break;
 						case 5:
 						{
-							int mw = slmIdle1.GetWidth();
-							int mh = slmIdle1.GetHeight();
-							slmIdle1.Draw(hDC, monster[i].x - (mw / 2), 550, mw * 2, mh * 2, 0, 0, mw, mh);
+							int mw = slmAttack2.GetWidth();
+							int mh = slmAttack2.GetHeight();
+							slmAttack2.Draw(hDC, monster[i].x - (mw / 2) - 10, 550, mw * 2, mh * 2, 0, 0, mw, mh);
 							monsterTimer[i]++;
 							if (monsterTimer[i] >= 60)
 							{
 								monsterTimer[i] = 0;
 								monster[i].is_Active = FALSE;
 								isCharMove = FALSE;
+								CheckState(hWnd, player);
 							}
 						}
 						break;
@@ -1435,7 +1494,7 @@ void PlayerAttack(HWND hWnd, Player* player)
 
 	if (player->cost == 0)
 	{
-		isTurnChange = TRUE;
+		CheckState(hWnd, player);
 	}
 
 }
@@ -1472,7 +1531,7 @@ void PlayerDeffence(HWND hWnd, Player* player)
 
 	if (player->cost == 0)
 	{
-		isTurnChange = TRUE;
+		CheckState(hWnd, player);
 	}
 
 }
@@ -1599,7 +1658,7 @@ void TurnChange(HWND hWnd, Player* player)
 					monster[TurnMonsterNum].animation_state = State_Attack;
 					monster[TurnMonsterNum].animation_num = 0;
 					monsterTimer[TurnMonsterNum] = 0;
-					player->hp.Current_hp -= CalcDmg(monster[TurnMonsterNum]);
+//					player->hp.Current_hp -= CalcDmg(monster[TurnMonsterNum]);
 					break;
 				}
 				else
@@ -1622,7 +1681,7 @@ void TurnChange(HWND hWnd, Player* player)
 				monster[i].animation_state = State_Attack;
 				monster[i].animation_num = 0;
 				monsterTimer[i] = 0;
-				player->hp.Current_hp -= CalcDmg(monster[i]);
+//				player->hp.Current_hp -= CalcDmg(monster[i]);
 				TurnMonsterNum = i;
 				isMonsterTurnNoneEnd = TRUE;
 				break;
@@ -1664,36 +1723,36 @@ void CheckState(HWND hWnd, Player* player)
 		PlayerDefeat(hWnd);
 		return;
 	}
-
-	for (int i = 0; i < 3; ++i)
+	
+	if (!isCharMove)
 	{
-		if (monster[i].hp.Current_hp == 0)
+		for (int i = 0; i < 3; ++i)
 		{
-			if (monster[i].is_Active)
+			if (monster[i].hp.Current_hp == 0)
 			{
-				monster[i].animation_state = State_Dead;
-				isCharMove = TRUE;
-				return;
+				if (monster[i].is_Active)
+				{
+					monster[i].animation_state = State_Dead;
+					monster[i].animation_num = 0;
+					monsterTimer[i] = 0;
+					isCharMove = TRUE;
+					return;
+				}
 			}
 		}
 	}
 
-
+	if (!isCharMove)
+	{
+		if (player->cost == 0)
+		{
+			SetTurnChangeTimer(hWnd);
+			return;
+		}
+	}
 }
 
-void PlayerDefeat(HWND hWnd)
-{
-	KillTimer(hWnd, 1);
-	MessageBox(hWnd, L"플레이어 패배", L"패배", MB_OK);
 
-}
-
-void PlayerWin(HWND hWnd)
-{
-	KillTimer(hWnd, 1);
-	MessageBox(hWnd, L"플레이어 승리", L"승리", MB_OK);
-
-}
 
 void SetTurnChangeTimer(HWND hWnd)
 {
@@ -1747,4 +1806,18 @@ int GetPrint()
 	}
 
 	return 0;
+}
+
+void PlayerDefeat(HWND hWnd)
+{
+	KillTimer(hWnd, 1);
+	MessageBox(hWnd, L"플레이어 패배", L"패배", MB_OK);
+
+}
+
+void PlayerWin(HWND hWnd)
+{
+	KillTimer(hWnd, 1);
+	MessageBox(hWnd, L"플레이어 승리", L"승리", MB_OK);
+
 }
