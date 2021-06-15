@@ -656,7 +656,7 @@ void IG_Timer(POINT cursor, int* map_yPos, RECT cRect, Master* master)
 // In_Game_Screen_num -1 = 지도화면
 //	In_Game_Screen_num이 -1 일때만 클릭이 가능하며
 //	master.booleans.Is_print_map == TRUE && In_Game_Screen_num != -1 이면 지도는 나오지만 클릭은 안 되도록 만든다.
-void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL* is_pause, int* map_yPos)
+void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL* is_pause, int* map_yPos,int* screen_number)
 {
 	int room_type;
 	TCHAR str[20];
@@ -696,6 +696,8 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 							case Room_Basic_Enemy:
 							case Room_Elite_Enemy:
 								// 전투
+								//*screen_number = 2;
+								//card_position = StartStage(hWnd, &master->player, rand() % 3);
 								break;
 							case Room_Rest:
 							case Room_Relics:
@@ -710,6 +712,8 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 								case Room_Basic_Enemy:
 								case Room_Elite_Enemy:
 									// 전투
+									//*screen_number = 2;
+									//card_position = StartStage(hWnd, &master->player, rand() % 3);
 									break;
 								case Room_Rest:
 								case Room_Relics:
