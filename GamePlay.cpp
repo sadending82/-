@@ -274,7 +274,7 @@ void SetGameCard(Player* player)
 {
 	for (int i = 0; i < MNCD; ++i)
 	{
-		player->deck.holdingCard[i] = player->deck.card[i];
+		player->deck.card[i] = player->deck.holdingCard[i];
 	}
 }
 
