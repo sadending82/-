@@ -149,6 +149,9 @@ void DisplayGame(HWND hWnd, HDC hDC, Player* player)
 				int ph = AttackCardImg.GetHeight();
 				AttackCardImg.Draw(hDC,player->deck.card[frontCard].left, player->deck.card[frontCard].top,
 					player->deck.card[frontCard].right - player->deck.card[frontCard].left, player->deck.card[frontCard].bottom - player->deck.card[frontCard].top, 0, 0, pw, ph);
+				WCHAR lstr[10] = { 0 };
+				wsprintf(lstr, L"%d", CalcDmg(player));
+				TextOut(hDC, player->deck.card[frontCard].left + 98, player->deck.card[frontCard].top + 183, lstr, lstrlen(lstr));
 
 			}
 			else if (player->deck.card[frontCard].type == Card_Type_Deffence)
@@ -157,6 +160,9 @@ void DisplayGame(HWND hWnd, HDC hDC, Player* player)
 				int ph = DeffenceCardImg.GetHeight();
 				DeffenceCardImg.Draw(hDC, player->deck.card[frontCard].left,player->deck.card[frontCard].top,
 					player->deck.card[frontCard].right - player->deck.card[frontCard].left, player->deck.card[frontCard].bottom - player->deck.card[frontCard].top, 0, 0, pw, ph);
+				WCHAR lstr[10] = { 0 };
+				wsprintf(lstr, L"%d", CalcShield(player));
+				TextOut(hDC, player->deck.card[frontCard].left + 98, player->deck.card[frontCard].top + 183, lstr, lstrlen(lstr));
 			}
 		}
 
@@ -1141,6 +1147,9 @@ static void DrawCard(HWND hWnd, HDC hDC, Player* player)
 					int ph = AttackCardImg.GetHeight();
 					AttackCardImg.Draw(hDC, player->deck.card[i].left, player->deck.card[i].top,
 						player->deck.card[i].right - player->deck.card[i].left, player->deck.card[i].bottom - player->deck.card[i].top, 0, 0, pw, ph);
+					WCHAR lstr[10] = { 0 };
+					wsprintf(lstr, L"%d", CalcDmg(player));
+					TextOut(hDC, player->deck.card[frontCard].left + 98, player->deck.card[frontCard].top + 183, lstr, lstrlen(lstr));
 				}
 				else if (player->deck.card[i].type == Card_Type_Deffence)
 				{
@@ -1148,6 +1157,9 @@ static void DrawCard(HWND hWnd, HDC hDC, Player* player)
 					int ph = DeffenceCardImg.GetHeight();
 					DeffenceCardImg.Draw(hDC, player->deck.card[i].left, player->deck.card[i].top,
 						player->deck.card[i].right - player->deck.card[i].left, player->deck.card[i].bottom - player->deck.card[i].top, 0, 0, pw, ph);
+					WCHAR lstr[10] = { 0 };
+					wsprintf(lstr, L"%d", CalcShield(player));
+					TextOut(hDC, player->deck.card[frontCard].left + 98, player->deck.card[frontCard].top + 183, lstr, lstrlen(lstr));
 				}
 			}
 		}
