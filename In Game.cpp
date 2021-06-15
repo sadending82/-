@@ -66,7 +66,14 @@ static BOOL is_on_Card_Removal_Butten;
 static BOOL is_on_Merchant_Exit_Butten;
 
 
+static CImage cCard_Buy_Card_Butten1;
+static CImage cCard_Buy_Card_Butten2;
 
+static RECT rCard_Buy_Card_Butten1;
+static RECT rCard_Buy_Card_Butten2;
+
+static BOOL is_on_Card_Buy_Card_Butten1;
+static BOOL is_on_Card_Buy_Card_Butten2;
 
 //이미지 세팅
 void Set_IG_Img()
@@ -148,6 +155,11 @@ void Set_IG_Img()
 		cMerchant_Exit_Butten.Load(L"Merchant_Exit_Butten.png");
 	if (cMerchant_Exit_Butten_.IsNull())
 		cMerchant_Exit_Butten_.Load(L"Merchant_Exit_Butten_.png");
+
+	if (cCard_Buy_Card_Butten1.IsNull())
+		cCard_Buy_Card_Butten1.Load(L"공격카드.png");
+	if (cCard_Buy_Card_Butten2.IsNull())
+		cCard_Buy_Card_Butten2.Load(L"방어카드.png");
 }
 
 void set_IG_Button(RECT cRect)
@@ -180,6 +192,18 @@ void set_IG_Button(RECT cRect)
 	rMerchant_Exit_Butten.top = cRect.bottom - 150;
 	rMerchant_Exit_Butten.right = rMerchant_Exit_Butten.left + 200;
 	rMerchant_Exit_Butten.bottom = rMerchant_Exit_Butten.top + 80;
+
+	rCard_Buy_Card_Butten1.left = cRect.left + 150;
+	rCard_Buy_Card_Butten1.right = rCard_Buy_Card_Butten1.left + 200;
+	rCard_Buy_Card_Butten1.top = cRect.top + 100;
+	rCard_Buy_Card_Butten1.bottom = rCard_Buy_Card_Butten1.top + 320;
+
+
+	rCard_Buy_Card_Butten2.right = cRect.right - 150;
+	rCard_Buy_Card_Butten2.left = rCard_Buy_Card_Butten2.right - 200;
+	rCard_Buy_Card_Butten2.top = cRect.top + 100;
+	rCard_Buy_Card_Butten2.bottom = rCard_Buy_Card_Butten2.top + 320;
+
 
 
 }
@@ -641,6 +665,8 @@ void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos, i
 		ph = cMerchant_Screen.GetHeight();
 		cMerchant_Screen.Draw(hMemDC, 0, 0, cRect.right, cRect.bottom, 0, 0, pw, ph);
 		// 버튼 출력
+		print_button(hMemDC, is_on_Card_Buy_Card_Butten1, &cCard_Buy_Card_Butten1, &cCard_Buy_Card_Butten1, rCard_Buy_Card_Butten1);
+		print_button(hMemDC, is_on_Card_Buy_Card_Butten2, &cCard_Buy_Card_Butten2, &cCard_Buy_Card_Butten2, rCard_Buy_Card_Butten2);
 		print_button(hMemDC, is_on_Card_Removal_Butten, &cCard_Removal_Butten, &cCard_Removal_Butten_, rCard_Removal_Butten);
 		// 가격 표시
 		wsprintf(str, L"%d", master.player.Card_Removal_Count * 25 + 75);
@@ -798,6 +824,8 @@ void IG_Timer(POINT cursor, int* map_yPos, RECT cRect, Master* master)
 //	master.booleans.Is_print_map == TRUE && In_Game_Screen_num != -1 이면 지도는 나오지만 클릭은 안 되도록 만든다.
 void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL* is_pause, int* map_yPos,int* screen_number)
 {
+	Card tmpCard;
+
 	int random_num;
 	int room_type;
 	TCHAR str[20];
@@ -969,6 +997,55 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 			master->screen_numbers.In_Game_Screen_num = Out_of_game;
 			master->booleans.Is_print_map = TRUE;
 		}
+		if (is_in_rect(mx, my, rCard_Buy_Card_Butten1))
+		{
+			if (master->player.money >= 50)
+			{
+				tmpCard.is_Active = TRUE;
+				tmpCard.is_enhanced = FALSE;
+				tmpCard.is_inhand = FALSE;
+				tmpCard.is_Moving = FALSE;
+				tmpCard.occupation = Card_Occu_ALL;
+				tmpCard.type = Card_Type_Attack;
+				tmpCard.number = 0;
+				tmpCard.left = 900;
+				tmpCard.right = 1100;
+				tmpCard.top = 470;
+				tmpCard.bottom = 730;
+				tmpCard.cost = 1;
+				master->player.deck.holdingCard[master->player.deck.num_of_cards] = tmpCard;
+				master->player.deck.num_of_cards++;
+				MessageBox(hWnd, L"공격 카드 추가", L"카드 추가", MB_OK);
+			}
+			else
+				MessageBox(hWnd, L"실패", L"카드 추가", MB_OK);
+
+		}
+		if (is_in_rect(mx, my, rCard_Buy_Card_Butten2))
+		{
+			if (master->player.money >= 50)
+			{
+				tmpCard.is_Active = TRUE;
+				tmpCard.is_enhanced = FALSE;
+				tmpCard.is_inhand = FALSE;
+				tmpCard.is_Moving = FALSE;
+				tmpCard.occupation = Card_Occu_ALL;
+				tmpCard.type = Card_Type_Deffence;
+				tmpCard.number = 0;
+				tmpCard.left = 900;
+				tmpCard.right = 1100;
+				tmpCard.top = 470;
+				tmpCard.bottom = 730;
+				tmpCard.cost = 1;
+				master->player.deck.holdingCard[master->player.deck.num_of_cards] = tmpCard;
+				master->player.deck.num_of_cards++;
+				MessageBox(hWnd, L"방어 카드 추가", L"카드 추가", MB_OK);
+			}
+			else
+				MessageBox(hWnd, L"실패", L"카드 추가", MB_OK);
+
+		}
+
 		break;
 	case Room_Random:
 		break;

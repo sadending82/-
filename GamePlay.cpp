@@ -219,6 +219,13 @@ void DisplayGame(HWND hWnd, HDC hDC, Player* player)
 
 void SetCard(Player* player)
 { // 임시로 막 넣었음.
+	for (int i = 0; i < MNCD; ++i)
+	{
+		if (player->deck.holdingCard[i].is_Active)
+		{
+			player->deck.holdingCard[i].is_Active = FALSE;
+		}
+	}
 	Card tmpCard;
 	tmpCard.is_Active = TRUE;
 	tmpCard.is_enhanced = FALSE;
