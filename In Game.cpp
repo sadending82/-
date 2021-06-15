@@ -689,6 +689,7 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 					if (is_in_rect(mx, my, master->stage.map.All_room[i]->rect))
 						if (master->stage.map.Current_Room->next[j] != NULL && is_in_rect(mx, my, master->stage.map.Current_Room->next[j]->rect))
 						{
+							//master->booleans.Is_print_map = FALSE;
 							MessageBox(hWnd, str, L"노드 선택", MB_OK);// 완성하면 주석처리
 							room_type = master->stage.map.Current_Room->room_type;
 							switch (room_type)
@@ -696,8 +697,8 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 							case Room_Basic_Enemy:
 							case Room_Elite_Enemy:
 								// 전투
-								//*screen_number = 2;
-								//card_position = StartStage(hWnd, &master->player, rand() % 3);
+								*screen_number = 2;
+								StartStage(hWnd, &master->player, rand() % 3);
 								break;
 							case Room_Rest:
 							case Room_Relics:
@@ -712,8 +713,8 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 								case Room_Basic_Enemy:
 								case Room_Elite_Enemy:
 									// 전투
-									//*screen_number = 2;
-									//card_position = StartStage(hWnd, &master->player, rand() % 3);
+									*screen_number = 2;
+									StartStage(hWnd, &master->player, rand() % 3);
 									break;
 								case Room_Rest:
 								case Room_Relics:
