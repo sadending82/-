@@ -11,7 +11,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 /* -*- 다른 소스파일에서 이 변수를 필요로 할 경우에는 함수의 인자로서 소스코드로 들고 가도록 합시다*/
 
 Master master = { 0 };
-Player player = { 0 };
+//Player player = { 0 };
 
 static int count = 0;
 static POS card_position = { 0 };
@@ -66,7 +66,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 	static RECT cRect;
 
-	static Master master;
+	//static Master master;
 	static int screen_number;
 	static int main_menu;//메인 화면의 상태
 
@@ -153,7 +153,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			// screen_number == 1인 상태에서 맵 타일중 전투인 경우를 선택하면 해당 스테이지에 랜덤한 몬스터를 지정해서 전투를 진행합니다.
 			// 몬스터가 정해지면 screen_number = 2;를 하고 화면에 위 순서대로 출력해야할겁니다.
 			// 전투가 끝나면 ==(플레이어의 체력or 몬스터의 체력 이 0이되면) 다시 1로 돌아갑니다. 위의 설명처럼 패배의 경우는 아래의 게임 오버 화면이 나와야합니다.
-			DisplayGame(hWnd, hMemDC, &player);
+			DisplayGame(hWnd, hMemDC, &master.player);
 			print_Status_Bar(hMemDC, cRect, master);
 
 
@@ -215,11 +215,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			int num = 0;
 			for (int i = 0; i < 50; ++i)
 			{
-				if (player.deck.card[i].is_Active)
+				if (master.player.deck.card[i].is_Active)
 				{
-					if (player.deck.card[i].is_Moving)
+					if (master.player.deck.card[i].is_Moving)
 					{
-						CardAnimToXy(hWnd, card_position.x + (num * 150), card_position.y, 10, &(player.deck.card[i]), i);
+						CardAnimToXy(hWnd, card_position.x + (num * 150), card_position.y, 10, &(master.player.deck.card[i]), i);
 						num++;
 					}
 				}
@@ -249,7 +249,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		case TurnDelay_Timer:
 		{
 			KillTimer(hWnd, 25);
-			GetTurnChangeTimer(hWnd, &player);
+			GetTurnChangeTimer(hWnd, &master.player);
 
 		}
 			break;
@@ -267,14 +267,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		switch (screen_number)
 		{
 		case 0:
-			MS_LBUTTONDOWN(hWnd, mx, my, &main_menu, &screen_number, &player, &master, cRect);
+			MS_LBUTTONDOWN(hWnd, mx, my, &main_menu, &screen_number, &master.player, &master, cRect);
 			break;
 		case 1:
 			if (!is_pause)
 				IG_LBUTTONDOWN(hWnd, mx, my, &master, cRect, &is_pause, &map_yPos);
 			break;
 		case 2:
-			card_position = GP_LBUTTONDOWN(hWnd, mx, my, &player, card_position.x, card_position.y);
+			card_position = GP_LBUTTONDOWN(hWnd, mx, my, &master.player, card_position.x, card_position.y);
 			break;
 		}
 	}
@@ -299,7 +299,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			IG_MOUSEMOVE(mx, my,&cursor);
 			break;
 		case 2:
-			GP_MOUSEMOVE(mx, my, &player);
+			GP_MOUSEMOVE(mx, my, &master.player);
 			break;
 		}
 	}
@@ -354,24 +354,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					break;
 				case 1:
 					// 0번째 캐릭터로 게임 시작
-					player.x = 200;
-					player.hp.Max_hp = player.hp.Current_hp = 80;
-					player.money = 0;
-					player.occupation = 0;
-					player.isCharacterActive = TRUE;
-					player.animation_num = 0;
-					player.animation_state = 0;
-					player.selectedCard = -1;
-					player.amount_of_card_draw = 5;
-					player.cost = 3;
-					master.player = player;
-					master.game_seed = rand();
-					SetCard(&player);
+					Set_player(0, &master);
 
 
 					
 					screen_number = 2;
-					card_position = StartStage(hWnd, &player, rand() % 3);
+					card_position = StartStage(hWnd, &master.player, rand() % 3);
 					break;
 				case 2:
 					//아래에서 처리
