@@ -941,7 +941,7 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 			// 카드 제거
 			random_num = rand() % (master->player.deck.num_of_cards + 1) - 1;
 			MessageBox(hWnd, L"랜덤한 카드를 제거합니다(실패 가능)", L"카드 제거", MB_OK);
-			if (master->player.deck.num_of_cards > 2 && master->player.money >= 75 + master->player.Card_Removal_Count * 25)
+			if (master->player.deck.num_of_cards > 6 && master->player.money >= 75 + master->player.Card_Removal_Count * 25)
 			{
 				master->player.money = master->player.money - 75 + master->player.Card_Removal_Count * 25;
 				if (random_num == -1)
