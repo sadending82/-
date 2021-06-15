@@ -344,6 +344,7 @@ typedef struct {
 
 POS* GetPosPointer();
 void ChangeScreenNumber(int num);
+Master* GetMaster();
 
 // -*- 아래부터는 GamePlay에 관한 함수입니다.
 void DisplayGame(HWND hWnd, HDC hDC, Player* player);

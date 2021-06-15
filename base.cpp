@@ -520,3 +520,8 @@ void ChangeScreenNumber(int num)
 	screen_number = num;
 }
 
+Master* GetMaster()
+{
+	return &master;
+}
+
