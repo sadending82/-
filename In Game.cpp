@@ -798,7 +798,7 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 		{
 			wsprintf(str, L"체력을 30%% 회복합니다(%d)", master->player.hp.Max_hp / 10 * 3);
 			MessageBox(hWnd, str, L"휴식", MB_OK);// 완성하면 주석처리
-			master->player.hp.Current_hp + master->player.hp.Max_hp / 10 * 3;
+			master->player.hp.Current_hp = master->player.hp.Current_hp + master->player.hp.Max_hp / 10 * 3;
 			if (master->player.hp.Current_hp > master->player.hp.Max_hp)
 				master->player.hp.Current_hp = master->player.hp.Max_hp;
 			master->screen_numbers.In_Game_Screen_num = Out_of_game;

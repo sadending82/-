@@ -387,8 +387,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				case 1:
 					// 0번째 캐릭터로 게임 시작
 					Set_player(0, &master);
-					screen_number = 2;
-					StartStage(hWnd, &master.player, rand() % 3);
+					make_map(&master, cRect);
+					screen_number = 1;
+					master.screen_numbers.In_Game_Screen_num = Out_of_game;
+					master.booleans.Is_print_map = TRUE;
+					map_yPos = 0;
 					break;
 				case 2:
 					//아래에서 처리
