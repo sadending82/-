@@ -556,6 +556,7 @@ void print_room(HDC hMapDC, Master master, RECT cRect,int room_print_count)
 void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos, int room_print_count)
 {
 	int pw, ph;
+	TCHAR str[100];
 	Set_IG_POINT(cRect);
 	//지도를 알맞게 출력한다.
 	switch (master.screen_numbers.In_Game_Screen_num)
@@ -572,7 +573,16 @@ void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos, i
 		// 버튼 출력
 		print_button(hMemDC, is_on_Rest_Butten, &cRest_Butten, &cRest_Butten_, rRest_Butten);
 		print_button(hMemDC, is_on_Enchant_Butten, &cEnchant_Butten, &cEnchant_Butten_, rEnchant_Butten);
-
+		if (is_on_Rest_Butten)
+		{
+			wsprintf(str, L"체력을 30%% 회복합니다(%d)", master.player.hp.Max_hp / 10 * 3);
+			TextOut(hMemDC, rRest_Butten.right-15, rRest_Butten.bottom + 10, str, _tcslen(str));
+		}
+		else if (is_on_Enchant_Butten)
+		{
+			wsprintf(str, L"카드 한 장을 강화합니다.");
+			TextOut(hMemDC, rRest_Butten.right - 5, rRest_Butten.bottom + 10, str, _tcslen(str));
+		}
 		// 버튼 위에 커서가 올라갈 시 문장 출력
 		// EZ?
 		break;
