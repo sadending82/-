@@ -2145,6 +2145,177 @@ void GP_MOUSEMOVE(int x, int y, Player* player)
 	arrow_endPos = { x, y };
 }
 
+void GP_E(HWND hWnd, Player* player)
+{
+	if (player->isMyTurn)
+	{
+		TurnChange(hWnd, player);
+	}
+}
+
+void GP_NUMBER(HWND hWnd, Player* player, int wParam)
+{
+	if (!isCardMove)
+	{
+		switch (wParam)
+		{
+		case '0':
+		{
+			if (player->deck.card[9].is_inhand)
+			{
+				if (isFront == TRUE)
+				{
+					isFront = FALSE;
+					player->deck.card[frontCard].top += 100;
+					player->deck.card[frontCard].bottom += 100;
+				}
+				frontCard = 9;
+				player->deck.card[9].top -= 100;
+				player->deck.card[9].bottom -= 100;
+				isFront = TRUE;
+			}
+
+		}
+		break;
+		case '1':
+			if (player->deck.card[0].is_inhand)
+			{
+				if (isFront == TRUE)
+				{
+					isFront = FALSE;
+					player->deck.card[frontCard].top += 100;
+					player->deck.card[frontCard].bottom += 100;
+				}
+				frontCard = 0;
+				player->deck.card[0].top -= 100;
+				player->deck.card[0].bottom -= 100;
+				isFront = TRUE;
+			}
+			break;
+		case '2':
+			if (player->deck.card[1].is_inhand)
+			{
+				if (isFront == TRUE)
+				{
+					isFront = FALSE;
+					player->deck.card[frontCard].top += 100;
+					player->deck.card[frontCard].bottom += 100;
+				}
+				frontCard = 1;
+				player->deck.card[1].top -= 100;
+				player->deck.card[1].bottom -= 100;
+				isFront = TRUE;
+			}
+			break;
+		case '3':
+			if (player->deck.card[2].is_inhand)
+			{
+				if (isFront == TRUE)
+				{
+					isFront = FALSE;
+					player->deck.card[frontCard].top += 100;
+					player->deck.card[frontCard].bottom += 100;
+				}
+				frontCard = 2;
+				player->deck.card[2].top -= 100;
+				player->deck.card[2].bottom -= 100;
+				isFront = TRUE;
+			}
+			break;
+		case '4':
+			if (player->deck.card[3].is_inhand)
+			{
+				if (isFront == TRUE)
+				{
+					isFront = FALSE;
+					player->deck.card[frontCard].top += 100;
+					player->deck.card[frontCard].bottom += 100;
+				}
+				frontCard = 3;
+				player->deck.card[3].top -= 100;
+				player->deck.card[3].bottom -= 100;
+				isFront = TRUE;
+			}
+			break;
+		case '5':
+			if (player->deck.card[4].is_inhand)
+			{
+				if (isFront == TRUE)
+				{
+					isFront = FALSE;
+					player->deck.card[frontCard].top += 100;
+					player->deck.card[frontCard].bottom += 100;
+				}
+				frontCard = 4;
+				player->deck.card[4].top -= 100;
+				player->deck.card[4].bottom -= 100;
+				isFront = TRUE;
+			}
+			break;
+		case '6':
+			if (player->deck.card[5].is_inhand)
+			{
+				if (isFront == TRUE)
+				{
+					isFront = FALSE;
+					player->deck.card[frontCard].top += 100;
+					player->deck.card[frontCard].bottom += 100;
+				}
+				frontCard = 5;
+				player->deck.card[5].top -= 100;
+				player->deck.card[5].bottom -= 100;
+				isFront = TRUE;
+			}
+			break;
+		case '7':
+			if (player->deck.card[6].is_inhand)
+			{
+				if (isFront == TRUE)
+				{
+					isFront = FALSE;
+					player->deck.card[frontCard].top += 100;
+					player->deck.card[frontCard].bottom += 100;
+				}
+				frontCard = 6;
+				player->deck.card[6].top -= 100;
+				player->deck.card[6].bottom -= 100;
+				isFront = TRUE;
+			}
+			break;
+		case '8':
+			if (player->deck.card[7].is_inhand)
+			{
+				if (isFront == TRUE)
+				{
+					isFront = FALSE;
+					player->deck.card[frontCard].top += 100;
+					player->deck.card[frontCard].bottom += 100;
+				}
+				frontCard = 7;
+				player->deck.card[7].top -= 100;
+				player->deck.card[7].bottom -= 100;
+				isFront = TRUE;
+			}
+			break;
+		case '9':
+			if (player->deck.card[8].is_inhand)
+			{
+				if (isFront == TRUE)
+				{
+					isFront = FALSE;
+					player->deck.card[frontCard].top += 100;
+					player->deck.card[frontCard].bottom += 100;
+				}
+				frontCard = 8;
+				player->deck.card[8].top -= 100;
+				player->deck.card[8].bottom -= 100;
+				isFront = TRUE;
+			}
+			break;
+		}
+	}
+}
+
 void CardAnimToXy(HWND hWnd, int x, int y, int animNum, Card* card, int cardNum)
 {
 	if (card->is_inhand == TRUE)
@@ -2392,6 +2563,9 @@ void StartStage(HWND hWnd, Player* player, int monsterNum)
 	SetMonster(monsterNum);
 
 	player->isMyTurn = TRUE;
+
+	player->hp.Shield_figure = 0;
+	player->cost = 3;
 
 	Shupple(player, 10);
 	player->deck.card[0].is_inhand = TRUE;

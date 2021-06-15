@@ -450,7 +450,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			{
 			case 2:
 				// 턴 종료
-
+				GP_E(hWnd, &(master.player));
 				break;
 			}
 			break;
@@ -467,9 +467,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		}
 		if (screen_number == 2 && !is_pause)	//  전투중 키 사용
 		{
-			if (wParam <= '0' && wParam <= '9')
+			if (wParam >= '0' && wParam <= '9')
 			{
 				//해당하는 카드를 선택 상태로 만든다.
+				GP_NUMBER(hWnd, &(master.player), wParam);
 			}
 		}
 	}

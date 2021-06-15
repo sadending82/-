@@ -349,7 +349,8 @@ void ChangeScreenNumber(int num);
 void DisplayGame(HWND hWnd, HDC hDC, Player* player);
 void SetCard(Player* player);
 POS GP_LBUTTONDOWN(HWND hWnd, int x, int y, Player* player, int Lx, int Ly);
-
+void GP_E(HWND hWnd, Player* player);
+void GP_NUMBER(HWND hWnd, Player* player, int wParam);
 void CardAnimToXy(HWND hWnd, int x, int y, int animNum, Card* card, int cardNum);
 void StartStage(HWND hWnd, Player* player, int monsterNum);
 void GP_MOUSEMOVE(int, int, Player*);
