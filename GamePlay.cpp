@@ -3107,6 +3107,8 @@ void PlayerDefeat(HWND hWnd)
 	arrow_pos = { 0 };
 	arrow_endPos = { 0 };
 
+	MessageBox(hWnd, L"ÀüÅõ¿¡¼­ ÆÐ¹èÇÏ¼Ì½À´Ï´Ù.", L"ÆÐ¹è", MB_OK);
+
 	ChangeScreenNumber(0);
 }
 
@@ -3121,10 +3123,18 @@ void PlayerWin(HWND hWnd)
 	KillTimer(hWnd, Print_Timer);
 	KillTimer(hWnd, TurnDelay_Timer);
 	KillTimer(hWnd, DmgPrint_Timer);
+
+	int gold = (rand() % 5 + 5) * monsterCount;
+
+	MessageBox(hWnd, L"ÀüÅõ¿¡¼­ ½Â¸®ÇÏ¼Ì½À´Ï´Ù.", L"½Â¸®", MB_OK);
+	WCHAR str[30] = { 0 };
+	wsprintf(str, L"È¹µæÇÏ½Å °ñµå´Â %d°ñµå ÀÔ´Ï´Ù.", gold);
+
+	MessageBox(hWnd, str, L"ÀüÅõ °á°ú", MB_OK);
 	master->screen_numbers.In_Game_Screen_num = Out_of_game;
 	master->booleans.Is_print_map = TRUE;
-	master->player.money += (rand() % 5 + 5) * monsterCount;
 	master->stage.floor_num++;
+	master->player.money += gold;
 
 	frontCard = 0;
 	isFront = FALSE;
