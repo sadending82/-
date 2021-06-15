@@ -41,6 +41,8 @@ static BOOL isEnemyTurnPrint = FALSE;
 static BOOL isEnemyDmgPrint = FALSE;
 static BOOL isMyDmgPrint = FALSE;
 
+static BOOL isEnhanced = FALSE;
+
 static int MoveCard = 0;
 
 static int AtkMonster = 0;
@@ -738,9 +740,18 @@ void DrawPlayer(HWND hWnd, HDC hDC, Player* player)
 			if (timer >= 28)
 			{
 				player->animation_num++;
-
-				monster[AtkMonster].hp.Current_hp -= CalcDmg(player);
-
+				int dmg = 0;
+				if (isEnhanced)
+				{
+					dmg = 8 + player->item.buffs[0].num;
+				}
+				else
+				{
+					dmg = 5 + player->item.buffs[0].num;
+				}
+				monster[AtkMonster].hp.Current_hp -= dmg;
+				myAtkDmg = dmg;
+				isEnhanced = FALSE;
 				if (monster[AtkMonster].hp.Current_hp <= 0)
 				{
 					monster[AtkMonster].hp.Current_hp = 0;
@@ -2667,6 +2678,10 @@ void ChangePlayerTurn(HWND hWnd, Player* player)
 
 void PlayerAttack(HWND hWnd, Player* player)
 {
+	if (player->deck.card[frontCard].is_enhanced)
+	{
+		isEnhanced = TRUE;
+	}
 	player->deck.card[frontCard] = { 0 };
 	player->cost--;
 	int targetNum = frontCard;
@@ -2707,6 +2722,10 @@ void PlayerAttack(HWND hWnd, Player* player)
 
 void PlayerDeffence(HWND hWnd, Player* player)
 {
+	if (player->deck.card[frontCard].is_enhanced)
+	{
+		isEnhanced = TRUE;
+	}
 	player->deck.card[frontCard] = { 0 };
 	player->cost--;
 	int targetNum = frontCard;
@@ -2731,8 +2750,17 @@ void PlayerDeffence(HWND hWnd, Player* player)
 	player->animation_num = 0;
 	isCharMove = TRUE;
 	timer = 0;
-
-	player->hp.Shield_figure += CalcShield(player);
+	int dmg = 0;
+	if (isEnhanced)
+	{
+		dmg = 8 + player->item.buffs[1].num;
+	}
+	else
+	{
+		dmg = 5 + player->item.buffs[1].num;
+	}
+	player->hp.Shield_figure += dmg;
+	isEnhanced = FALSE;
 
 	isFront = FALSE;
 	isSelected = FALSE;
@@ -2839,15 +2867,16 @@ void SetCardPos(HWND hWnd, Player* player, int num)
 
 int CalcDmg(Player* player)
 {
+	int dmg;
 	if (player->deck.card[frontCard].is_enhanced)
 	{
-		myAtkDmg = 8 + player->item.buffs[0].num;
+		dmg = 8 + player->item.buffs[0].num;
 	}
 	else
 	{
-		myAtkDmg = 5 + player->item.buffs[0].num;
+		dmg = 5 + player->item.buffs[0].num;
 	}
-	return myAtkDmg;
+	return dmg;
 }
 
 void CalcDmg(Player* player, Monster monster)
