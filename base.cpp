@@ -143,6 +143,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			//	배경 출력
 			//	맵 타일 출력
 			print_IG(hMemDC, hMapDC, cRect, master, map_yPos, room_print_count);
+			print_Map(hMemDC, hMapDC, cRect, master, map_yPos, room_print_count);
 			print_Status_Bar(hMemDC, cRect, master);
 			break;
 		case 2:
@@ -158,6 +159,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			// 몬스터가 정해지면 screen_number = 2;를 하고 화면에 위 순서대로 출력해야할겁니다.
 			// 전투가 끝나면 ==(플레이어의 체력or 몬스터의 체력 이 0이되면) 다시 1로 돌아갑니다. 위의 설명처럼 패배의 경우는 아래의 게임 오버 화면이 나와야합니다.
 			DisplayGame(hWnd, hMemDC, &master.player);
+			print_Map(hMemDC, hMapDC, cRect, master, map_yPos, room_print_count);
 			print_Status_Bar(hMemDC, cRect, master);
 
 
@@ -329,9 +331,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		case 1:
 
 			IG_MOUSEMOVE(mx, my, &cursor, master, cRect);
+			Map_MOUSEMOVE(mx, my, &cursor);
 			break;
 		case 2:
 			GP_MOUSEMOVE(mx, my, &master.player);
+			Map_MOUSEMOVE(mx, my, &cursor);
 			break;
 		}
 	}
@@ -459,12 +463,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			break;
 		case 'm':
 		case 'M':
-			if (master.screen_numbers.In_Game_Screen_num != Out_of_game && screen_number == 1)
+			switch (screen_number)
 			{
-				if (master.booleans.Is_print_map)
-					master.booleans.Is_print_map = FALSE;
-				else
-					master.booleans.Is_print_map = TRUE;
+			case 1:
+			case 2:
+				if (master.screen_numbers.In_Game_Screen_num != Out_of_game)
+				{
+					if (master.booleans.Is_print_map)
+						master.booleans.Is_print_map = FALSE;
+					else
+						master.booleans.Is_print_map = TRUE;
+				}
+				break;
 			}
 			break;
 		}

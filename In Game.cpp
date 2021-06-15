@@ -583,6 +583,11 @@ void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos, i
 	case Room_Random:
 		break;
 	}
+	
+}
+void print_Map(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos, int room_print_count)
+{
+	int pw, ph;
 	if (master.booleans.Is_print_map)
 	{
 		pw = cIG_Map.GetWidth();
@@ -608,8 +613,9 @@ void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos, i
 		ph = cLegend.GetHeight();
 		cLegend.Draw(hMemDC, cRect.right - pw - 150, cRect.bottom / 2 - ph / 2, pw, ph, 0, 0, pw, ph);
 	}
-
 }
+
+
 
 void print_Status_Bar(HDC hMemDC, RECT cRect, Master master)
 {
@@ -642,8 +648,7 @@ void IG_MOUSEMOVE(int mx, int my, POINT* cursor, Master master, RECT cRect)
 {
 	is_on_Rest_Butten = FALSE;
 	is_on_Enchant_Butten = FALSE;
-	cursor->x = mx;
-	cursor->y = my;
+	
 
 	//
 	switch (master.screen_numbers.In_Game_Screen_num)
@@ -666,6 +671,11 @@ void IG_MOUSEMOVE(int mx, int my, POINT* cursor, Master master, RECT cRect)
 	case Room_Random:
 		break;
 	}
+}
+void Map_MOUSEMOVE(int mx, int my, POINT* cursor)
+{
+	cursor->x = mx;
+	cursor->y = my;
 }
 void IG_Timer(POINT cursor, int* map_yPos, RECT cRect, Master* master)
 {
@@ -754,7 +764,6 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 								// 전투
 								*screen_number = 2;
 								StartStage(hWnd, &master->player, rand() % 3);
-								break;
 							case Room_Rest:
 								master->screen_numbers.In_Game_Screen_num = room_type;
 								master->booleans.Is_print_map = FALSE;// 테스트중
@@ -772,7 +781,6 @@ void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL*
 									// 전투
 									*screen_number = 2;
 									StartStage(hWnd, &master->player, rand() % 3);
-									break;
 								case Room_Rest:
 									master->screen_numbers.In_Game_Screen_num = room_type;
 									master->booleans.Is_print_map = FALSE;//테스트중

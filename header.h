@@ -385,12 +385,15 @@ void make_random_map(Master master);
 void make_map(Master* master, RECT cRect);
 void print_room(HDC hMapDC, Master master, RECT cRect, int room_print_count);
 void IG_MOUSEMOVE(int mx, int my, POINT* cursor, Master master, RECT cRect);
+void Map_MOUSEMOVE(int mx, int my, POINT* cursor);
+
 void IG_Timer(POINT cursor, int* map_yPos, RECT cRect, Master* master);
 void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL* is_pause, int* map_yPos, int* screen_number);
 void print_Status_Bar(HDC hMemDC, RECT cRect, Master master);
 
 void Event_Rest(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL* is_pause);
 void Pause_LBUTTONDOWN(int mx, int my, RECT cRect, BOOL* is_pause);
+void print_Map(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos, int room_print_count);
 
 
 void print_OS_Pause(HDC hMemDC, RECT cRect, Master master);
