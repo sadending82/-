@@ -26,9 +26,38 @@ void print_OS_Pause(HDC hMemDC, RECT cRect, Master master)
 	int ph = cPause.GetHeight();
 	cPause.Draw(hMemDC, (cRect.right - pw) / 2, (cRect.bottom - ph) / 2, pw, ph, 0, 0, pw, ph);
 }
-void OS_Pause_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL* is_pause)
+void OS_Pause_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL* is_pause,int *screen_number,int* main_menu)
 {
+	int answer;
+
 	// 옵션창 영역에서 위의 34 부분을 포함한 부분을 누르면 옵션 꺼짐 종료를 누르면 겜 종료
+	RECT tmp;
+	int pw = cPause.GetWidth();
+	int ph = cPause.GetHeight();
+	tmp.left = (cRect.right - pw) / 2;
+	tmp.right = tmp.left+ pw;
+	tmp.top = (cRect.bottom - ph) / 2;
+	tmp.bottom = tmp.top + ph;
+	if (is_in_rect(mx, my, tmp))
+		;
+	else
+		*is_pause = FALSE;
+
+	// 메인으로 돌아갈건지 물어볼 부분
+	tmp.left = tmp.right - 215;
+	tmp.top += 25;
+	tmp.bottom = tmp.top + 35;
+	if (is_in_rect(mx, my, tmp))
+	{
+		answer = MessageBox(hWnd, L"정말로?", L"메인화면으로 돌아가기", MB_YESNO);
+		if (answer == IDYES)
+		{
+			*screen_number = 0;
+			*is_pause = FALSE;
+			*main_menu = 0;
+		}
+	}
+		
 }
 
 

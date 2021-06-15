@@ -36,6 +36,8 @@ static CImage cMerchant_2;
 static CImage cBoss_2;
 
 
+static CImage cRest_Screen;
+
 static CImage cRest_Butten;
 static CImage cRest_Butten_;
 static CImage cEnchant_Butten;
@@ -99,6 +101,8 @@ void Set_IG_Img()
 	if (cBoss_2.IsNull())
 		cBoss_2.Load(L"Boss_2.png");
 
+	if (cRest_Screen.IsNull())
+		cRest_Screen.Load(L"Rest_Screen.png");
 	if (cRest_Butten.IsNull())
 		cRest_Butten.Load(L"Rest_Butten.png");
 	if (cEnchant_Butten.IsNull())
@@ -526,30 +530,53 @@ void print_IG(HDC hMemDC, HDC hMapDC, RECT cRect, Master master, int map_yPos, i
 {
 	Set_IG_POINT(cRect);
 	//지도를 알맞게 출력한다.
-	int pw = cIG_Map.GetWidth();
-	int ph = cIG_Map.GetHeight();
-	cIG_Map.Draw(hMapDC, 0, 0, pIG_Map.x, pIG_Map.y, 0, 0, pw, ph);
-	BitBlt(hMemDC, cRect.right / 5, 0, pIG_Map.x, cRect.bottom, hMapDC, 0, map_yPos, SRCCOPY);
-	// 방 출력
-	print_room(hMemDC, master,cRect, room_print_count);
-	// 방을 잊는 선 출력
-	for (int i = 0; i < 13; i++)
+	switch (master.screen_numbers.In_Game_Screen_num)
 	{
-		for (int j = 0; j < MNRF; j++)
-			if (master.stage.map.All_room[i]->next[j] != NULL)
-			{
-				MoveToEx(hMemDC, master.stage.map.All_room[i]->rect.left + (master.stage.map.All_room[i]->rect.right- master.stage.map.All_room[i]->rect.left)/2, master.stage.map.All_room[i]->rect.top, NULL);
-				LineTo(hMemDC, master.stage.map.All_room[i]->next[j]->rect.left + (master.stage.map.All_room[i]->next[j]->rect.right - master.stage.map.All_room[i]->next[j]->rect.left) / 2, master.stage.map.All_room[i]->next[j]->rect.bottom);
-			}
+	case 0:
+		// 플레이어만 서있는 화면이 나오거나 이전 전투 결과가 나온다.
+		break;
+	case Room_Rest:
+		// 휴식 화면 출력
+		// 배경 출력
+		//int pw = cRest_Screen.GetWidth();
+		//int ph = cRest_Screen.GetHeight();
+		//cRest_Screen.Draw(hMapDC, 0, 0, pIG_Map.x, pIG_Map.y, 0, 0, pw, ph);
+		// 버튼 출력
+		// 버튼 위에 커서가 올라갈 시 문장 출력
+		// EZ?
+		break;
+	case Room_Relics:
+		break;
+	case Room_Merchant:
+		break;
+	case Room_Random:
+		break;
 	}
+	if (master.booleans.Is_print_map)
+	{
+		int pw = cIG_Map.GetWidth();
+		int ph = cIG_Map.GetHeight();
+		cIG_Map.Draw(hMapDC, 0, 0, pIG_Map.x, pIG_Map.y, 0, 0, pw, ph);
+		BitBlt(hMemDC, cRect.right / 5, 0, pIG_Map.x, cRect.bottom, hMapDC, 0, map_yPos, SRCCOPY);
+		// 방 출력
+		print_room(hMemDC, master, cRect, room_print_count);
+		// 방을 잊는 선 출력
+		for (int i = 0; i < 13; i++)
+		{
+			for (int j = 0; j < MNRF; j++)
+				if (master.stage.map.All_room[i]->next[j] != NULL)
+				{
+					MoveToEx(hMemDC, master.stage.map.All_room[i]->rect.left + (master.stage.map.All_room[i]->rect.right - master.stage.map.All_room[i]->rect.left) / 2, master.stage.map.All_room[i]->rect.top, NULL);
+					LineTo(hMemDC, master.stage.map.All_room[i]->next[j]->rect.left + (master.stage.map.All_room[i]->next[j]->rect.right - master.stage.map.All_room[i]->next[j]->rect.left) / 2, master.stage.map.All_room[i]->next[j]->rect.bottom);
+				}
+		}
 
 
-	// 옆에 나오는 목록 출력
-	pw = cLegend.GetWidth();
-	ph = cLegend.GetHeight();
-	cLegend.Draw(hMemDC, cRect.right - pw - 150, cRect.bottom / 2 - ph / 2, pw, ph, 0, 0, pw, ph);
-
-	
+		// 옆에 나오는 목록 출력
+		pw = cLegend.GetWidth();
+		ph = cLegend.GetHeight();
+		cLegend.Draw(hMemDC, cRect.right - pw - 150, cRect.bottom / 2 - ph / 2, pw, ph, 0, 0, pw, ph);
+	}
 
 }
 
@@ -625,93 +652,102 @@ void IG_Timer(POINT cursor, int* map_yPos, RECT cRect, Master* master)
 	// rect 영역 움직여주는 함수 갔다가 쓰자.
 	
 }
+
+// In_Game_Screen_num -1 = 지도화면
+//	In_Game_Screen_num이 -1 일때만 클릭이 가능하며
+//	master.booleans.Is_print_map == TRUE && In_Game_Screen_num != -1 이면 지도는 나오지만 클릭은 안 되도록 만든다.
 void IG_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL* is_pause, int* map_yPos)
 {
+	int room_type;
 	TCHAR str[20];
-	if (is_in_rect(mx, my, master->stage.map.Boss_Room->rect))
+	switch (master->screen_numbers.In_Game_Screen_num)
 	{
-		MessageBox(hWnd, L"보스방", L"노드 선택", MB_OK);
-		master->stage.map.Current_Room = master->stage.map.Boss_Room;// 이건 필요 없음
-		// 보스와 전투 시작 코드 추가
-		// 전투가 끝나면 다음 스테이지로 가거나 마지막 스테이지면 점수가 나오고 메인 화면으로
-		//	보스와의 전투에서 승리시
-		master->stage.stage_num++;
-		if (master->stage.stage_num == 4)
-			;//최대 스테이지는 3 이므로 점수를 출력하고 게임을 종료
-		else
+	case Out_of_game:
+		if (is_in_rect(mx, my, master->stage.map.Boss_Room->rect))// 보스와 싸울 수 없을때 클릭이 불가능하도록 바꿔야함
 		{
-			*map_yPos = 0;
-			make_map(master, cRect);
-		}
+			MessageBox(hWnd, L"보스방", L"노드 선택", MB_OK);
+			master->stage.map.Current_Room = master->stage.map.Boss_Room;// 이건 필요 없음
+			// 보스와 전투 시작 코드 추가
+			// 전투가 끝나면 다음 스테이지로 가거나 마지막 스테이지면 점수가 나오고 메인 화면으로
+			//	보스와의 전투에서 승리시
+			master->stage.stage_num++;
+			if (master->stage.stage_num == 4)
+				;//최대 스테이지는 3 이므로 점수를 출력하고 게임을 종료
+			else
+			{
+				*map_yPos = 0;
+				make_map(master, cRect);
+			}
 
-	}
-	else
-		for (int i = 0; i < 13; i++)
-		{
-			wsprintf(str, L"%d", i);
-			//커런트룸의 next이면
-			for (int j = 0; j < MNRF; j++)
-				if(is_in_rect(mx, my, master->stage.map.All_room[i]->rect))
-					if (master->stage.map.Current_Room->next[j] != NULL && is_in_rect(mx, my, master->stage.map.Current_Room->next[j]->rect))
-					{
-						MessageBox(hWnd, str, L"노드 선택", MB_OK);
-						//각각을 함수로 만들어야 랜덤 구현하기가 편함.
-						switch (master->stage.map.Current_Room->room_type)
-						{
-						case Room_Basic_Enemy:
-							break;
-						case Room_Elite_Enemy:
-							break;
-						case Room_Rest:
-							Event_Rest(hWnd, mx, my, master, cRect, is_pause);
-							break;
-						case Room_Relics:
-							break;
-						case Room_Merchant:
-							break;
-						case Room_Random:
-							break;
-						}
-						// 위 작업이 끝나면 아래 코드가 실행되어야함
-						master->stage.map.Current_Room = master->stage.map.All_room[i];
-						master->stage.floor_num++;
-					}
 		}
-	RECT tmp;
-	tmp.left = cRect.right - cStatus_Bar.GetHeight();
-	tmp.right = cRect.right;
-	tmp.top = 0;
-	tmp.bottom = cStatus_Bar.GetHeight();
-	if (is_in_rect(mx, my, tmp))
+		else
+			for (int i = 0; i < 13; i++)
+			{
+				wsprintf(str, L"%d", i);
+				//커런트룸의 next이면
+				for (int j = 0; j < MNRF; j++)
+					if (is_in_rect(mx, my, master->stage.map.All_room[i]->rect))
+						if (master->stage.map.Current_Room->next[j] != NULL && is_in_rect(mx, my, master->stage.map.Current_Room->next[j]->rect))
+						{
+							MessageBox(hWnd, str, L"노드 선택", MB_OK);// 완성하면 주석처리
+							room_type = master->stage.map.Current_Room->room_type;
+							switch (room_type)
+							{
+							case Room_Basic_Enemy:
+							case Room_Elite_Enemy:
+								// 전투
+								break;
+							case Room_Rest:
+							case Room_Relics:
+							case Room_Merchant:
+								master->screen_numbers.In_Game_Screen_num = room_type;
+								master->booleans.Is_print_map = FALSE;// 테스트중
+								break;
+							case Room_Random:
+								room_type = get_random_type_of_room();
+								switch (room_type)
+								{
+								case Room_Basic_Enemy:
+								case Room_Elite_Enemy:
+									// 전투
+									break;
+								case Room_Rest:
+								case Room_Relics:
+								case Room_Merchant:
+									master->screen_numbers.In_Game_Screen_num = room_type;
+									master->booleans.Is_print_map = FALSE;//테스트중
+									break;
+								case Room_Random:
+									// 위를 제외한 특별 이벤트 발생
+									break;
+								}
+								break;
+							}
+							// 위 작업이 끝나면 아래 코드가 실행되어야함
+							master->stage.map.Current_Room = master->stage.map.All_room[i];
+							master->stage.floor_num++;
+						}
+			}
+		RECT tmp;
+		tmp.left = cRect.right - cStatus_Bar.GetHeight();
+		tmp.right = cRect.right;
+		tmp.top = 0;
+		tmp.bottom = cStatus_Bar.GetHeight();
+		if (is_in_rect(mx, my, tmp))
 			*is_pause = TRUE;
+		break;
+	}
+	
 }
 
 void Event_Basic_Enemy();
 void Event_Elite_Enemy();
 void Event_Rest(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL* is_pause)
 {
-	// 휴식 화면 출력
-	// 배경 출력
-	// 버튼 출력
-	// 버튼 위에 커서가 올라갈 시 문장 출력
-	// EZ?
+	
 }
 void Event_Relics();
 void Event_Merchant();
 void Event_Random()
 {
-	switch (get_random_type_of_room())
-	{
-	case Room_Basic_Enemy:
-		break;
-	case Room_Elite_Enemy:
-		break;
-	case Room_Rest:
-		break;
-	case Room_Relics:
-		break;
-	case Room_Random:
-		// 위를 제외한 특별 이벤트 발생
-		break;
-	}
 }

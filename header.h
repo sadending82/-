@@ -49,6 +49,9 @@
 #define Number_of_Boss_Monsters_in_Stage_1 0
 #define BMS1 Number_of_Boss_Monsters_in_Stage_1
 
+//In Game 관련
+
+#define Out_of_game			-1
 //Room 관련
 
 #define Room_Start			-1
@@ -308,9 +311,31 @@ animation_state가
 //	이름이 부적절해보여서 수정합니다.
 //	값은 게임을 실행하고 케릭터를 설정할때 정해집니다.
 typedef struct {
+	// 정리할때 각종BOOL 변수를 여기에 추가
+	BOOL Is_print_map;
+}Booleans;
+/*
+Is_print_map == TRUE이면 지도를 출력한다.
+
+*/
+typedef struct {
+	// 정리할때 각종 화면 구분용 변수를 여기에 추가
+	int In_Game_Screen_num;
+}Screen_Numbers;
+/*
+In_Game_Screen_num
+nomal			0
+Rest			2
+Relics			3
+Merchant		4
+Random			5
+*/
+typedef struct {
 	Player player;
 	int game_seed; // -*- 이것도 무엇인가요? 
 	Stage stage;
+	Booleans booleans;	//	나중에 윈도으프로시져 정리용
+	Screen_Numbers screen_numbers;
 }Master;
 
 
@@ -360,6 +385,7 @@ void Event_Rest(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL* is_
 
 
 void print_OS_Pause(HDC hMemDC, RECT cRect, Master master);
+void OS_Pause_LBUTTONDOWN(HWND hWnd, int mx, int my, Master* master, RECT cRect, BOOL* is_pause, int* screen_number, int* main_menu);
 
 
 // 많이 사용하는 함수

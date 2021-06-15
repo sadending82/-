@@ -272,9 +272,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		case 1:
 			if (!is_pause)
 				IG_LBUTTONDOWN(hWnd, mx, my, &master, cRect, &is_pause, &map_yPos);
+			else
+				OS_Pause_LBUTTONDOWN(hWnd, mx, my, &master, cRect, &is_pause, &screen_number, &main_menu);
 			break;
 		case 2:
-			card_position = GP_LBUTTONDOWN(hWnd, mx, my, &master.player, card_position.x, card_position.y);
+			
+			if (!is_pause)
+				card_position = GP_LBUTTONDOWN(hWnd, mx, my, &master.player, card_position.x, card_position.y);
+			else
+				OS_Pause_LBUTTONDOWN(hWnd, mx, my, &master, cRect, &is_pause, &screen_number, &main_menu);
 			break;
 		}
 	}
@@ -386,6 +392,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					make_map(&master, cRect);
 
 					screen_number = 1;
+					master.screen_numbers.In_Game_Screen_num = Out_of_game;
+					master.booleans.Is_print_map = TRUE;
 					break;
 				}
 				break;

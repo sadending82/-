@@ -187,6 +187,8 @@ void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_numbe
 
 
 			*screen_number = 1;
+			master->screen_numbers.In_Game_Screen_num = Out_of_game;
+			master->booleans.Is_print_map = TRUE;
 		}
 
 		if (is_in_rect(mx, my, rCharacter2))
@@ -198,6 +200,8 @@ void MS_LBUTTONDOWN(HWND hWnd, int mx, int my, int* main_menu, int* screen_numbe
 
 
 			*screen_number = 1;
+			master->screen_numbers.In_Game_Screen_num = Out_of_game;
+			master->booleans.Is_print_map = TRUE;
 		}
 		break;
 	case 2:
