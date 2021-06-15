@@ -2625,7 +2625,7 @@ void StartStage(HWND hWnd, Player* player, int monsterNum)
 
 void ChangePlayerTurn(HWND hWnd, Player* player)
 {
-	SetCard(player);
+	SetGameCard(player);
 
 	player->isMyTurn = TRUE;
 
