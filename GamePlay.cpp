@@ -2147,9 +2147,12 @@ void GP_MOUSEMOVE(int x, int y, Player* player)
 
 void GP_E(HWND hWnd, Player* player)
 {
-	if (player->isMyTurn)
+	if (!isCardMove && !isCharMove)
 	{
-		TurnChange(hWnd, player);
+		if (player->isMyTurn)
+		{
+			TurnChange(hWnd, player);
+		}
 	}
 }
 
