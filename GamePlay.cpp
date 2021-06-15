@@ -2559,6 +2559,8 @@ void SetMonster(int monsterNum)
 
 void StartStage(HWND hWnd, Player* player, int monsterNum)
 {
+	Master* master = GetMaster();
+	master->stage.floor_num--;
 	SetCard(player);
 	SetMonster(monsterNum);
 
@@ -3052,14 +3054,124 @@ int GetPrint()
 
 void PlayerDefeat(HWND hWnd)
 {
+
+
+	KillTimer(hWnd, Card_Timer);
+	KillTimer(hWnd, Print_Timer);
+	KillTimer(hWnd, TurnDelay_Timer);
+	KillTimer(hWnd, DmgPrint_Timer);
+
+	frontCard = 0;
+	isFront = FALSE;
+	isCharMove = FALSE;
+	selected = -1;
+	isSelected = FALSE;
+	isCardMove = FALSE;
+	isAtkSelected = FALSE;
+	isTurnChange = FALSE;
+	isChangedTurn = FALSE;
+	isMouseUpTurnEnd = FALSE;
+
+	isMyTurnPrint = FALSE;
+	isEnemyTurnPrint = FALSE;
+
+	isEnemyDmgPrint = FALSE;
+	isMyDmgPrint = FALSE;
+
+	MoveCard = 0;
+
+	AtkMonster = 0;
+
+	monsterAtkDmg = 0;
+	myAtkDmg = 0;
+
+	for (int i = 0; i < 3; ++i)
+	{
+		monster[i] = { 0 };
+	}
+	monsterCount = 0;
+
+	timer = 0;
+	for (int i = 0; i < 3; ++i)
+	{
+		monsterTimer[i] = { 0 };
+	}
+	for (int i = 0; i < 50; ++i)
+	{
+		CardTimer[i] = { 0 };
+	}
+	DmgTimer = 0;
+
+	TurnMonsterNum = 0;
+
+	arrow_pos = { 0 };
+	arrow_endPos = { 0 };
+
 	ChangeScreenNumber(0);
 }
 
 void PlayerWin(HWND hWnd)
 {
+
+
+
+
 	Master* master = GetMaster();
+	KillTimer(hWnd, Card_Timer);
+	KillTimer(hWnd, Print_Timer);
+	KillTimer(hWnd, TurnDelay_Timer);
+	KillTimer(hWnd, DmgPrint_Timer);
 	master->screen_numbers.In_Game_Screen_num = Out_of_game;
 	master->booleans.Is_print_map = TRUE;
+	master->player.money += (rand() % 5 + 5) * monsterCount;
+	master->stage.floor_num++;
+
+	frontCard = 0;
+	isFront = FALSE;
+	isCharMove = FALSE;
+	selected = -1;
+	isSelected = FALSE;
+	isCardMove = FALSE;
+	isAtkSelected = FALSE;
+	isTurnChange = FALSE;
+	isChangedTurn = FALSE;
+	isMouseUpTurnEnd = FALSE;
+
+	isMyTurnPrint = FALSE;
+	isEnemyTurnPrint = FALSE;
+
+	isEnemyDmgPrint = FALSE;
+	isMyDmgPrint = FALSE;
+
+	MoveCard = 0;
+
+	AtkMonster = 0;
+
+	monsterAtkDmg = 0;
+	myAtkDmg = 0;
+
+	for (int i = 0; i < 3; ++i)
+	{
+		monster[i] = { 0 };
+	}
+	monsterCount = 0;
+
+	timer = 0;
+	for (int i = 0; i < 3; ++i)
+	{
+		monsterTimer[i] = { 0 };
+	}
+	for (int i = 0; i < 50; ++i)
+	{
+		CardTimer[i] = { 0 };
+	}
+	DmgTimer = 0;
+
+	TurnMonsterNum = 0;
+
+	arrow_pos = { 0 };
+	arrow_endPos = { 0 };
+
 	ChangeScreenNumber(1);
 }
 

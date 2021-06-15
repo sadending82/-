@@ -29,6 +29,8 @@ static CImage cCharacter2;
 static CImage cCharacter1_;
 static CImage cCharacter2_;
 
+static CImage cRCharacter1;
+
 static BOOL is_on_Character1;
 static BOOL is_on_Character2;
 
@@ -62,6 +64,8 @@ void Set_MS_Img()
 		cCharacter1_.Load(L"Character1_.png");
 	if (cCharacter2_.IsNull())
 		cCharacter2_.Load(L"Character2_.png");
+	if (cRCharacter1.IsNull())
+		cRCharacter1.Load(L"RcharIdle1.png");
 }
 
 void set_MS_Button(HWND hWnd, RECT cRect, HINSTANCE g_hInst)
@@ -137,6 +141,7 @@ void print_MS(HDC hMemDC, RECT cRect,int main_menu)
 		//현재 존재하는 캐릭터를 화면에 출력
 		//키보드 1, 2, 3 or 캐릭터 클릭을 통해 선택하고 게임 시작 누를 시 게임 시작 -- screen_number = 1;
 		print_button(hMemDC, is_on_Character1, &cCharacter1, &cCharacter1_, rCharacter1);
+		cRCharacter1.Draw(hMemDC, 10, 100, 512, 512, 0, 0, 128, 128);
 		print_button(hMemDC, is_on_Character2, &cCharacter2, &cCharacter2_, rCharacter2);
 		break;
 	case 2:
