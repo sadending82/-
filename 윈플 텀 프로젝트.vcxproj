@@ -169,6 +169,8 @@
     <Image Include="Elite_Enemy_2.png" />
     <Image Include="Exit.png" />
     <Image Include="Exit_.png" />
+    <Image Include="HP_Bar_Empty.png" />
+    <Image Include="HP_Bar_HP.png" />
     <Image Include="IG_Map.png" />
     <Image Include="Legend.png" />
     <Image Include="Main_screen.png" />
