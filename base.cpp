@@ -477,6 +477,44 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				break;
 			}
 			break;
+		case VK_UP:
+			if (screen_number == 1)
+			{
+				if (map_yPos > -30)
+				{
+					map_yPos = map_yPos - 30;
+					if (master.stage.map.Boss_Room != NULL)
+					{
+						for (int i = 0; i < 13; i++)
+						{
+							OffsetRect(&master.stage.map.All_room[i]->rect, 0, 30);
+						}
+						OffsetRect(&master.stage.map.Boss_Room->rect, 0, 30);
+					}
+				}
+				if (map_yPos < -30)
+					map_yPos = -30;
+			}
+			break;
+		case VK_DOWN:
+			if (screen_number == 1)
+			{
+				if (map_yPos < cRect.bottom + 30)
+				{
+					map_yPos = map_yPos + 30;
+					if (master.stage.map.Boss_Room != NULL)
+					{
+						for (int i = 0; i < 13; i++)
+						{
+							OffsetRect(&master.stage.map.All_room[i]->rect, 0, -30);
+						}
+						OffsetRect(&master.stage.map.Boss_Room->rect, 0, -30);
+					}
+				}
+				if (map_yPos > cRect.bottom + 30)
+					map_yPos = cRect.bottom + 30;
+			}
+			break;
 		}
 		if (screen_number == 2 && !is_pause)	//  전투중 키 사용
 		{
