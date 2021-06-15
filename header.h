@@ -226,6 +226,7 @@ ALL, 2, 0 = 모든 직업의 0번째 수비 카드 = 6 + 민첩의 방어도		기본 수비 카드(0번�
 */
 typedef struct {
 	Card card[MNCD];
+	Card holdingCard[MNCD];
 	int num_of_cards; // 기본값 DNCD
 }Deck;
 typedef struct {
